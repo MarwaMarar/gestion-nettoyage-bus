@@ -1,0 +1,70 @@
+<div class="rapports">
+
+  <div class="header-page">
+
+  <h2>Rapports 📊</h2>
+
+  <input
+    type="text"
+    class="recherche"
+    placeholder="🔍 Rechercher..."
+    [(ngModel)]="recherche">
+
+</div>
+
+  <!-- Cartes statistiques -->
+  <div class="cartes">
+
+    <div class="carte">
+      <h3>{{ totalBus }}</h3>
+      <p>Bus</p>
+    </div>
+
+    <div class="carte">
+      <h3>{{ totalAgents }}</h3>
+      <p>Agents</p>
+    </div>
+
+    <div class="carte">
+      <h3>{{ nettoyagesTermines }}</h3>
+      <p>Nettoyages terminés</p>
+    </div>
+
+    <div class="carte">
+      <h3>{{ nettoyagesEnAttente }}</h3>
+      <p>Nettoyages en attente</p>
+    </div>
+
+  </div>
+
+  <h3>Liste des rapports</h3>
+
+  <table>
+
+    <thead>
+      <tr>
+        <th>Bus</th>
+        <th>Type</th>
+        <th>Date</th>
+        <th>Agent</th>
+        <th>Statut</th>
+      </tr>
+    </thead>
+
+    <tbody>
+
+    <tr *ngFor="let rapport of rapportsFiltres">
+
+        <td>{{ rapport.bus }}</td>
+        <td>{{ rapport.type }}</td>
+        <td>{{ rapport.date }}</td>
+        <td>{{ rapport.agent }}</td>
+        <td>{{ rapport.statut }}</td>
+
+      </tr>
+
+    </tbody>
+
+  </table>
+
+</div>

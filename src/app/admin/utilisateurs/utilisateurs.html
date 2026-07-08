@@ -1,0 +1,131 @@
+<div class="utilisateurs">
+
+  <div class="header-page">
+
+  <h2>Utilisateurs</h2>
+
+  <div class="actions-header">
+
+    <input
+      type="text"
+      class="recherche"
+      placeholder="🔍 Rechercher..."
+      [(ngModel)]="recherche">
+
+    <button class="btn-ajouter" (click)="ajouterUtilisateur()">
+      + Ajouter un utilisateur
+    </button>
+
+  </div>
+
+</div>
+
+
+
+  <!-- Formulaire -->
+
+  <div class="formulaire" *ngIf="afficherFormulaire">
+
+
+    <input
+      type="text"
+      placeholder="Nom"
+      [(ngModel)]="nom">
+
+
+    <input
+      type="email"
+      placeholder="Email"
+      [(ngModel)]="email">
+
+
+    <select [(ngModel)]="role">
+
+      <option value="">
+        Rôle
+      </option>
+
+      <option value="Administrateur">
+        Administrateur
+      </option>
+
+      <option value="Agent">
+        Agent
+      </option>
+
+    </select>
+
+
+
+    <button class="btn-formulaire" (click)="enregistrerUtilisateur()">
+      {{ modeModification ? 'Modifier' : 'Ajouter' }}
+    </button>
+
+
+  </div>
+
+
+
+
+  <!-- Tableau -->
+
+  <table>
+
+    <thead>
+
+      <tr>
+        <th>Nom</th>
+        <th>Email</th>
+        <th>Rôle</th>
+        <th>Action</th>
+      </tr>
+
+    </thead>
+
+
+
+    <tbody>
+
+
+     <tr *ngFor="let utilisateur of utilisateursFiltres">
+
+
+        <td>{{ utilisateur.nom }}</td>
+
+        <td>{{ utilisateur.email }}</td>
+
+        <td>{{ utilisateur.role }}</td>
+
+
+        <td>
+
+
+          <button
+          class="btn-modifier"
+          (click)="modifierUtilisateur(utilisateur)">
+            Modifier
+          </button>
+
+
+
+          <button
+          class="btn-supprimer"
+          (click)="supprimerUtilisateur(utilisateur.email)">
+            Supprimer
+          </button>
+
+
+        </td>
+
+
+      </tr>
+
+
+    </tbody>
+
+
+  </table>
+
+
+
+</div>

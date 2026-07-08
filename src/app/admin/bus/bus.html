@@ -1,0 +1,115 @@
+<div class="bus">
+
+ <div class="header-page">
+
+  <h2>Liste des Bus 🚌</h2>
+
+  <div class="actions-header">
+
+    <input
+      type="text"
+      class="recherche"
+      placeholder="🔍 Rechercher..."
+      [(ngModel)]="recherche">
+
+    <button class="btn-ajouter" (click)="ajouterBus()">
+      + Ajouter un bus
+    </button>
+
+  </div>
+
+</div>
+
+
+  <!-- Formulaire -->
+
+  <div class="formulaire" *ngIf="afficherFormulaire">
+
+
+    <input
+      type="text"
+      placeholder="Numéro du bus"
+      [(ngModel)]="numero">
+
+
+    <input
+      type="text"
+      placeholder="Immatriculation"
+      [(ngModel)]="immatriculation">
+
+
+    <select [(ngModel)]="statut">
+
+      <option value="">
+        Statut
+      </option>
+
+      <option value="Propre">
+        Propre
+      </option>
+
+      <option value="Sale">
+        Sale
+      </option>
+
+    </select>
+
+
+    <button class="btn-formulaire" (click)="enregistrerBus()">
+      {{ modeModification ? 'Modifier' : 'Ajouter' }}
+    </button>
+
+
+  </div>
+
+
+
+  <!-- Tableau -->
+
+  <table>
+
+    <thead>
+
+      <tr>
+        <th>ID</th>
+        <th>Numéro</th>
+        <th>Immatriculation</th>
+        <th>Statut</th>
+        <th>Actions</th>
+      </tr>
+
+    </thead>
+
+
+    <tbody>
+
+      <tr *ngFor="let bus of busFiltres">
+
+        <td>{{ bus.id }}</td>
+
+        <td>{{ bus.numero }}</td>
+
+        <td>{{ bus.immatriculation }}</td>
+
+        <td>{{ bus.statut }}</td>
+
+        <td>
+
+          <button class="btn-modifier" (click)="modifierBus(bus)">
+            Modifier
+          </button>
+
+          <button class="btn-supprimer" (click)="supprimerBus(bus.id)">
+            Supprimer
+          </button>
+
+        </td>
+
+      </tr>
+
+    </tbody>
+
+  </table>
+
+
+</div>

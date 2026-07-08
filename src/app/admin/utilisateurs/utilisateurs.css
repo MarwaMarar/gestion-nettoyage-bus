@@ -1,0 +1,177 @@
+.utilisateurs {
+
+  background: white;
+  padding: 25px;
+  border-radius: 10px;
+
+}
+
+
+
+.header-page {
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+
+}
+
+
+
+.header-page h2 {
+
+  margin: 0;
+
+}
+
+
+
+/* Boutons */
+
+button {
+
+  padding: 8px 15px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  color: white;
+  font-weight: bold;
+
+}
+
+
+
+.btn-ajouter {
+
+  background: #2563eb;
+
+}
+
+
+
+.btn-modifier {
+
+  background: #f59e0b;
+  margin: 0 5px;
+
+}
+
+
+
+.btn-supprimer {
+
+  background: #dc2626;
+  margin: 0 5px;
+
+}
+
+
+
+.btn-formulaire {
+
+  background: #2563eb;
+
+}
+
+
+
+button:hover {
+
+  opacity: 0.85;
+
+}
+
+
+
+/* Formulaire */
+
+
+.formulaire {
+
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 20px;
+
+}
+
+
+
+.formulaire input,
+.formulaire select {
+
+  width: 170px;
+  height: 35px;
+
+  box-sizing: border-box;
+
+  padding: 8px 10px;
+
+  border: 1px solid #ddd;
+  border-radius: 6px;
+
+  font-size: 14px;
+
+}
+
+
+
+/* Tableau */
+
+
+table {
+
+  width: 100%;
+  border-collapse: collapse;
+
+}
+
+
+
+th,
+td {
+
+  padding: 12px;
+  text-align: center;
+  border-bottom: 1px solid #ddd;
+
+}
+
+
+
+th {
+
+  background: #111827;
+  color: white;
+
+}
+
+
+
+tbody tr:hover {
+
+  background: #f8fafc;
+
+}
+
+.actions-header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.recherche {
+  width: 220px;
+  height: 30px;
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  outline: none;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+.recherche:focus {
+  border-color: #2563eb;
+}
