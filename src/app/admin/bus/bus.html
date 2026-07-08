@@ -1,115 +1,148 @@
 <div class="bus">
 
- <div class="header-page">
+  <!-- Header -->
+  <div class="header-page">
+    <div class="header-page-left">
+      <h2><i class="fa-solid fa-bus"></i> Liste des Bus</h2>
+      <p>Gérez et importez votre flotte de bus</p>
+    </div>
+    <div class="actions-header">
+      <input
+        type="text"
+        class="recherche"
+        placeholder="🔍 Rechercher un bus…"
+        [(ngModel)]="recherche">
 
-  <h2>Liste des Bus 🚌</h2>
+      <button class="btn-import-toggle" (click)="basculerImport()">
+        <i class="fa-solid fa-file-import"></i>
+        Importer CSV
+      </button>
 
-  <div class="actions-header">
-
-    <input
-      type="text"
-      class="recherche"
-      placeholder="🔍 Rechercher..."
-      [(ngModel)]="recherche">
-
-    <button class="btn-ajouter" (click)="ajouterBus()">
-      + Ajouter un bus
-    </button>
-
+      <button class="btn-ajouter" (click)="ajouterBus()">
+        <i class="fa-solid fa-plus"></i>
+        Ajouter un bus
+      </button>
+    </div>
   </div>
 
-</div>
+
+  <!-- Zone CSV Import -->
+  <div class="import-csv-container" *ngIf="afficherImport">
+    <div
+      class="drag-drop-zone"
+      [class.dragover]="isDragging"
+      (dragover)="onDragOver($event)"
+      (dragleave)="onDragLeave($event)"
+      (drop)="onDrop($event)"
+      (click)="fileInput.click()">
+
+      <div class="drag-drop-content">
+        <div class="icon-upload">
+          <i class="fa-solid fa-cloud-arrow-up"></i>
+        </div>
+        <p class="drag-drop-text">
+          <strong>Glissez-déposez un fichier CSV</strong> ou cliquez pour parcourir
+        </p>
+        <p class="format-help">
+          Colonnes attendues :
+          <code>numero</code>
+          <code>immatriculation</code>
+          <code>assignation</code>
+        </p>
+      </div>
+
+      <input
+        #fileInput
+        type="file"
+        accept=".csv"
+        (change)="onFileSelected($event)"
+        style="display: none;">
+    </div>
+
+    <div *ngIf="messageImport"
+         class="import-feedback"
+         [class.success]="typeMessageImport === 'success'"
+         [class.error]="typeMessageImport === 'error'">
+      <i class="fa-solid"
+         [class.fa-circle-check]="typeMessageImport === 'success'"
+         [class.fa-circle-xmark]="typeMessageImport === 'error'"></i>
+      {{ messageImport }}
+    </div>
+  </div>
 
 
   <!-- Formulaire -->
-
   <div class="formulaire" *ngIf="afficherFormulaire">
-
-
-    <input
-      type="text"
-      placeholder="Numéro du parc"
-      [(ngModel)]="numero">
-
-
-    <input
-      type="text"
-      placeholder="Immatriculation"
-      [(ngModel)]="immatriculation">
-
+    <input type="text" placeholder="Numéro du parc"  [(ngModel)]="numero">
+    <input type="text" placeholder="Immatriculation" [(ngModel)]="immatriculation">
 
     <select [(ngModel)]="assignation">
-
-      <option value="">
-      assignation
-      </option>
-
-      <option value="KARID">
-       KARID
-      </option>
-
-      <option value="ARTIS">
-        ARTIS
-      </option>
-
+      <option value="">Assignation</option>
+      <option value="KARID">KARID</option>
+      <option value="ARTIS">ARTIS</option>
     </select>
 
-
     <button class="btn-formulaire" (click)="enregistrerBus()">
+      <i class="fa-solid" [class.fa-pen]="modeModification" [class.fa-plus]="!modeModification"></i>
       {{ modeModification ? 'Modifier' : 'Ajouter' }}
     </button>
-
-
   </div>
 
 
+  <!-- Table -->
+  <div class="table-card">
+    <div class="table-card-header">
+      <div class="table-card-title">
+        <i class="fa-solid fa-table-list" style="color:var(--primary)"></i>
+        Flotte de bus
+        <span class="table-count">{{ busFiltres.length }}</span>
+      </div>
+    </div>
 
-  <!-- Tableau -->
-
-  <table>
-
-    <thead>
-
-      <tr>
-        <th>ID</th>
-        <th>Numéro du parc</th>
-        <th>Immatriculation</th>
-        <th>Assignation</th>
-        <th>Actions</th>
-      </tr>
-
-    </thead>
-
-
-    <tbody>
-
-      <tr *ngFor="let bus of busFiltres">
-
-        <td>{{ bus.id }}</td>
-
-        <td>{{ bus.numero }}</td>
-
-        <td>{{ bus.immatriculation }}</td>
-
-        <td>{{ bus.assignation }}</td>
-
-        <td>
-
-          <button class="btn-modifier" (click)="modifierBus(bus)">
-            Modifier
-          </button>
-
-          <button class="btn-supprimer" (click)="supprimerBus(bus.id)">
-            Supprimer
-          </button>
-
-        </td>
-
-      </tr>
-
-    </tbody>
-
-  </table>
-
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Numéro de parc</th>
+          <th>Immatriculation</th>
+          <th>Assignation</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let b of busFiltres">
+          <td><span class="badge badge-neutral">#{{ b.id }}</span></td>
+          <td><strong>{{ b.numero }}</strong></td>
+          <td>{{ b.immatriculation }}</td>
+          <td>
+            <span class="badge"
+              [class.badge-karid]="b.assignation === 'KARID'"
+              [class.badge-artis]="b.assignation === 'ARTIS'"
+              [class.badge-none]="!b.assignation">
+              {{ b.assignation || '—' }}
+            </span>
+          </td>
+          <td>
+            <div class="td-actions">
+              <button class="btn-modifier" (click)="modifierBus(b)">
+                <i class="fa-solid fa-pen"></i> Modifier
+              </button>
+              <button class="btn-supprimer" (click)="supprimerBus(b.id)">
+                <i class="fa-solid fa-trash"></i> Supprimer
+              </button>
+            </div>
+          </td>
+        </tr>
+        <tr *ngIf="busFiltres.length === 0">
+          <td colspan="5">
+            <div class="empty-state">
+              <i class="fa-solid fa-bus-simple"></i>
+              <p>Aucun bus trouvé</p>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
 </div>

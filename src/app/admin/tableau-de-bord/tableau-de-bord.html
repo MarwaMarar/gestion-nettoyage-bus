@@ -1,37 +1,73 @@
 <div class="dashboard">
 
-  <div class="welcome">
-        <h2>Bienvenue, Administrateur 👋</h2>
-        <p>Gérez les bus, les utilisateurs et les opérations de nettoyage.</p>
+  <!-- Welcome Banner -->
+  <div class="welcome-banner">
+    <div class="welcome-text">
+      <h2>Bienvenue, Administrateur 👋</h2>
+      <p>Gérez les bus, les utilisateurs et les opérations de nettoyage depuis votre tableau de bord.</p>
+    </div>
+    <div class="welcome-icon">🚌</div>
   </div>
 
-
+  <!-- Stats Cards -->
   <div class="cards">
 
-    <div class="card">
-     <h3>🚌 Bus</h3>
-      <p>{{ bus }}</p>
+    <div class="card card-bus">
+      <div class="card-icon-wrap">
+        <i class="fa-solid fa-bus"></i>
+      </div>
+      <div class="card-body">
+        <h3>Total Bus</h3>
+        <p>{{ bus }}</p>
+        <div class="card-trend">
+          <i class="fa-solid fa-arrow-trend-up"></i>
+          <span>+3 ce mois</span>
+        </div>
+      </div>
     </div>
 
-    <div class="card">
-      <h3>👤 Utilisateurs</h3>
-      <p>{{ utilisateurs }}</p>
+    <div class="card card-users">
+      <div class="card-icon-wrap">
+        <i class="fa-solid fa-users"></i>
+      </div>
+      <div class="card-body">
+        <h3>Utilisateurs</h3>
+        <p>{{ utilisateurs }}</p>
+        <div class="card-trend">
+          <i class="fa-solid fa-arrow-trend-up"></i>
+          <span>+1 ce mois</span>
+        </div>
+      </div>
     </div>
 
-    <div class="card">
-       <h3>🧹 Nettoyages</h3>
-      <p>{{ nettoyages }}</p>
+    <div class="card card-clean">
+      <div class="card-icon-wrap">
+        <i class="fa-solid fa-broom"></i>
+      </div>
+      <div class="card-body">
+        <h3>Nettoyages</h3>
+        <p>{{ nettoyages }}</p>
+        <div class="card-trend">
+          <i class="fa-solid fa-arrow-trend-up"></i>
+          <span>+8 cette semaine</span>
+        </div>
+      </div>
     </div>
 
-    <div class="card">
-     <h3>📊 Rapports</h3>
-      <p>{{ rapports }}</p>
+    <div class="card card-report">
+      <div class="card-icon-wrap">
+        <i class="fa-solid fa-chart-line"></i>
+      </div>
+      <div class="card-body">
+        <h3>Rapports</h3>
+        <p>{{ rapports }}</p>
+        <div class="card-trend">
+          <i class="fa-solid fa-arrow-trend-up"></i>
+          <span>Vue mensuelle</span>
+        </div>
+      </div>
     </div>
 
   </div>
 
 </div>
-
-
-
-

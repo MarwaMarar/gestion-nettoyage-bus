@@ -1,131 +1,152 @@
 <div class="utilisateurs">
 
+  <!-- Header -->
   <div class="header-page">
+    <div class="header-page-left">
+      <h2><i class="fa-solid fa-users"></i> Utilisateurs</h2>
+      <p>Gérez les comptes et les rôles des utilisateurs</p>
+    </div>
+    <div class="actions-header">
+      <input
+        type="text"
+        class="recherche"
+        placeholder="🔍 Rechercher un utilisateur…"
+        [(ngModel)]="recherche">
 
-  <h2>Utilisateurs</h2>
+      <button class="btn-import-toggle" (click)="basculerImport()">
+        <i class="fa-solid fa-file-import"></i>
+        Importer CSV
+      </button>
 
-  <div class="actions-header">
-
-    <input
-      type="text"
-      class="recherche"
-      placeholder="🔍 Rechercher..."
-      [(ngModel)]="recherche">
-
-    <button class="btn-ajouter" (click)="ajouterUtilisateur()">
-      + Ajouter un utilisateur
-    </button>
-
+      <button class="btn-ajouter" (click)="ajouterUtilisateur()">
+        <i class="fa-solid fa-plus"></i>
+        Ajouter un utilisateur
+      </button>
+    </div>
   </div>
 
-</div>
 
+  <!-- Zone CSV Import -->
+  <div class="import-csv-container" *ngIf="afficherImport">
+    <div
+      class="drag-drop-zone"
+      [class.dragover]="isDragging"
+      (dragover)="onDragOver($event)"
+      (dragleave)="onDragLeave($event)"
+      (drop)="onDrop($event)"
+      (click)="fileInput.click()">
+
+      <div class="drag-drop-content">
+        <div class="icon-upload">
+          <i class="fa-solid fa-cloud-arrow-up"></i>
+        </div>
+        <p class="drag-drop-text">
+          <strong>Glissez-déposez un fichier CSV</strong> ou cliquez pour parcourir
+        </p>
+        <p class="format-help">
+          Colonnes attendues :
+          <code>nom</code>
+          <code>email</code>
+          <code>role</code>
+        </p>
+      </div>
+
+      <input
+        #fileInput
+        type="file"
+        accept=".csv"
+        (change)="onFileSelected($event)"
+        style="display: none;">
+    </div>
+
+    <div *ngIf="messageImport"
+         class="import-feedback"
+         [class.success]="typeMessageImport === 'success'"
+         [class.error]="typeMessageImport === 'error'">
+      <i class="fa-solid"
+         [class.fa-circle-check]="typeMessageImport === 'success'"
+         [class.fa-circle-xmark]="typeMessageImport === 'error'"></i>
+      {{ messageImport }}
+    </div>
+  </div>
 
 
   <!-- Formulaire -->
-
   <div class="formulaire" *ngIf="afficherFormulaire">
-
-
-    <input
-      type="text"
-      placeholder="Nom"
-      [(ngModel)]="nom">
-
-
-    <input
-      type="email"
-      placeholder="Email"
-      [(ngModel)]="email">
-
+    <input type="text"  placeholder="Nom complet" [(ngModel)]="nom">
+    <input type="email" placeholder="Email"        [(ngModel)]="email">
 
     <select [(ngModel)]="role">
-
-      <option value="">
-        Rôle
-      </option>
-
-      <option value="Administrateur">
-        Administrateur
-      </option>
-
-      <option value="Agent">
-        Agent
-      </option>
-
+      <option value="">Rôle</option>
+      <option value="Administrateur">Administrateur</option>
+      <option value="Agent">Agent</option>
     </select>
 
-
-
     <button class="btn-formulaire" (click)="enregistrerUtilisateur()">
+      <i class="fa-solid" [class.fa-pen]="modeModification" [class.fa-plus]="!modeModification"></i>
       {{ modeModification ? 'Modifier' : 'Ajouter' }}
     </button>
-
-
   </div>
 
 
+  <!-- Table -->
+  <div class="table-card">
+    <div class="table-card-header">
+      <div class="table-card-title">
+        <i class="fa-solid fa-users" style="color:var(--warning)"></i>
+        Liste des utilisateurs
+        <span class="table-count">{{ utilisateursFiltres.length }}</span>
+      </div>
+    </div>
 
-
-  <!-- Tableau -->
-
-  <table>
-
-    <thead>
-
-      <tr>
-        <th>Nom</th>
-        <th>Email</th>
-        <th>Rôle</th>
-        <th>Action</th>
-      </tr>
-
-    </thead>
-
-
-
-    <tbody>
-
-
-     <tr *ngFor="let utilisateur of utilisateursFiltres">
-
-
-        <td>{{ utilisateur.nom }}</td>
-
-        <td>{{ utilisateur.email }}</td>
-
-        <td>{{ utilisateur.role }}</td>
-
-
-        <td>
-
-
-          <button
-          class="btn-modifier"
-          (click)="modifierUtilisateur(utilisateur)">
-            Modifier
-          </button>
-
-
-
-          <button
-          class="btn-supprimer"
-          (click)="supprimerUtilisateur(utilisateur.email)">
-            Supprimer
-          </button>
-
-
-        </td>
-
-
-      </tr>
-
-
-    </tbody>
-
-
-  </table>
-
-
+    <table>
+      <thead>
+        <tr>
+          <th>Nom</th>
+          <th>Email</th>
+          <th>Rôle</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let u of utilisateursFiltres">
+          <td>
+            <div style="display:flex;align-items:center;gap:10px">
+              <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--primary),#818cf8);display:flex;align-items:center;justify-content:center;color:white;font-size:12px;font-weight:700;flex-shrink:0">
+                {{ u.nom.charAt(0).toUpperCase() }}
+              </div>
+              <strong>{{ u.nom }}</strong>
+            </div>
+          </td>
+          <td>{{ u.email }}</td>
+          <td>
+            <span class="badge"
+              [class.badge-admin]="u.role === 'Administrateur'"
+              [class.badge-agent]="u.role === 'Agent'">
+              {{ u.role }}
+            </span>
+          </td>
+          <td>
+            <div class="td-actions">
+              <button class="btn-modifier" (click)="modifierUtilisateur(u)">
+                <i class="fa-solid fa-pen"></i> Modifier
+              </button>
+              <button class="btn-supprimer" (click)="supprimerUtilisateur(u.email)">
+                <i class="fa-solid fa-trash"></i> Supprimer
+              </button>
+            </div>
+          </td>
+        </tr>
+        <tr *ngIf="utilisateursFiltres.length === 0">
+          <td colspan="4">
+            <div class="empty-state">
+              <i class="fa-solid fa-user-slash"></i>
+              <p>Aucun utilisateur trouvé</p>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
 </div>

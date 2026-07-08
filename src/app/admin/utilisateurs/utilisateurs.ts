@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { parseCSV } from '../../utils/csv-parser';
 
 @Component({
   selector: 'app-utilisateurs',
@@ -15,6 +16,12 @@ export class Utilisateurs {
   modeModification = false;
 
   utilisateurSelectionne: any = null;
+
+  // Import CSV states
+  afficherImport = false;
+  isDragging = false;
+  messageImport = '';
+  typeMessageImport = ''; // 'success' | 'error'
 
 
   nom = '';
@@ -108,6 +115,132 @@ get utilisateursFiltres() {
     this.afficherFormulaire = true;
     this.modeModification = true;
 
+  }
+
+  // basculer la zone d'importation
+  basculerImport() {
+    this.afficherImport = !this.afficherImport;
+    this.messageImport = '';
+  }
+
+  // drag-and-drop events
+  onDragOver(event: DragEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDragging = true;
+  }
+
+  onDragLeave(event: DragEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDragging = false;
+  }
+
+  onDrop(event: DragEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDragging = false;
+
+    const files = event.dataTransfer?.files;
+    if (files && files.length > 0) {
+      const file = files[0];
+      if (file.name.endsWith('.csv')) {
+        this.lireFichier(file);
+      } else {
+        this.messageImport = 'Veuillez déposer un fichier au format .csv';
+        this.typeMessageImport = 'error';
+      }
+    }
+  }
+
+  onFileSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      const file = input.files[0];
+      this.lireFichier(file);
+    }
+  }
+
+  private lireFichier(file: File) {
+    const reader = new FileReader();
+    reader.onload = (e: any) => {
+      const text = e.target.result;
+      this.traiterCSV(text);
+    };
+    reader.onerror = () => {
+      this.messageImport = 'Erreur lors de la lecture du fichier.';
+      this.typeMessageImport = 'error';
+    };
+    reader.readAsText(file, 'UTF-8');
+  }
+
+  private traiterCSV(content: string) {
+    try {
+      const data = parseCSV(content);
+      if (data.length === 0) {
+        this.messageImport = 'Le fichier CSV est vide ou invalide.';
+        this.typeMessageImport = 'error';
+        return;
+      }
+
+      const firstRow = data[0];
+      const keys = Object.keys(firstRow);
+      
+      const nomKey = keys.find(k => k.toLowerCase().includes('nom') || k.toLowerCase() === 'name');
+      const emailKey = keys.find(k => k.toLowerCase().includes('mail') || k.toLowerCase() === 'email');
+      const roleKey = keys.find(k => k.toLowerCase().includes('role') || k.toLowerCase() === 'rôle');
+
+      if (!nomKey || !emailKey || !roleKey) {
+        this.messageImport = 'Le fichier CSV doit contenir les colonnes : nom, email, role';
+        this.typeMessageImport = 'error';
+        return;
+      }
+
+      let countImported = 0;
+      let countDuplicates = 0;
+
+      data.forEach(row => {
+        const uNom = (row[nomKey] || '').toString().trim();
+        const uEmail = (row[emailKey] || '').toString().trim();
+        let uRole = (row[roleKey] || '').toString().trim();
+
+        if (uRole.toLowerCase().startsWith('admin')) {
+          uRole = 'Administrateur';
+        } else if (uRole.toLowerCase().startsWith('agent')) {
+          uRole = 'Agent';
+        } else {
+          uRole = 'Agent';
+        }
+
+        if (uNom && uEmail) {
+          const existe = this.utilisateurs.some(u => u.email.toLowerCase() === uEmail.toLowerCase());
+          if (!existe) {
+            this.utilisateurs.push({
+              nom: uNom,
+              email: uEmail,
+              role: uRole
+            });
+            countImported++;
+          } else {
+            countDuplicates++;
+          }
+        }
+      });
+
+      if (countImported > 0) {
+        this.messageImport = `${countImported} utilisateur(s) importé(s) avec succès.${countDuplicates > 0 ? ` (${countDuplicates} doublon(s) ignoré(s))` : ''}`;
+        this.typeMessageImport = 'success';
+      } else if (countDuplicates > 0) {
+        this.messageImport = 'Aucun utilisateur importé. Tous les emails existent déjà (doublons).';
+        this.typeMessageImport = 'error';
+      } else {
+        this.messageImport = 'Aucune donnée valide trouvée dans le fichier CSV.';
+        this.typeMessageImport = 'error';
+      }
+    } catch (err: any) {
+      this.messageImport = `Erreur lors de l'analyse du CSV : ${err.message || err}`;
+      this.typeMessageImport = 'error';
+    }
   }
 
 }

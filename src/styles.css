@@ -1,1 +1,162 @@
-/* You can add global styles to this file, and also import other style files */
+/* ============================================
+   ALSA CLEAN FLEET — Global Design System 2026
+   Inspired by Linear, Vercel, Stripe, Tailwind UI
+   ============================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+/* ── CSS Custom Properties (Light Theme) ── */
+:root {
+  /* Brand */
+  --primary:        #2563EB;
+  --primary-hover:  #1d4ed8;
+  --primary-light:  #eff6ff;
+  --primary-muted:  #bfdbfe;
+
+  --success:        #22C55E;
+  --success-light:  #f0fdf4;
+  --success-muted:  #bbf7d0;
+
+  --warning:        #F59E0B;
+  --warning-light:  #fffbeb;
+  --warning-muted:  #fde68a;
+
+  --danger:         #EF4444;
+  --danger-light:   #fef2f2;
+  --danger-muted:   #fecaca;
+
+  /* Backgrounds */
+  --bg:             #F8FAFC;
+  --surface:        #ffffff;
+  --surface-raised: #f1f5f9;
+  --border:         #e2e8f0;
+  --border-hover:   #cbd5e1;
+
+  /* Sidebar */
+  --sidebar-bg:     #0F172A;
+  --sidebar-hover:  rgba(255,255,255,0.08);
+  --sidebar-active: rgba(37,99,235,0.25);
+  --sidebar-text:   #94a3b8;
+  --sidebar-text-active: #ffffff;
+
+  /* Navbar */
+  --navbar-bg:      #ffffff;
+
+  /* Typography */
+  --text-primary:   #0f172a;
+  --text-secondary: #475569;
+  --text-muted:     #94a3b8;
+
+  /* Shadows */
+  --shadow-sm:   0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+  --shadow-md:   0 4px 16px rgba(0,0,0,.07), 0 2px 6px rgba(0,0,0,.04);
+  --shadow-lg:   0 10px 32px rgba(0,0,0,.10), 0 4px 12px rgba(0,0,0,.05);
+  --shadow-glow: 0 0 0 3px rgba(37,99,235,.15);
+
+  /* Radius */
+  --radius-sm:  8px;
+  --radius-md:  12px;
+  --radius-lg:  16px;
+  --radius-xl:  20px;
+  --radius-full: 999px;
+
+  /* Transitions */
+  --transition: 0.2s cubic-bezier(0.4,0,0.2,1);
+
+  /* Sidebar width */
+  --sidebar-w: 260px;
+}
+
+/* ── Dark Theme ── */
+[data-theme="dark"] {
+  --primary:        #3b82f6;
+  --primary-hover:  #2563eb;
+  --primary-light:  #1e3a5f;
+  --primary-muted:  #1e40af;
+
+  --bg:             #0b1120;
+  --surface:        #111827;
+  --surface-raised: #1e2736;
+  --border:         #1e293b;
+  --border-hover:   #334155;
+
+  --sidebar-bg:     #080d18;
+  --sidebar-hover:  rgba(255,255,255,0.06);
+  --sidebar-active: rgba(59,130,246,0.2);
+
+  --navbar-bg:      #111827;
+
+  --text-primary:   #f1f5f9;
+  --text-secondary: #94a3b8;
+  --text-muted:     #475569;
+
+  --shadow-sm:   0 1px 3px rgba(0,0,0,.3);
+  --shadow-md:   0 4px 16px rgba(0,0,0,.4);
+  --shadow-lg:   0 10px 32px rgba(0,0,0,.5);
+}
+
+/* ── Base Reset ── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text-primary);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: var(--radius-full); }
+::-webkit-scrollbar-thumb:hover { background: var(--border-hover); }
+
+/* ── Utility: Badges ── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 10px;
+  border-radius: var(--radius-full);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .02em;
+}
+.badge-success { background: var(--success-light); color: #16a34a; border: 1px solid var(--success-muted); }
+.badge-warning { background: var(--warning-light); color: #d97706; border: 1px solid var(--warning-muted); }
+.badge-danger  { background: var(--danger-light);  color: #dc2626; border: 1px solid var(--danger-muted); }
+.badge-primary { background: var(--primary-light); color: var(--primary); border: 1px solid var(--primary-muted); }
+.badge-neutral { background: var(--surface-raised); color: var(--text-secondary); border: 1px solid var(--border); }
+
+/* ── Utility: Animations ── */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.5; }
+}
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}

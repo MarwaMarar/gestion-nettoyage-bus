@@ -1,58 +1,52 @@
 <div class="sidebar">
 
-  <div class="logo">
-
-    <i class="fa-solid fa-bus"></i>
-
-    <div>
+  <!-- Logo -->
+  <a class="sidebar-logo" routerLink="/admin/tableau-de-bord">
+    <div class="sidebar-logo-icon">
+      <i class="fa-solid fa-bus"></i>
+    </div>
+    <div class="sidebar-logo-text">
       <h2>ALSA</h2>
       <span>Clean Fleet</span>
     </div>
+  </a>
 
-  </div>
-
+  <!-- Navigation -->
+  <span class="sidebar-section-label">Menu principal</span>
 
   <nav>
-
-    <a routerLink="/admin/tableau-de-bord">
-      <i class="fa-solid fa-house"></i>
-      Tableau de bord
+    <a routerLink="/admin/tableau-de-bord" routerLinkActive="active">
+      <i class="fa-solid fa-gauge-high"></i>
+      <span>Tableau de bord</span>
     </a>
 
-
-    <a routerLink="/admin/bus">
+    <a routerLink="/admin/bus" routerLinkActive="active">
       <i class="fa-solid fa-bus"></i>
-      Bus
+      <span>Bus</span>
     </a>
 
-
-    <a routerLink="/admin/utilisateurs">
+    <a routerLink="/admin/utilisateurs" routerLinkActive="active">
       <i class="fa-solid fa-users"></i>
-      Utilisateurs
+      <span>Utilisateurs</span>
     </a>
 
-
-    <a routerLink="/admin/nettoyages">
+    <a routerLink="/admin/nettoyages" routerLinkActive="active">
       <i class="fa-solid fa-broom"></i>
-      Nettoyages
+      <span>Nettoyages</span>
     </a>
 
-
-    <a routerLink="/admin/rapports">
+    <a routerLink="/admin/rapports" routerLinkActive="active">
       <i class="fa-solid fa-chart-line"></i>
-      Rapports
+      <span>Rapports</span>
     </a>
-
-
   </nav>
 
-
+  <!-- Footer -->
   <div class="sidebar-footer">
-
-    <i class="fa-solid fa-gear"></i>
-    Paramètres
-
+    <a routerLink="/admin/parametres" routerLinkActive="active">
+      <i class="fa-solid fa-gear"></i>
+      <span>Paramètres</span>
+    </a>
   </div>
-
 
 </div>

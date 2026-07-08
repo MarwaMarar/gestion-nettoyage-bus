@@ -1,99 +1,237 @@
 <div class="rapports">
 
+  <!-- Header -->
   <div class="header-page">
+    <div class="header-page-left">
+      <h2><i class="fa-solid fa-chart-line"></i> Rapports & Analyses</h2>
+      <p>Vue d'ensemble des performances de nettoyage</p>
+    </div>
+    <input
+      type="text"
+      class="recherche"
+      placeholder="🔍 Rechercher…"
+      [(ngModel)]="recherche">
+  </div>
 
-  <h2>Rapports 📊</h2>
 
-  <input
-    type="text"
-    class="recherche"
-    placeholder="🔍 Rechercher..."
-    [(ngModel)]="recherche">
-
-</div>
-
-  <!-- Cartes statistiques -->
+  <!-- Stat Cards -->
   <div class="cartes">
 
-    <div class="carte">
-      <h3>{{ totalBus }}</h3>
-      <p>Bus</p>
+    <div class="carte carte-bus">
+      <div class="carte-icon"><i class="fa-solid fa-bus"></i></div>
+      <div class="carte-info">
+        <h3>{{ totalBus }}</h3>
+        <p>Total Bus</p>
+      </div>
     </div>
 
-    <div class="carte">
-      <h3>{{ totalAgents }}</h3>
-      <p>Agents</p>
+    <div class="carte carte-agents">
+      <div class="carte-icon"><i class="fa-solid fa-user-helmet-safety"></i></div>
+      <div class="carte-info">
+        <h3>{{ totalAgents }}</h3>
+        <p>Agents actifs</p>
+      </div>
     </div>
 
-    <div class="carte">
-      <h3>{{ nettoyagesTermines }}</h3>
-      <p>Nettoyages terminés</p>
+    <div class="carte carte-done">
+      <div class="carte-icon"><i class="fa-solid fa-circle-check"></i></div>
+      <div class="carte-info">
+        <h3>{{ nettoyagesTermines }}</h3>
+        <p>Nettoyages terminés</p>
+      </div>
     </div>
 
-    <div class="carte">
-      <h3>{{ nettoyagesEnAttente }}</h3>
-      <p>Nettoyages en attente</p>
+    <div class="carte carte-wait">
+      <div class="carte-icon"><i class="fa-solid fa-clock"></i></div>
+      <div class="carte-info">
+        <h3>{{ nettoyagesEnAttente }}</h3>
+        <p>En attente</p>
+      </div>
     </div>
 
   </div>
 
-  <h3>Liste des rapports</h3>
 
+  <!-- Analytics Grid: Progress Chart + Summary Table -->
+  <div class="analytics-grid">
+
+    <!-- CSS Progress Chart -->
+    <div class="panel">
+      <div class="panel-header">
+        <i class="fa-solid fa-chart-bar" style="color:#8b5cf6"></i>
+        Nettoyages par société
+      </div>
+      <div class="panel-body">
+        <div class="progress-chart">
+
+          <!-- ARTIS -->
+          <div>
+            <div class="progress-item-label">
+              <div class="progress-company">
+                <span class="progress-dot" style="background:var(--primary)"></span>
+                <span class="progress-name">ARTIS</span>
+                <span class="progress-count">18 nettoyages</span>
+              </div>
+              <span class="progress-pct" style="color:var(--primary)">72%</span>
+            </div>
+            <div class="progress-bar-track">
+              <div class="progress-bar-fill fill-artis" style="width: 72%"></div>
+            </div>
+          </div>
+
+          <!-- KARID -->
+          <div>
+            <div class="progress-item-label">
+              <div class="progress-company">
+                <span class="progress-dot" style="background:#8b5cf6"></span>
+                <span class="progress-name">KARID</span>
+                <span class="progress-count">12 nettoyages</span>
+              </div>
+              <span class="progress-pct" style="color:#8b5cf6">67%</span>
+            </div>
+            <div class="progress-bar-track">
+              <div class="progress-bar-fill fill-karid" style="width: 67%"></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Summary Table by Société -->
+    <div class="panel">
+      <div class="panel-header">
+        <i class="fa-solid fa-table" style="color:var(--success)"></i>
+        Résumé par société
+      </div>
+      <table class="summary-table">
+        <thead>
+          <tr>
+            <th>Société</th>
+            <th>Bus nettoyés</th>
+            <th>Total Bus</th>
+            <th>Progression</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <span class="society-chip">
+                <i class="fa-solid fa-circle dot-artis" style="font-size:8px"></i>
+                ARTIS
+              </span>
+            </td>
+            <td><strong>18</strong></td>
+            <td>25</td>
+            <td>
+              <div class="mini-bar-wrap">
+                <div class="mini-bar-track">
+                  <div class="mini-bar-fill fill-artis" style="width:72%"></div>
+                </div>
+                <span style="font-size:12px;font-weight:700;color:var(--primary);min-width:36px">72%</span>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <span class="society-chip">
+                <i class="fa-solid fa-circle dot-karid" style="font-size:8px"></i>
+                KARID
+              </span>
+            </td>
+            <td><strong>12</strong></td>
+            <td>18</td>
+            <td>
+              <div class="mini-bar-wrap">
+                <div class="mini-bar-track">
+                  <div class="mini-bar-fill fill-karid" style="width:67%"></div>
+                </div>
+                <span style="font-size:12px;font-weight:700;color:#8b5cf6;min-width:36px">67%</span>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+
+  <!-- Date Filter -->
   <div class="filtre-date">
-
-  <h3>Historique des nettoyages</h3>
-
-  <div class="dates">
-
-    <div>
-      <label>Date début</label>
-      <input
-        type="date"
-        [(ngModel)]="dateDebut">
+    <div class="filtre-title">
+      <i class="fa-regular fa-calendar" style="color:var(--primary)"></i>
+      Historique des nettoyages
     </div>
-
-
-    <div>
-      <label>Date fin</label>
-      <input
-        type="date"
-        [(ngModel)]="dateFin">
+    <div class="dates">
+      <div>
+        <label>Date début</label>
+        <input type="date" [(ngModel)]="dateDebut">
+      </div>
+      <div>
+        <label>Date fin</label>
+        <input type="date" [(ngModel)]="dateFin">
+      </div>
+      <button class="btn-rechercher">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        Filtrer
+      </button>
     </div>
-
-     <button>
-      🔍 Rechercher
-     </button>
-
   </div>
 
-</div>
 
-  <table>
+  <!-- Report Table -->
+  <div class="table-card">
+    <div class="table-card-header">
+      <div class="table-card-title">
+        <i class="fa-solid fa-list-check" style="color:var(--primary)"></i>
+        Rapport détaillé
+        <span class="table-count">{{ rapportsFiltres.length }}</span>
+      </div>
+    </div>
 
-    <thead>
-      <tr>
-        <th>Bus</th>
-        <th>Type</th>
-        <th>Date</th>
-        <th>Agent</th>
-        <th>Statut</th>
-      </tr>
-    </thead>
-
-    <tbody>
-
-    <tr *ngFor="let rapport of rapportsFiltres">
-
-        <td>{{ rapport.bus }}</td>
-        <td>{{ rapport.type }}</td>
-        <td>{{ rapport.date }}</td>
-        <td>{{ rapport.agent }}</td>
-        <td>{{ rapport.statut }}</td>
-
-      </tr>
-
-    </tbody>
-
-  </table>
+    <table>
+      <thead>
+        <tr>
+          <th>Bus</th>
+          <th>Type</th>
+          <th>Date</th>
+          <th>Agent</th>
+          <th>Statut</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let rapport of rapportsFiltres">
+          <td><strong>{{ rapport.bus }}</strong></td>
+          <td>{{ rapport.type }}</td>
+          <td>{{ rapport.date }}</td>
+          <td>
+            <div style="display:flex;align-items:center;gap:8px">
+              <div style="width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,var(--primary),#818cf8);display:flex;align-items:center;justify-content:center;color:white;font-size:10px;font-weight:700;flex-shrink:0">
+                {{ rapport.agent.charAt(0) }}
+              </div>
+              {{ rapport.agent }}
+            </div>
+          </td>
+          <td>
+            <span class="badge"
+              [class.badge-en-attente]="rapport.statut === 'En attente'"
+              [class.badge-en-cours]="rapport.statut === 'En cours'"
+              [class.badge-termine]="rapport.statut === 'Terminé'">
+              {{ rapport.statut }}
+            </span>
+          </td>
+        </tr>
+        <tr *ngIf="rapportsFiltres.length === 0">
+          <td colspan="5">
+            <div class="empty-state">
+              <i class="fa-solid fa-chart-line"></i>
+              <p>Aucun rapport pour cette période</p>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
 </div>

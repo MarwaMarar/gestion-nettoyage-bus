@@ -1,3 +1,4 @@
+/* ── App Shell Layout ── */
 .layout {
   display: flex;
   min-height: 100vh;
@@ -5,12 +6,32 @@
 
 .contenu-principal {
   flex: 1;
-  margin-left: 250px;
-  padding: 20px;
-  background: #f3f4f6;
+  margin-left: var(--sidebar-w);
   min-height: 100vh;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  transition: margin-left var(--transition);
 }
 
 .page {
-  padding-top: 20px;
+  flex: 1;
+  padding: 24px;
+  animation: fadeInUp 0.35s ease both;
+}
+
+/* ── Responsive ── */
+@media (max-width: 1024px) {
+  .contenu-principal {
+    margin-left: 72px;
+  }
+}
+
+@media (max-width: 640px) {
+  .contenu-principal {
+    margin-left: 0;
+  }
+  .page {
+    padding: 16px;
+  }
 }

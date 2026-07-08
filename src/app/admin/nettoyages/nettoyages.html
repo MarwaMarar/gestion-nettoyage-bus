@@ -1,148 +1,163 @@
 <div class="nettoyages">
 
- <div class="header-page">
+  <!-- Header -->
+  <div class="header-page">
+    <div class="header-page-left">
+      <h2><i class="fa-solid fa-broom"></i> Nettoyages</h2>
+      <p>Planifiez et suivez les opérations de nettoyage</p>
+    </div>
+    <div class="actions-header">
+      <input
+        type="text"
+        class="recherche"
+        placeholder="🔍 Rechercher un nettoyage…"
+        [(ngModel)]="recherche">
 
-  <h2>Liste des Nettoyages 🧹</h2>
+      <button class="btn-import-toggle" (click)="basculerImport()">
+        <i class="fa-solid fa-file-import"></i>
+        Importer CSV
+      </button>
 
-  <div class="actions-header">
-
-    <input
-      type="text"
-      class="recherche"
-      placeholder="🔍 Rechercher..."
-      [(ngModel)]="recherche">
-
-    <button class="btn-ajouter" (click)="ajouterNettoyage()">
-      Ajouter un nettoyage
-    </button>
-
+      <button class="btn-ajouter" (click)="ajouterNettoyage()">
+        <i class="fa-solid fa-plus"></i>
+        Ajouter un nettoyage
+      </button>
+    </div>
   </div>
 
-</div>
+
+  <!-- Zone CSV Import -->
+  <div class="import-csv-container" *ngIf="afficherImport">
+    <div
+      class="drag-drop-zone"
+      [class.dragover]="isDragging"
+      (dragover)="onDragOver($event)"
+      (dragleave)="onDragLeave($event)"
+      (drop)="onDrop($event)"
+      (click)="fileInput.click()">
+
+      <div class="drag-drop-content">
+        <div class="icon-upload">
+          <i class="fa-solid fa-cloud-arrow-up"></i>
+        </div>
+        <p class="drag-drop-text">
+          <strong>Glissez-déposez un fichier CSV</strong> ou cliquez pour parcourir
+        </p>
+        <p class="format-help">
+          Colonnes attendues :
+          <code>bus</code>
+          <code>type</code>
+          <code>date</code>
+          <code>statut</code>
+        </p>
+      </div>
+
+      <input
+        #fileInput
+        type="file"
+        accept=".csv"
+        (change)="onFileSelected($event)"
+        style="display: none;">
+    </div>
+
+    <div *ngIf="messageImport"
+         class="import-feedback"
+         [class.success]="typeMessageImport === 'success'"
+         [class.error]="typeMessageImport === 'error'">
+      <i class="fa-solid"
+         [class.fa-circle-check]="typeMessageImport === 'success'"
+         [class.fa-circle-xmark]="typeMessageImport === 'error'"></i>
+      {{ messageImport }}
+    </div>
+  </div>
 
 
   <!-- Formulaire -->
-
   <div class="formulaire" *ngIf="afficherFormulaire">
-
     <select [(ngModel)]="busChoisi">
-
-      <option value="">
-        Choisir un bus
-      </option>
-
-      <option *ngFor="let bus of bus" [value]="bus">
-        {{ bus }}
-      </option>
-
+      <option value="">Choisir un bus</option>
+      <option *ngFor="let b of bus" [value]="b">{{ b }}</option>
     </select>
-
 
     <select [(ngModel)]="type">
-
-      <option value="">
-        Type de nettoyage
-      </option>
-
-      <option value="Tous les 2 jours">
-        Tous les 2 jours
-      </option>
-
-      <option value="Chaque semaine">
-        Chaque semaine
-      </option>
-
-      <option value="Chaque mois">
-        Chaque mois
-      </option>
-
+      <option value="">Type de nettoyage</option>
+      <option value="Tous les 2 jours">Tous les 2 jours</option>
+      <option value="Chaque semaine">Chaque semaine</option>
+      <option value="Chaque mois">Chaque mois</option>
     </select>
 
-
-    <input
-      type="date"
-      [(ngModel)]="date">
-
+    <input type="date" [(ngModel)]="date">
 
     <select [(ngModel)]="statut">
-
-      <option value="">
-        Statut
-      </option>
-
-      <option value="En attente">
-        En attente
-      </option>
-
-      <option value="En cours">
-        En cours
-      </option>
-
-      <option value="Terminé">
-        Terminé
-      </option>
-
+      <option value="">Statut</option>
+      <option value="En attente">En attente</option>
+      <option value="En cours">En cours</option>
+      <option value="Terminé">Terminé</option>
     </select>
 
-
     <button class="btn-formulaire" (click)="enregistrerNettoyage()">
+      <i class="fa-solid" [class.fa-pen]="modeModification" [class.fa-plus]="!modeModification"></i>
       {{ modeModification ? 'Modifier' : 'Ajouter' }}
     </button>
-
   </div>
 
 
+  <!-- Table -->
+  <div class="table-card">
+    <div class="table-card-header">
+      <div class="table-card-title">
+        <i class="fa-solid fa-broom" style="color:var(--success)"></i>
+        Historique des nettoyages
+        <span class="table-count">{{ nettoyagesFiltres.length }}</span>
+      </div>
+    </div>
 
-  <!-- Tableau -->
-
-  <table>
-
-    <thead>
-
-      <tr>
-        <th>ID</th>
-        <th>Bus</th>
-        <th>Type</th>
-        <th>Date</th>
-        <th>Statut</th>
-        <th>Actions</th>
-      </tr>
-
-    </thead>
-
-
-    <tbody>
-
-      <tr *ngFor="let n of nettoyagesFiltres">
-
-        <td>{{ n.id }}</td>
-        <td>{{ n.bus }}</td>
-        <td>{{ n.type }}</td>
-        <td>{{ n.date }}</td>
-        <td>{{ n.statut }}</td>
-
-        <td>
-
-          <button
-            class="btn-modifier"
-            type="button"
-            (click)="modifierNettoyage(n)">
-            Modifier
-          </button>
-
-          <button
-            class="btn-supprimer"
-            type="button"
-            (click)="supprimerNettoyage(n.id)">
-            Supprimer
-          </button>
-
-        </td>
-
-      </tr>
-
-    </tbody>
-
-  </table>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Bus</th>
+          <th>Type</th>
+          <th>Date</th>
+          <th>Statut</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let n of nettoyagesFiltres">
+          <td><span class="badge badge-neutral">#{{ n.id }}</span></td>
+          <td><strong>{{ n.bus }}</strong></td>
+          <td>{{ n.type }}</td>
+          <td>{{ n.date }}</td>
+          <td>
+            <span class="badge"
+              [class.badge-en-attente]="n.statut === 'En attente'"
+              [class.badge-en-cours]="n.statut === 'En cours'"
+              [class.badge-termine]="n.statut === 'Terminé'">
+              {{ n.statut }}
+            </span>
+          </td>
+          <td>
+            <div class="td-actions">
+              <button class="btn-modifier" (click)="modifierNettoyage(n)">
+                <i class="fa-solid fa-pen"></i> Modifier
+              </button>
+              <button class="btn-supprimer" (click)="supprimerNettoyage(n.id)">
+                <i class="fa-solid fa-trash"></i> Supprimer
+              </button>
+            </div>
+          </td>
+        </tr>
+        <tr *ngIf="nettoyagesFiltres.length === 0">
+          <td colspan="6">
+            <div class="empty-state">
+              <i class="fa-solid fa-broom"></i>
+              <p>Aucun nettoyage trouvé</p>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
 </div>

@@ -1,16 +1,35 @@
 <div class="navbar">
 
-  <div class="titre">
-    <h2>Gestion Nettoyage Bus 🚌</h2>
-    <p>Système de gestion des opérations de nettoyage</p>
+  <!-- Left: Title -->
+  <div class="navbar-left">
+    <span class="navbar-title">ALSA Clean Fleet</span>
+    <span class="navbar-sep">/</span>
+    <span class="navbar-subtitle">Système de gestion de flotte</span>
   </div>
 
-  <div class="droite">
+  <!-- Center: Search -->
+  <div class="navbar-search">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="text" placeholder="Recherche rapide..." />
+  </div>
 
-    <span class="notification">🔔</span>
+  <!-- Right: Actions -->
+  <div class="navbar-right">
 
-    <div class="profil">
-      👤 Administrateur
+    <!-- Notifications -->
+    <button class="navbar-icon-btn" title="Notifications">
+      <i class="fa-regular fa-bell"></i>
+      <span class="notif-dot"></span>
+    </button>
+
+    <!-- Profile -->
+    <div class="navbar-profile">
+      <div class="navbar-avatar">AD</div>
+      <div class="navbar-profile-info">
+        <span class="navbar-profile-name">Administrateur</span>
+        <span class="navbar-profile-role">Super Admin</span>
+      </div>
+      <i class="fa-solid fa-chevron-down" style="font-size:10px;color:var(--text-muted);margin-left:2px"></i>
     </div>
 
   </div>
