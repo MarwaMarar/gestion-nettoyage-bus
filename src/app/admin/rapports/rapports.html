@@ -39,6 +39,35 @@
 
   <h3>Liste des rapports</h3>
 
+  <div class="filtre-date">
+
+  <h3>Historique des nettoyages</h3>
+
+  <div class="dates">
+
+    <div>
+      <label>Date début</label>
+      <input
+        type="date"
+        [(ngModel)]="dateDebut">
+    </div>
+
+
+    <div>
+      <label>Date fin</label>
+      <input
+        type="date"
+        [(ngModel)]="dateFin">
+    </div>
+
+     <button>
+      🔍 Rechercher
+     </button>
+
+  </div>
+
+</div>
+
   <table>
 
     <thead>

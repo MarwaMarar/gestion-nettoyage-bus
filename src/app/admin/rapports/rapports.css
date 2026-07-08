@@ -105,3 +105,85 @@ tbody tr:hover {
   border-color: #2563eb;
 
 }
+
+
+.filtre-date {
+
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 25px;
+
+}
+
+
+.filtre-date h3 {
+
+  margin-bottom: 15px;
+
+}
+
+
+.dates {
+
+  display: flex;
+  align-items: flex-end;
+  gap: 20px;
+
+}
+
+
+.dates div {
+
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+}
+
+
+.dates label {
+
+  font-size: 14px;
+  font-weight: bold;
+
+}
+
+
+.dates input {
+
+  width: 180px;
+  padding: 10px;
+
+  border: 1px solid #ddd;
+  border-radius: 8px;
+
+  font-size: 14px;
+
+}
+
+
+.dates button {
+
+  height: 40px;
+
+  background: #2563eb;
+
+  color: white;
+
+  border: none;
+
+  padding: 0 20px;
+
+  border-radius: 8px;
+
+  cursor: pointer;
+
+}
+
+
+.dates button:hover {
+
+  opacity: 0.85;
+
+}

@@ -15,10 +15,16 @@ import { FormsModule } from '@angular/forms';
 })
 export class Rapports {
 
+  dateDebut = '';
+  dateFin = '';
+  recherche = '';
+
+
   totalBus = 18;
   totalAgents = 10;
   nettoyagesTermines = 25;
   nettoyagesEnAttente = 7;
+
 
   rapports = [
 
@@ -39,15 +45,60 @@ export class Rapports {
     }
 
   ];
-    recherche = '';
 
-    get rapportsFiltres() {
 
-  return this.rapports.filter(rapport =>
-    rapport.bus.toLowerCase().includes(this.recherche.toLowerCase()) ||
-    rapport.agent.toLowerCase().includes(this.recherche.toLowerCase()) ||
-    rapport.type.toLowerCase().includes(this.recherche.toLowerCase())
-  );
 
-}
+  get rapportsFiltres() {
+
+    return this.rapports.filter(rapport => {
+
+
+      // Recherche par texte
+      const rechercheTexte =
+        rapport.bus.toLowerCase().includes(this.recherche.toLowerCase()) ||
+        rapport.agent.toLowerCase().includes(this.recherche.toLowerCase()) ||
+        rapport.type.toLowerCase().includes(this.recherche.toLowerCase());
+
+
+
+      // Conversion date rapport
+      const dateRapport = this.convertirDate(rapport.date);
+
+
+
+      // Vérification date début
+      const dateDebutOK =
+        !this.dateDebut ||
+        dateRapport >= new Date(this.dateDebut);
+
+
+
+      // Vérification date fin
+      const dateFinOK =
+        !this.dateFin ||
+        dateRapport <= new Date(this.dateFin);
+
+
+
+      return rechercheTexte && dateDebutOK && dateFinOK;
+
+    });
+
+  }
+
+
+
+  convertirDate(date: string) {
+
+    const [jour, mois, annee] = date.split('/');
+
+
+    return new Date(
+      Number(annee),
+      Number(mois) - 1,
+      Number(jour)
+    );
+
+  }
+
 }
