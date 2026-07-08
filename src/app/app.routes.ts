@@ -4,6 +4,7 @@ import { Bus } from './admin/bus/bus';
 import { Utilisateurs } from './admin/utilisateurs/utilisateurs';
 import { Nettoyages } from './admin/nettoyages/nettoyages';
 import { Rapports } from './admin/rapports/rapports';
+import { Parametres } from './admin/parametres/parametres';
 
 export const routes: Routes = [
   { path: 'admin/tableau-de-bord', component: TableauDeBordComponent },
@@ -12,4 +13,5 @@ export const routes: Routes = [
   { path: 'admin/utilisateurs', component: Utilisateurs },
   { path: 'admin/nettoyages', component: Nettoyages },
   { path: 'admin/rapports', component: Rapports },
+  { path: 'admin/parametres',component: Parametres}
 ];

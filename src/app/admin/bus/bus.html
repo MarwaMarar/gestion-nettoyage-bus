@@ -28,7 +28,7 @@
 
     <input
       type="text"
-      placeholder="Numéro du bus"
+      placeholder="Numéro du parc"
       [(ngModel)]="numero">
 
 
@@ -38,18 +38,18 @@
       [(ngModel)]="immatriculation">
 
 
-    <select [(ngModel)]="statut">
+    <select [(ngModel)]="assignation">
 
       <option value="">
-        Statut
+      assignation
       </option>
 
-      <option value="Propre">
-        Propre
+      <option value="KARID">
+       KARID
       </option>
 
-      <option value="Sale">
-        Sale
+      <option value="ARTIS">
+        ARTIS
       </option>
 
     </select>
@@ -72,9 +72,9 @@
 
       <tr>
         <th>ID</th>
-        <th>Numéro</th>
+        <th>Numéro du parc</th>
         <th>Immatriculation</th>
-        <th>Statut</th>
+        <th>Assignation</th>
         <th>Actions</th>
       </tr>
 
@@ -91,7 +91,7 @@
 
         <td>{{ bus.immatriculation }}</td>
 
-        <td>{{ bus.statut }}</td>
+        <td>{{ bus.assignation }}</td>
 
         <td>
 
