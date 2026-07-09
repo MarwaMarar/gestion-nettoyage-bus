@@ -17,17 +17,18 @@ export class Utilisateurs {
 
   utilisateurSelectionne: any = null;
 
-  // Import CSV states
+
   afficherImport = false;
   isDragging = false;
   messageImport = '';
-  typeMessageImport = ''; // 'success' | 'error'
+  typeMessageImport = '';
 
 
   nom = '';
-  email = '';
+  email = ''
   role = '';
   recherche = '';
+
 
 
   utilisateurs = [
@@ -35,22 +36,24 @@ export class Utilisateurs {
       nom: 'Admin',
       email: 'admin@gmail.com',
       role: 'Administrateur'
+
+
+
     },
     {
       nom: 'Ahmed',
       email: 'ahmed@gmail.com',
-      role: 'Agent'
-    }
+      role: 'Nettoyeur'
+    },
   ];
 
 
-  // ouvrir formulaire ajout
   ajouterUtilisateur() {
 
     this.afficherFormulaire = true;
     this.modeModification = false;
 
-    this.nom = '';
+    this.nom  = '';
     this.email = '';
     this.role = '';
 
@@ -63,7 +66,7 @@ get utilisateursFiltres() {
   );
 }
 
-  // ajouter ou modifier
+
   enregistrerUtilisateur() {
 
     if (this.modeModification) {
@@ -93,7 +96,7 @@ get utilisateursFiltres() {
   }
 
 
-  // supprimer
+
   supprimerUtilisateur(email: string) {
 
     this.utilisateurs = this.utilisateurs.filter(
@@ -103,7 +106,7 @@ get utilisateursFiltres() {
   }
 
 
-  // modifier
+
   modifierUtilisateur(utilisateur: any) {
 
     this.utilisateurSelectionne = utilisateur;
@@ -117,13 +120,13 @@ get utilisateursFiltres() {
 
   }
 
-  // basculer la zone d'importation
+
   basculerImport() {
     this.afficherImport = !this.afficherImport;
     this.messageImport = '';
   }
 
-  // drag-and-drop events
+
   onDragOver(event: DragEvent) {
     event.preventDefault();
     event.stopPropagation();
@@ -185,7 +188,7 @@ get utilisateursFiltres() {
 
       const firstRow = data[0];
       const keys = Object.keys(firstRow);
-      
+
       const nomKey = keys.find(k => k.toLowerCase().includes('nom') || k.toLowerCase() === 'name');
       const emailKey = keys.find(k => k.toLowerCase().includes('mail') || k.toLowerCase() === 'email');
       const roleKey = keys.find(k => k.toLowerCase().includes('role') || k.toLowerCase() === 'rôle');
@@ -206,10 +209,10 @@ get utilisateursFiltres() {
 
         if (uRole.toLowerCase().startsWith('admin')) {
           uRole = 'Administrateur';
-        } else if (uRole.toLowerCase().startsWith('agent')) {
-          uRole = 'Agent';
+        } else if (uRole.toLowerCase().startsWith('super')) {
+          uRole = 'Superviseur';
         } else {
-          uRole = 'Agent';
+          uRole = 'Nettoyeur';
         }
 
         if (uNom && uEmail) {

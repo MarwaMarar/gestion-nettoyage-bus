@@ -17,11 +17,11 @@ export class Bus {
 
   busSelectionne: any = null;
 
-  // Import CSV states
+
   afficherImport = false;
   isDragging = false;
   messageImport = '';
-  typeMessageImport = ''; // 'success' | 'error'
+  typeMessageImport = '';
 
 
   numero = '';
@@ -35,18 +35,18 @@ export class Bus {
       id: 1,
       numero: '12',
       immatriculation: '12345-A-6',
-      assignation: 'ARTIS'
+      assignation: 'MAN'
     },
     {
       id: 2,
       numero: '18',
       immatriculation: '45678-B-1',
-      assignation: 'KARID'
+      assignation: 'BHNS'
     }
   ];
 
 
-  // ouvrir formulaire
+
   ajouterBus() {
     this.afficherFormulaire = true;
     this.modeModification = false;
@@ -62,7 +62,7 @@ export class Bus {
     bus.immatriculation.toLowerCase().includes(this.recherche.toLowerCase())
   );
   }
-  // enregistrer ajout ou modification
+
   enregistrerBus() {
 
     if (this.modeModification) {
@@ -93,7 +93,6 @@ export class Bus {
   }
 
 
-  // supprimer bus
   supprimerBus(id: number) {
 
     this.bus = this.bus.filter(
@@ -103,7 +102,6 @@ export class Bus {
   }
 
 
-  // modifier bus
   modifierBus(bus: any) {
 
     this.busSelectionne = bus;
@@ -117,13 +115,12 @@ export class Bus {
 
   }
 
-  // basculer la zone d'importation
+
   basculerImport() {
     this.afficherImport = !this.afficherImport;
     this.messageImport = '';
   }
 
-  // drag-and-drop events
   onDragOver(event: DragEvent) {
     event.preventDefault();
     event.stopPropagation();
@@ -185,7 +182,7 @@ export class Bus {
 
       const firstRow = data[0];
       const keys = Object.keys(firstRow);
-      
+
       const numeroKey = keys.find(k => k.toLowerCase().includes('num') || k.toLowerCase().includes('parc') || k.toLowerCase() === 'numero');
       const immatriculationKey = keys.find(k => k.toLowerCase().includes('immat') || k.toLowerCase() === 'immatriculation');
       const assignationKey = keys.find(k => k.toLowerCase().includes('assign') || k.toLowerCase() === 'assignation');
@@ -204,7 +201,7 @@ export class Bus {
         const immat = (row[immatriculationKey] || '').toString().trim();
         let assign = (row[assignationKey] || '').toString().trim().toUpperCase();
 
-        if (assign !== 'KARID' && assign !== 'ARTIS') {
+        if (assign !== 'BHNS' && assign !== 'KING-LONG' && assign !== 'ISUZU' && assign !== 'MAN' && assign !== 'MERCEDES') {
           assign = '';
         }
 

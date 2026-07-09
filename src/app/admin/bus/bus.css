@@ -1,13 +1,9 @@
-/* ============================================
-   BUS — Premium Data Page
-   ============================================ */
 
-/* ── Page Wrapper ── */
 .bus {
   animation: fadeInUp 0.35s ease both;
 }
 
-/* ── Page Header ── */
+
 .header-page {
   display: flex;
   align-items: center;
@@ -46,7 +42,7 @@
   flex-wrap: wrap;
 }
 
-/* ── Search Input ── */
+
 .recherche {
   display: flex;
   align-items: center;
@@ -64,6 +60,7 @@
   transition: border-color var(--transition), box-shadow var(--transition);
 }
 
+
 .recherche:focus {
   border-color: var(--primary);
   box-shadow: var(--shadow-glow);
@@ -71,7 +68,7 @@
 
 .recherche::placeholder { color: var(--text-muted); }
 
-/* ── Buttons ── */
+
 .btn-import-toggle {
   display: inline-flex;
   align-items: center;
@@ -88,6 +85,7 @@
   font-family: inherit;
   transition: background var(--transition), border-color var(--transition), transform var(--transition);
 }
+
 
 .btn-import-toggle:hover {
   background: #dcfce7;
@@ -119,7 +117,7 @@
   box-shadow: 0 6px 18px rgba(37,99,235,0.4);
 }
 
-/* ── CSV Import Zone ── */
+
 .import-csv-container {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -221,7 +219,7 @@
   border: 1px solid var(--danger-muted);
 }
 
-/* ── Form ── */
+
 .formulaire {
   display: flex;
   align-items: center;
@@ -235,6 +233,7 @@
   animation: slideDown 0.25s ease both;
   box-shadow: var(--shadow-sm);
 }
+
 
 .formulaire input,
 .formulaire select {
@@ -280,7 +279,7 @@
   transform: translateY(-1px);
 }
 
-/* ── Table Card ── */
+
 .table-card {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -412,7 +411,7 @@ tbody tr:hover {
   transform: translateY(-1px);
 }
 
-/* ── Empty state ── */
+
 .empty-state {
   text-align: center;
   padding: 48px 24px;
@@ -431,9 +430,12 @@ tbody tr:hover {
   font-weight: 500;
 }
 
-/* ── Assignation badges ── */
-.badge-karid  { background: #f0f9ff; color: #0369a1; border: 1px solid #bae6fd; }
-.badge-artis  { background: #faf5ff; color: #7c3aed; border: 1px solid #ddd6fe; }
+
+.badge-BHNS  { background: #f0f9ff; color: #0369a1; border: 1px solid #bae6fd; }
+.badge-MERCEDES  { background: #faf5ff; color: #7c3aed; border: 1px solid #ddd6fe; }
+.badge-MAN  { background: #faf5ff; color: #5e0474; border: 1px solid #ddd6fe; }
+.badge-ISUZU  { background: #faf5ff; color: #c00ce8; border: 1px solid #ddd6fe; }
+.badge-KING-LONG  { background: #faf5ff; color: #81d8f3; border: 1px solid #ddd6fe; }
 .badge-none   { background: var(--surface-raised); color: var(--text-muted); border: 1px solid var(--border); }
 
 @media (max-width: 768px) {

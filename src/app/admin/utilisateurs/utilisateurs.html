@@ -1,6 +1,6 @@
 <div class="utilisateurs">
 
-  <!-- Header -->
+
   <div class="header-page">
     <div class="header-page-left">
       <h2><i class="fa-solid fa-users"></i> Utilisateurs</h2>
@@ -26,7 +26,6 @@
   </div>
 
 
-  <!-- Zone CSV Import -->
   <div class="import-csv-container" *ngIf="afficherImport">
     <div
       class="drag-drop-zone"
@@ -71,7 +70,6 @@
   </div>
 
 
-  <!-- Formulaire -->
   <div class="formulaire" *ngIf="afficherFormulaire">
     <input type="text"  placeholder="Nom complet" [(ngModel)]="nom">
     <input type="email" placeholder="Email"        [(ngModel)]="email">
@@ -79,7 +77,8 @@
     <select [(ngModel)]="role">
       <option value="">Rôle</option>
       <option value="Administrateur">Administrateur</option>
-      <option value="Agent">Agent</option>
+      <option value="Nettoyeur">Nettoyeur</option>
+      <option value="Superviseur">Superviseur</option>
     </select>
 
     <button class="btn-formulaire" (click)="enregistrerUtilisateur()">
@@ -89,7 +88,6 @@
   </div>
 
 
-  <!-- Table -->
   <div class="table-card">
     <div class="table-card-header">
       <div class="table-card-title">
@@ -102,7 +100,7 @@
     <table>
       <thead>
         <tr>
-          <th>Nom</th>
+          <th>Nom Complet</th>
           <th>Email</th>
           <th>Rôle</th>
           <th>Actions</th>
@@ -122,7 +120,8 @@
           <td>
             <span class="badge"
               [class.badge-admin]="u.role === 'Administrateur'"
-              [class.badge-agent]="u.role === 'Agent'">
+              [class.badge-super]="u.role === 'Superviseur'"
+              [class.badge-nett]="u.role === 'Nettoyeur'">
               {{ u.role }}
             </span>
           </td>
@@ -132,7 +131,7 @@
                 <i class="fa-solid fa-pen"></i> Modifier
               </button>
               <button class="btn-supprimer" (click)="supprimerUtilisateur(u.email)">
-                <i class="fa-solid fa-trash"></i> Supprimer
+                <i class="fa-solid fa-trash"></i> Désavtiver
               </button>
             </div>
           </td>
