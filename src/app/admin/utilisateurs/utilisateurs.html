@@ -70,22 +70,49 @@
   </div>
 
 
-  <div class="formulaire" *ngIf="afficherFormulaire">
-    <input type="text"  placeholder="Nom complet" [(ngModel)]="nom">
-    <input type="email" placeholder="Email"        [(ngModel)]="email">
+ <div class="formulaire" *ngIf="afficherFormulaire">
 
-    <select [(ngModel)]="role">
-      <option value="">Rôle</option>
-      <option value="Administrateur">Administrateur</option>
-      <option value="Nettoyeur">Nettoyeur</option>
-      <option value="Superviseur">Superviseur</option>
-    </select>
+  <input
+    type="text"
+    placeholder="Nom complet"
+    [(ngModel)]="nom">
 
-    <button class="btn-formulaire" (click)="enregistrerUtilisateur()">
-      <i class="fa-solid" [class.fa-pen]="modeModification" [class.fa-plus]="!modeModification"></i>
-      {{ modeModification ? 'Modifier' : 'Ajouter' }}
-    </button>
-  </div>
+  <input
+    type="text"
+    placeholder="Matricule"
+    [(ngModel)]="matricule">
+
+  <input
+    type="text"
+    placeholder="Téléphone"
+    [(ngModel)]="telephone">
+
+  <input
+    type="email"
+    placeholder="Email"
+    [(ngModel)]="email">
+
+  <input
+    type="text"
+    placeholder="Login"
+    [(ngModel)]="login">
+
+  <select [(ngModel)]="role">
+    <option value="">Rôle</option>
+    <option value="Administrateur">Administrateur</option>
+    <option value="Nettoyeur">Nettoyeur</option>
+    <option value="Superviseur">Superviseur</option>
+  </select>
+
+  <button class="btn-formulaire" (click)="enregistrerUtilisateur()">
+    <i class="fa-solid"
+       [class.fa-pen]="modeModification"
+       [class.fa-plus]="!modeModification"></i>
+
+    {{ modeModification ? 'Modifier' : 'Ajouter' }}
+  </button>
+
+</div>
 
 
   <div class="table-card">
@@ -98,54 +125,108 @@
     </div>
 
     <table>
-      <thead>
-        <tr>
-          <th>Nom Complet</th>
-          <th>Email</th>
-          <th>Rôle</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let u of utilisateursFiltres">
-          <td>
-            <div style="display:flex;align-items:center;gap:10px">
-              <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--primary),#818cf8);display:flex;align-items:center;justify-content:center;color:white;font-size:12px;font-weight:700;flex-shrink:0">
-                {{ u.nom.charAt(0).toUpperCase() }}
-              </div>
-              <strong>{{ u.nom }}</strong>
-            </div>
-          </td>
-          <td>{{ u.email }}</td>
-          <td>
-            <span class="badge"
-              [class.badge-admin]="u.role === 'Administrateur'"
-              [class.badge-super]="u.role === 'Superviseur'"
-              [class.badge-nett]="u.role === 'Nettoyeur'">
-              {{ u.role }}
-            </span>
-          </td>
-          <td>
-            <div class="td-actions">
-              <button class="btn-modifier" (click)="modifierUtilisateur(u)">
-                <i class="fa-solid fa-pen"></i> Modifier
-              </button>
-              <button class="btn-supprimer" (click)="supprimerUtilisateur(u.email)">
-                <i class="fa-solid fa-trash"></i> Désavtiver
-              </button>
-            </div>
-          </td>
-        </tr>
-        <tr *ngIf="utilisateursFiltres.length === 0">
-          <td colspan="4">
-            <div class="empty-state">
-              <i class="fa-solid fa-user-slash"></i>
-              <p>Aucun utilisateur trouvé</p>
-            </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+  <thead>
+    <tr>
+      <th>Nom Complet</th>
+      <th>Matricule</th>
+      <th>Téléphone</th>
+      <th>Email</th>
+      <th>Login</th>
+      <th>Rôle</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
 
-</div>
+  <tbody>
+
+    <tr *ngFor="let u of utilisateursFiltres">
+
+      <td>
+        <div style="display:flex;align-items:center;gap:10px">
+
+          <div
+            style="
+              width:32px;
+              height:32px;
+              border-radius:50%;
+              background:linear-gradient(135deg,var(--primary),#818cf8);
+              display:flex;
+              align-items:center;
+              justify-content:center;
+              color:white;
+              font-size:12px;
+              font-weight:700;
+              flex-shrink:0;
+            ">
+            {{ u.nom.charAt(0).toUpperCase() }}
+          </div>
+          <strong>{{ u.nom }}</strong>
+
+        </div>
+      </td>
+
+      <td>{{ u.matricule }}</td>
+
+      <td>{{ u.telephone }}</td>
+
+      <td>{{ u.email }}</td>
+
+      <td>{{ u.login }}</td>
+
+      <td>
+        <span
+          class="badge"
+          [class.badge-admin]="u.role === 'Administrateur'"
+          [class.badge-super]="u.role === 'Superviseur'"
+          [class.badge-nett]="u.role === 'Nettoyeur'">
+
+          {{ u.role }}
+
+        </span>
+      </td>
+
+      <td>
+        <div class="td-actions">
+
+          <button
+            class="btn-modifier"
+            (click)="modifierUtilisateur(u)">
+
+            <i class="fa-solid fa-pen"></i>
+            Modifier
+
+          </button>
+
+          <button
+            class="btn-supprimer"
+            (click)="supprimerUtilisateur(u.email)">
+
+            <i class="fa-solid fa-trash"></i>
+            Désactiver
+
+          </button>
+
+        </div>
+      </td>
+
+    </tr>
+
+    <tr *ngIf="utilisateursFiltres.length === 0">
+
+      <td colspan="7">
+
+        <div class="empty-state">
+
+          <i class="fa-solid fa-user-slash"></i>
+
+          <p>Aucun utilisateur trouvé</p>
+
+        </div>
+
+      </td>
+
+    </tr>
+
+  </tbody>
+
+</table>

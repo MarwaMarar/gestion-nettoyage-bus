@@ -25,27 +25,33 @@ export class Utilisateurs {
 
 
   nom = '';
-  email = ''
+  matricule = '';
+  telephone = '';
+  email = '';
+  login = '';
   role = '';
   recherche = '';
 
 
 
   utilisateurs = [
-    {
-      nom: 'Admin',
-      email: 'admin@gmail.com',
-      role: 'Administrateur'
-
-
-
-    },
-    {
-      nom: 'Ahmed',
-      email: 'ahmed@gmail.com',
-      role: 'Nettoyeur'
-    },
-  ];
+  {
+    nom: 'Ahmed',
+    matricule: 'MAT001',
+    telephone: '0612345678',
+    email: 'ahmed@gmail.com',
+    login: 'ahmed',
+    role: 'Nettoyeur'
+  },
+  {
+    nom: 'Admin',
+    matricule: 'ADM001',
+    telephone: '0600000000',
+    email: 'admin@gmail.com',
+    login: 'admin',
+    role: 'Administrateur'
+  }
+];
 
 
   ajouterUtilisateur() {
@@ -53,9 +59,12 @@ export class Utilisateurs {
     this.afficherFormulaire = true;
     this.modeModification = false;
 
-    this.nom  = '';
-    this.email = '';
-    this.role = '';
+    this.nom = '';
+  this.matricule = '';
+  this.telephone = '';
+  this.email = '';
+  this.login = '';
+  this.role = '';
 
   }
 
@@ -69,34 +78,39 @@ get utilisateursFiltres() {
 
   enregistrerUtilisateur() {
 
-    if (this.modeModification) {
+  if (this.modeModification) {
 
-      this.utilisateurSelectionne.nom = this.nom;
-      this.utilisateurSelectionne.email = this.email;
-      this.utilisateurSelectionne.role = this.role;
+    this.utilisateurSelectionne.nom = this.nom;
+    this.utilisateurSelectionne.matricule = this.matricule;
+    this.utilisateurSelectionne.telephone = this.telephone;
+    this.utilisateurSelectionne.email = this.email;
+    this.utilisateurSelectionne.login = this.login;
+    this.utilisateurSelectionne.role = this.role;
 
-    } else {
+  } else {
 
-      this.utilisateurs.push({
-        nom: this.nom,
-        email: this.email,
-        role: this.role
-      });
-
-    }
-
-
-    this.nom = '';
-    this.email = '';
-    this.role = '';
-
-    this.afficherFormulaire = false;
-    this.modeModification = false;
+    this.utilisateurs.push({
+      nom: this.nom,
+      matricule: this.matricule,
+      telephone: this.telephone,
+      email: this.email,
+      login: this.login,
+      role: this.role
+    });
 
   }
 
+  this.nom = '';
+  this.matricule = '';
+  this.telephone = '';
+  this.email = '';
+  this.login = '';
+  this.role = '';
 
+  this.afficherFormulaire = false;
+  this.modeModification = false;
 
+}
   supprimerUtilisateur(email: string) {
 
     this.utilisateurs = this.utilisateurs.filter(
@@ -109,16 +123,19 @@ get utilisateursFiltres() {
 
   modifierUtilisateur(utilisateur: any) {
 
-    this.utilisateurSelectionne = utilisateur;
+  this.utilisateurSelectionne = utilisateur;
 
-    this.nom = utilisateur.nom;
-    this.email = utilisateur.email;
-    this.role = utilisateur.role;
+  this.nom = utilisateur.nom;
+  this.matricule = utilisateur.matricule;
+  this.telephone = utilisateur.telephone;
+  this.email = utilisateur.email;
+  this.login = utilisateur.login;
+  this.role = utilisateur.role;
 
-    this.afficherFormulaire = true;
-    this.modeModification = true;
+  this.afficherFormulaire = true;
+  this.modeModification = true;
 
-  }
+}
 
 
   basculerImport() {
@@ -219,10 +236,13 @@ get utilisateursFiltres() {
           const existe = this.utilisateurs.some(u => u.email.toLowerCase() === uEmail.toLowerCase());
           if (!existe) {
             this.utilisateurs.push({
-              nom: uNom,
-              email: uEmail,
-              role: uRole
-            });
+            nom: uNom,
+            matricule: '',
+            telephone: '',
+            email: uEmail,
+            login: '',
+            role: uRole
+});
             countImported++;
           } else {
             countDuplicates++;
