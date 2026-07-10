@@ -438,6 +438,30 @@ tbody tr:hover {
 .badge-KING-LONG  { background: #faf5ff; color: #81d8f3; border: 1px solid #ddd6fe; }
 .badge-none   { background: var(--surface-raised); color: var(--text-muted); border: 1px solid var(--border); }
 
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+
+.badge-actif {
+  background: #dcfce7;
+  color: #15803d;
+  border: 1px solid #bbf7d0;
+}
+
+.badge-inactif {
+  background: #fee2e2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+}
+
+
 @media (max-width: 768px) {
   .header-page { flex-direction: column; align-items: flex-start; }
   .actions-header { width: 100%; }

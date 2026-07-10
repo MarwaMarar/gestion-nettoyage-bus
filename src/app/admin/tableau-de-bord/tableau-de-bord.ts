@@ -8,10 +8,12 @@ import { Component } from '@angular/core';
 })
 export class TableauDeBordComponent {
 
-  bus = 12;
-  utilisateurs = 5;
-  nettoyages = 20;
-  rapports = 3;
+bus = 12;
+nettoyagesJour = 4;
+nettoyagesValides = 15;
+nettoyagesRefuses = 2;
+nettoyagesAttente = 3;
+pourcentageValidation = 75;
 
 }
 

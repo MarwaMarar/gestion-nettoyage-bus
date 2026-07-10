@@ -1,4 +1,4 @@
-/* ── App Shell Layout ── */
+
 .layout {
   display: flex;
   min-height: 100vh;
@@ -20,7 +20,6 @@
   animation: fadeInUp 0.35s ease both;
 }
 
-/* ── Responsive ── */
 @media (max-width: 1024px) {
   .contenu-principal {
     margin-left: 72px;

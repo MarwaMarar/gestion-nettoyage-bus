@@ -53,7 +53,7 @@ export class Rapports {
     return this.rapports.filter(rapport => {
 
 
-      // Recherche par texte
+      
       const rechercheTexte =
         rapport.bus.toLowerCase().includes(this.recherche.toLowerCase()) ||
         rapport.agent.toLowerCase().includes(this.recherche.toLowerCase()) ||
@@ -61,19 +61,18 @@ export class Rapports {
 
 
 
-      // Conversion date rapport
+     
       const dateRapport = this.convertirDate(rapport.date);
 
 
 
-      // Vérification date début
+     
       const dateDebutOK =
         !this.dateDebut ||
         dateRapport >= new Date(this.dateDebut);
 
 
 
-      // Vérification date fin
       const dateFinOK =
         !this.dateFin ||
         dateRapport <= new Date(this.dateFin);

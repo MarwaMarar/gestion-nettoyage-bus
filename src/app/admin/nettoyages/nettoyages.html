@@ -1,6 +1,6 @@
 <div class="nettoyages">
 
-  <!-- Header -->
+
   <div class="header-page">
     <div class="header-page-left">
       <h2><i class="fa-solid fa-broom"></i> Nettoyages</h2>
@@ -26,7 +26,7 @@
   </div>
 
 
-  <!-- Zone CSV Import -->
+
   <div class="import-csv-container" *ngIf="afficherImport">
     <div
       class="drag-drop-zone"
@@ -72,7 +72,7 @@
   </div>
 
 
-  <!-- Formulaire -->
+
   <div class="formulaire" *ngIf="afficherFormulaire">
     <select [(ngModel)]="busChoisi">
       <option value="">Choisir un bus</option>
@@ -81,9 +81,9 @@
 
     <select [(ngModel)]="type">
       <option value="">Type de nettoyage</option>
-      <option value="Tous les 2 jours">Tous les 2 jours</option>
-      <option value="Chaque semaine">Chaque semaine</option>
-      <option value="Chaque mois">Chaque mois</option>
+      <option *ngFor="let t of typesNettoyage" [value]="t">
+              {{ t }}
+      </option>
     </select>
 
     <input type="date" [(ngModel)]="date">
@@ -102,7 +102,7 @@
   </div>
 
 
-  <!-- Table -->
+
   <div class="table-card">
     <div class="table-card-header">
       <div class="table-card-title">

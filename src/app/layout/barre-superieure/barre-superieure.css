@@ -1,6 +1,4 @@
-/* ============================================
-   NAVBAR — Top Bar Premium
-   ============================================ */
+
 
 .navbar {
   height: 64px;
@@ -22,7 +20,7 @@
   background: rgba(17,24,39,0.85);
 }
 
-/* ── Left: Breadcrumb / Page title ── */
+
 .navbar-left {
   display: flex;
   align-items: center;
@@ -48,7 +46,7 @@
   font-weight: 300;
 }
 
-/* ── Search bar ── */
+
 .navbar-search {
   display: flex;
   align-items: center;
@@ -86,7 +84,7 @@
   color: var(--text-muted);
 }
 
-/* ── Right actions ── */
+
 .navbar-right {
   display: flex;
   align-items: center;
@@ -115,7 +113,7 @@
   border-color: var(--border-hover);
 }
 
-/* Notification dot */
+
 .navbar-icon-btn .notif-dot {
   position: absolute;
   top: 6px;
@@ -127,7 +125,7 @@
   border: 2px solid var(--navbar-bg);
 }
 
-/* ── Avatar / Profile ── */
+
 .navbar-profile {
   display: flex;
   align-items: center;
@@ -177,7 +175,7 @@
   line-height: 1.2;
 }
 
-/* ── Dark/Light Toggle ── */
+
 .theme-switch {
   width: 36px;
   height: 36px;

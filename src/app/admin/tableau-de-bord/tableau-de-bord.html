@@ -1,6 +1,6 @@
 <div class="dashboard">
 
-  <!-- Welcome Banner -->
+
   <div class="welcome-banner">
     <div class="welcome-text">
       <h2>Bienvenue, Administrateur 👋</h2>
@@ -9,7 +9,7 @@
     <div class="welcome-icon">🚌</div>
   </div>
 
-  <!-- Stats Cards -->
+
   <div class="cards">
 
     <div class="card card-bus">
@@ -26,47 +26,59 @@
       </div>
     </div>
 
-    <div class="card card-users">
-      <div class="card-icon-wrap">
-        <i class="fa-solid fa-users"></i>
-      </div>
-      <div class="card-body">
-        <h3>Utilisateurs</h3>
-        <p>{{ utilisateurs }}</p>
-        <div class="card-trend">
-          <i class="fa-solid fa-arrow-trend-up"></i>
-          <span>+1 ce mois</span>
-        </div>
-      </div>
-    </div>
+   <div class="card card-clean">
+  <div class="card-icon-wrap">
+    <i class="fa-solid fa-broom"></i>
+  </div>
+  <div class="card-body">
+    <h3>Nettoyages du jour</h3>
+    <p>{{ nettoyagesJour }}</p>
+  </div>
+</div>
 
-    <div class="card card-clean">
-      <div class="card-icon-wrap">
-        <i class="fa-solid fa-broom"></i>
-      </div>
-      <div class="card-body">
-        <h3>Nettoyages</h3>
-        <p>{{ nettoyages }}</p>
-        <div class="card-trend">
-          <i class="fa-solid fa-arrow-trend-up"></i>
-          <span>+8 cette semaine</span>
-        </div>
-      </div>
-    </div>
 
-    <div class="card card-report">
-      <div class="card-icon-wrap">
-        <i class="fa-solid fa-chart-line"></i>
-      </div>
-      <div class="card-body">
-        <h3>Rapports</h3>
-        <p>{{ rapports }}</p>
-        <div class="card-trend">
-          <i class="fa-solid fa-arrow-trend-up"></i>
-          <span>Vue mensuelle</span>
-        </div>
-      </div>
-    </div>
+<div class="card card-valid">
+  <div class="card-icon-wrap">
+    <i class="fa-solid fa-circle-check"></i>
+  </div>
+  <div class="card-body">
+    <h3>Nettoyages validés</h3>
+    <p>{{ nettoyagesValides }}</p>
+  </div>
+</div>
+
+
+<div class="card card-refus">
+  <div class="card-icon-wrap">
+    <i class="fa-solid fa-circle-xmark"></i>
+  </div>
+  <div class="card-body">
+    <h3>Nettoyages refusés</h3>
+    <p>{{ nettoyagesRefuses }}</p>
+  </div>
+</div>
+
+
+<div class="card card-attente">
+  <div class="card-icon-wrap">
+    <i class="fa-solid fa-clock"></i>
+  </div>
+  <div class="card-body">
+    <h3>Nettoyages en attente</h3>
+    <p>{{ nettoyagesAttente }}</p>
+  </div>
+</div>
+
+
+<div class="card card-percent">
+  <div class="card-icon-wrap">
+    <i class="fa-solid fa-chart-pie"></i>
+  </div>
+  <div class="card-body">
+    <h3>Pourcentage validation</h3>
+    <p>{{ pourcentageValidation }}%</p>
+  </div>
+  </div>
 
   </div>
 

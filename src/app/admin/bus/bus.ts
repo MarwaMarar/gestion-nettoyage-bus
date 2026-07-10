@@ -28,22 +28,25 @@ export class Bus {
   immatriculation = '';
   assignation = '';
   recherche = '';
+  statut = '';
 
 
-  bus = [
-    {
-      id: 1,
-      numero: '12',
-      immatriculation: '12345-A-6',
-      assignation: 'MAN'
-    },
-    {
-      id: 2,
-      numero: '18',
-      immatriculation: '45678-B-1',
-      assignation: 'BHNS'
-    }
-  ];
+bus = [
+  {
+    id: 1,
+    numero: '12',
+    immatriculation: '12345-A-6',
+    assignation: 'MAN',
+    statut: 'Actif'
+  },
+  {
+    id: 2,
+    numero: '18',
+    immatriculation: '45678-B-1',
+    assignation: 'BHNS',
+    statut: 'Inactif'
+  }
+];
 
 
 
@@ -54,6 +57,7 @@ export class Bus {
     this.numero = '';
     this.immatriculation = '';
     this.assignation = '';
+    this.statut = '';
   }
 
   get busFiltres() {
@@ -70,6 +74,7 @@ export class Bus {
       this.busSelectionne.numero = this.numero;
       this.busSelectionne.immatriculation = this.immatriculation;
       this.busSelectionne.assignation = this.assignation;
+      this.busSelectionne.statut = this.statut;
 
     } else {
 
@@ -77,7 +82,8 @@ export class Bus {
         id: this.bus.length + 1,
         numero: this.numero,
         immatriculation: this.immatriculation,
-        assignation: this.assignation
+        assignation: this.assignation,
+        statut: this.statut
       });
 
     }
@@ -86,9 +92,11 @@ export class Bus {
     this.numero = '';
     this.immatriculation = '';
     this.assignation = '';
+    this.statut = '';
 
-    this.afficherFormulaire = false;
-    this.modeModification = false;
+
+   this.afficherFormulaire = false;
+   this.modeModification = false;
 
   }
 
@@ -109,6 +117,7 @@ export class Bus {
     this.numero = bus.numero;
     this.immatriculation = bus.immatriculation;
     this.assignation= bus.assignation;
+    this.statut = bus.statut;
 
     this.afficherFormulaire = true;
     this.modeModification = true;
@@ -182,13 +191,15 @@ export class Bus {
 
       const firstRow = data[0];
       const keys = Object.keys(firstRow);
+      console.log(keys);
 
       const numeroKey = keys.find(k => k.toLowerCase().includes('num') || k.toLowerCase().includes('parc') || k.toLowerCase() === 'numero');
       const immatriculationKey = keys.find(k => k.toLowerCase().includes('immat') || k.toLowerCase() === 'immatriculation');
       const assignationKey = keys.find(k => k.toLowerCase().includes('assign') || k.toLowerCase() === 'assignation');
+      const statutKey = keys.find(k => k.toLowerCase().includes('statut'));
 
       if (!numeroKey || !immatriculationKey || !assignationKey) {
-        this.messageImport = 'Le fichier CSV doit contenir les colonnes : numero, immatriculation, assignation';
+        this.messageImport = 'Le fichier CSV doit contenir les colonnes : numero, immatriculation, assignation, statut';
         this.typeMessageImport = 'error';
         return;
       }
@@ -200,6 +211,7 @@ export class Bus {
         const num = (row[numeroKey] || '').toString().trim();
         const immat = (row[immatriculationKey] || '').toString().trim();
         let assign = (row[assignationKey] || '').toString().trim().toUpperCase();
+        let stat = (row[statutKey!] || '').toString().trim();
 
         if (assign !== 'BHNS' && assign !== 'KING-LONG' && assign !== 'ISUZU' && assign !== 'MAN' && assign !== 'MERCEDES') {
           assign = '';
@@ -210,11 +222,12 @@ export class Bus {
           if (!existe) {
             const nextId = this.bus.length > 0 ? Math.max(...this.bus.map(b => b.id)) + 1 : 1;
             this.bus.push({
-              id: nextId,
-              numero: num,
-              immatriculation: immat,
-              assignation: assign
-            });
+                 id: nextId,
+                 numero: num,
+                 immatriculation: immat,
+                 assignation: assign,
+                 statut: stat
+});
             countImported++;
           } else {
             countDuplicates++;

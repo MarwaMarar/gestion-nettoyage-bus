@@ -48,6 +48,7 @@
           <code>numero</code>
           <code>immatriculation</code>
           <code>assignation</code>
+          <code>statut</code>
         </p>
       </div>
 
@@ -77,13 +78,22 @@
     <input type="text" placeholder="Immatriculation" [(ngModel)]="immatriculation">
 
     <select [(ngModel)]="assignation">
-      <option value="">Type de bus</option>
-      <option value="BHNS">BHNS</option>
-      <option value="MERCEDES">MERCEDES</option>
-      <option value="KING-LONG">KING-LONG</option>
+       <option value="">Type de bus</option>
+       <option value="BHNS">BHNS</option>
+       <option value="MERCEDES">MERCEDES</option>
+       <option value="KING-LONG">KING-LONG</option>
       <option value="ISUZU">ISUZU</option>
       <option value="MAN">MAN</option>
     </select>
+
+    <select [(ngModel)]="statut">
+      <option value="">Statut</option>
+      <option value="Actif">Actif</option>
+      <option value="Inactif">Inactif</option>
+    </select>
+
+
+
 
     <button class="btn-formulaire" (click)="enregistrerBus()">
       <i class="fa-solid" [class.fa-pen]="modeModification" [class.fa-plus]="!modeModification"></i>
@@ -109,6 +119,7 @@
           <th>Numéro de bus</th>
           <th>Immatriculation</th>
           <th>Type de bus</th>
+          <th>Statut</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -128,6 +139,15 @@
               {{ b.assignation || '—' }}
             </span>
           </td>
+
+          <td>
+            <span class="badge"
+              [class.badge-actif]="b.statut === 'Actif'"
+              [class.badge-inactif]="b.statut === 'Inactif'">
+              {{ b.statut || '—' }}
+             </span>
+          </td>
+
           <td>
             <div class="td-actions">
               <button class="btn-modifier" (click)="modifierBus(b)">
@@ -140,7 +160,7 @@
           </td>
         </tr>
         <tr *ngIf="busFiltres.length === 0">
-          <td colspan="5">
+          <td colspan="6">
             <div class="empty-state">
               <i class="fa-solid fa-bus-simple"></i>
               <p>Aucun bus trouvé</p>

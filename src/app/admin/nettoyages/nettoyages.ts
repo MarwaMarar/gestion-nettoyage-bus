@@ -18,11 +18,11 @@ export class Nettoyages {
 
   nettoyageSelectionne: any = null;
 
-  // Import CSV states
+
   afficherImport = false;
   isDragging = false;
   messageImport = '';
-  typeMessageImport = ''; // 'success' | 'error'
+  typeMessageImport = '';
 
 
   bus = [
@@ -30,13 +30,21 @@ export class Nettoyages {
     'Bus 18'
   ];
 
+  typesNettoyage = [
+  'Nettoyage intérieur',
+  'Nettoyage extérieur',
+  'Nettoyage complet',
+  'Désinfection',
+  'Lavage rapide',
+  'Nettoyage avant mise en service'
+  ];
 
   nettoyage = [
 
     {
       id: 1,
       bus: 'Bus 12',
-      type: 'Tous les 2 jours',
+      type: 'Nettoyage intérieur',
       date: '08/07/2026',
       statut: 'Terminé'
     },
@@ -44,7 +52,7 @@ export class Nettoyages {
     {
       id: 2,
       bus: 'Bus 18',
-      type: 'Chaque semaine',
+      type: 'Désinfection',
       date: '10/07/2026',
       statut: 'En attente'
     }
@@ -60,7 +68,7 @@ export class Nettoyages {
 
 
 
-  // ouvrir formulaire ajout
+
   ajouterNettoyage() {
 
     this.afficherFormulaire = true;
@@ -83,7 +91,7 @@ get nettoyagesFiltres() {
 
 }
 
-  // ajouter ou modifier
+
   enregistrerNettoyage() {
 
 
@@ -126,8 +134,6 @@ get nettoyagesFiltres() {
 
 
 
-
-  // supprimer nettoyage
   supprimerNettoyage(id: any) {
 
     this.nettoyage = this.nettoyage.filter(
@@ -138,8 +144,6 @@ get nettoyagesFiltres() {
 
 
 
-
-  // modifier nettoyage
   modifierNettoyage(n: any) {
 
 
@@ -158,20 +162,22 @@ get nettoyagesFiltres() {
 
   }
 
-  // basculer la zone d'importation
+
+
+
   basculerImport() {
     this.afficherImport = !this.afficherImport;
     this.messageImport = '';
   }
 
-  // drag-and-drop events
+
   onDragOver(event: DragEvent) {
     event.preventDefault();
     event.stopPropagation();
     this.isDragging = true;
   }
 
-  // dragleave event
+
   onDragLeave(event: DragEvent) {
     event.preventDefault();
     event.stopPropagation();
@@ -236,7 +242,7 @@ get nettoyagesFiltres() {
 
       const firstRow = data[0];
       const keys = Object.keys(firstRow);
-      
+
       const busKey = keys.find(k => k.toLowerCase() === 'bus');
       const typeKey = keys.find(k => k.toLowerCase() === 'type');
       const dateKey = keys.find(k => k.toLowerCase() === 'date');
