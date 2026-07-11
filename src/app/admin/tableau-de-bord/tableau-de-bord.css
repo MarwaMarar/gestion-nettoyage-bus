@@ -183,7 +183,8 @@
 }
 
 .card-valid::before {
-  background: var(--success);
+  background: var(--success) ;
+
 }
 
 .card-refus::before {
@@ -202,6 +203,7 @@
 .card-valid .card-icon-wrap {
   background: var(--success-light);
   color: var(--success);
+
 }
 
 .card-refus .card-icon-wrap {

@@ -2,8 +2,10 @@ import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-parametres',
-  imports: [],
+  standalone: true,
   templateUrl: './parametres.html',
-  styleUrl: './parametres.css',
+  styleUrl: './parametres.css'
 })
-export class Parametres {}
+export class Parametres {
+
+}
