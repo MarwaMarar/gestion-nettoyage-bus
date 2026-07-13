@@ -1,36 +1,187 @@
 <div class="navbar">
 
- 
+  <!-- Partie gauche -->
   <div class="navbar-left">
-    <span class="navbar-title">ALSA Clean Fleet</span>
-    <span class="navbar-sep">/</span>
-    <span class="navbar-subtitle">Système de gestion de flotte</span>
+
+    <span class="navbar-title">
+      ALSA Clean Fleet
+    </span>
+
+    <span class="navbar-sep">
+      /
+    </span>
+
+    <span class="navbar-subtitle">
+      Système de gestion de flotte
+    </span>
+
   </div>
 
+
+
+  <!-- Recherche -->
   <div class="navbar-search">
+
     <i class="fa-solid fa-magnifying-glass"></i>
-    <input type="text" placeholder="Recherche rapide..." />
+
+    <input
+      type="text"
+      placeholder="Recherche rapide..." />
+
   </div>
 
 
+
+
+  <!-- Partie droite -->
   <div class="navbar-right">
 
-  
-    <button class="navbar-icon-btn" title="Notifications">
-      <i class="fa-regular fa-bell"></i>
-      <span class="notif-dot"></span>
-    </button>
 
-    
-    <div class="navbar-profile">
-      <div class="navbar-avatar">AD</div>
-      <div class="navbar-profile-info">
-        <span class="navbar-profile-name">Administrateur</span>
-        <span class="navbar-profile-role">Super Admin</span>
+    <!-- Notifications -->
+    <div class="navbar-notification">
+
+      <button
+        class="navbar-icon-btn"
+        title="Notifications"
+        (click)="notificationsOuvert = !notificationsOuvert">
+
+        <i class="fa-regular fa-bell"></i>
+
+        <span class="notif-dot"></span>
+
+      </button>
+
+
+
+      <!-- Menu notifications -->
+      <div
+        class="notification-menu"
+        *ngIf="notificationsOuvert">
+
+
+        <h4>
+          Notifications
+        </h4>
+
+
+        <div class="notification-item">
+
+          <i class="fa-solid fa-circle-check"></i>
+
+          <span>
+            Nettoyage validé
+          </span>
+
+        </div>
+
+
+
+        <div class="notification-item">
+
+          <i class="fa-solid fa-clock"></i>
+
+          <span>
+            Rapport en attente
+          </span>
+
+        </div>
+
+
+
+        <div class="notification-item">
+
+          <i class="fa-solid fa-bus"></i>
+
+          <span>
+            Nouveau bus ajouté
+          </span>
+
+        </div>
+
+
       </div>
-      <i class="fa-solid fa-chevron-down" style="font-size:10px;color:var(--text-muted);margin-left:2px"></i>
+
+
     </div>
 
+
+
+
+
+    <!-- Profil Admin -->
+    <div
+      class="navbar-profile"
+      (click)="profilOuvert = !profilOuvert">
+
+
+      <div class="navbar-avatar">
+        AD
+      </div>
+
+
+
+      <div class="navbar-profile-info">
+
+        <span class="navbar-profile-name">
+          Administrateur
+        </span>
+
+
+        <span class="navbar-profile-role">
+          Super Admin
+        </span>
+
+      </div>
+
+
+
+      <i
+        class="fa-solid fa-chevron-down"
+        style="font-size:10px;color:var(--text-muted);margin-left:2px">
+      </i>
+
+
+
+
+
+      <!-- Menu Profil -->
+      <div
+        class="profile-menu"
+        *ngIf="profilOuvert">
+
+
+      <div class="profile-menu-item" (click)="allerProfil()">
+
+        <i class="fa-solid fa-user"></i>
+          Mon profil
+
+      </div>
+
+
+       <div class="profile-menu-item"(click)="allerParametres()">
+        <i class="fa-solid fa-gear"></i>
+         Paramètres
+
+       </div>
+
+
+
+       <div class="profile-menu-item logout"(click)="deconnexion()">
+
+       <i class="fa-solid fa-right-from-bracket"></i>
+       Déconnexion
+
+       </div>
+
+
+      </div>
+
+
+
+    </div>
+
+
   </div>
+
 
 </div>

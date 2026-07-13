@@ -1,52 +1,262 @@
-<div class="parametres-page">
+<div class="parametres">
 
-  <div class="page-title">
 
-    <h2>
-      <i class="fa-solid fa-gear"></i>
-      Paramètres
-    </h2>
+  <!-- Header -->
 
-    <p>
-      Configuration générale de l'application
-    </p>
+  <div class="header-page">
+
+    <div class="header-page-left">
+
+      <h2>
+        <i class="fa-solid fa-gear"></i>
+        Paramètres
+      </h2>
+
+      <p>
+        Configuration des paramètres de l'application
+      </p>
+
+    </div>
 
   </div>
 
 
 
-  <div class="settings-card">
 
-    <div class="settings-header">
+  <!-- Cards -->
 
-      <div class="settings-icon">
-        <i class="fa-solid fa-sliders"></i>
+  <div class="parametres-grid">
+
+
+    <!-- Notifications -->
+
+    <div class="param-card">
+
+
+      <div class="param-icon notif-icon">
+
+        <i class="fa-solid fa-bell"></i>
+
       </div>
 
 
-      <div>
+      <div class="param-content">
+
 
         <h3>
-          Préférences système
+          Notifications
         </h3>
 
+
         <p>
-          ALSA Clean Fleet v1.0
+          Gérer les alertes et notifications du système.
         </p>
 
+
+        <div class="option-line">
+
+          <span>
+            Activer les notifications
+          </span>
+
+
+          <label class="switch">
+
+            <input type="checkbox" checked>
+
+            <span class="slider"></span>
+
+          </label>
+
+
+        </div>
+
+
       </div>
+
 
     </div>
 
 
 
-    <p class="settings-description">
-      Cette section est en cours de développement.
-      Les paramètres de configuration avancés seront disponibles prochainement.
-    </p>
+
+
+    <!-- Apparence -->
+
+    <div class="param-card">
+
+
+      <div class="param-icon theme-icon">
+
+        <i class="fa-solid fa-palette"></i>
+
+      </div>
+
+
+
+      <div class="param-content">
+
+
+        <h3>
+          Apparence
+        </h3>
+
+
+        <p>
+          Personnaliser l'affichage de l'application.
+        </p>
+
+
+        <div class="option-line">
+
+
+          <span>
+            Mode sombre
+          </span>
+
+<label class="switch">
+
+  <input
+    type="checkbox"
+    (change)="changerTheme()">
+
+  <span class="slider"></span>
+
+</label>
+
+
+        </div>
+
+
+      </div>
+
+
+    </div>
+
+
+
+
+
+    <!-- Préférences -->
+
+    <div class="param-card">
+
+
+      <div class="param-icon preference-icon">
+
+        <i class="fa-solid fa-sliders"></i>
+
+      </div>
+
+
+
+      <div class="param-content">
+
+
+        <h3>
+          Préférences
+        </h3>
+
+
+        <p>
+          Gérer les préférences générales.
+        </p>
+
+
+        <div class="select-option">
+
+
+          <label>
+            Langue
+          </label>
+
+
+          <select>
+
+            <option>Français</option>
+
+            <option>Arabe</option>
+
+            <option>English</option>
+
+          </select>
+
+
+        </div>
+
+
+      </div>
+
+
+    </div>
+
+
+  <!-- Informations système -->
+
+
+  <div class="system-card">
+
+
+    <div class="system-header">
+
+      <i class="fa-solid fa-circle-info"></i>
+
+      Informations système
+
+    </div>
+
+
+
+    <div class="system-body">
+
+
+      <div>
+
+        <span>
+          Application
+        </span>
+
+        <strong>
+          ALSA Clean Fleet
+        </strong>
+
+      </div>
+
+
+
+      <div>
+
+        <span>
+          Version
+        </span>
+
+        <strong>
+          1.0.0
+        </strong>
+
+      </div>
+
+
+
+      <div>
+
+        <span>
+          Environnement
+        </span>
+
+        <strong>
+          Production
+        </strong>
+
+      </div>
+
+
+
+    </div>
 
 
   </div>
+
 
 
 </div>
