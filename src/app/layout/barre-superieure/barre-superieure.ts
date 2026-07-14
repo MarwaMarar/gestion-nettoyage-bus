@@ -2,54 +2,41 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 
-
 @Component({
   selector: 'app-barre-superieure',
   standalone: true,
-  imports: [
-    CommonModule
-  ],
+  imports: [CommonModule],
   templateUrl: './barre-superieure.html',
-  styleUrl: './barre-superieure.css',
+  styleUrls: ['./barre-superieure.css']
 })
-export class BarreSuperieure {
+export class BarreSuperieureComponent {
 
-
-  profilOuvert = false;
   notificationsOuvert = false;
+  profilOuvert = false;
+
+  constructor(private router: Router) {}
 
 
-  constructor(
-    private router: Router
-  ){}
+  deconnexion() {
 
 
+    localStorage.removeItem('user');
+    localStorage.removeItem('token');
 
-  allerProfil(){
+    this.router.navigate(['/login']);
 
-    this.router.navigate(['/admin/profil']);
+  }
 
+
+  allerProfil() {
+    this.router.navigate(['/profil']);
     this.profilOuvert = false;
-
   }
 
 
-
-  allerParametres(){
-
-    this.router.navigate(['/admin/parametres']);
-
+  allerParametres() {
+    this.router.navigate(['/parametres']);
     this.profilOuvert = false;
-
   }
-
-
-
-  deconnexion(){
-
-    console.log("Déconnexion");
-
-  }
-
 
 }
