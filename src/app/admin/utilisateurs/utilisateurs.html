@@ -124,6 +124,8 @@
       </div>
     </div>
 
+
+
     <table>
   <thead>
     <tr>
@@ -139,7 +141,7 @@
 
   <tbody>
 
-    <tr *ngFor="let u of utilisateursFiltres">
+  <tr *ngFor="let u of utilisateurs">
 
       <td>
         <div style="display:flex;align-items:center;gap:10px">
@@ -199,12 +201,16 @@
 
           <button
             class="btn-supprimer"
-            (click)="supprimerUtilisateur(u.email)">
+            (click)="supprimerUtilisateur(u.id)" >
 
             <i class="fa-solid fa-trash"></i>
             Désactiver
 
           </button>
+
+
+
+
 
         </div>
       </td>

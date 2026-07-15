@@ -270,14 +270,7 @@ get nettoyagesFiltres() {
             this.bus.push(b);
           }
 
-          const tLower = t.toLowerCase();
-          if (tLower.includes('2 jour') || tLower.includes('2 jours') || tLower.includes('deux jours')) {
-            t = 'Tous les 2 jours';
-          } else if (tLower.includes('semaine') || tLower.includes('hebdo')) {
-            t = 'Chaque semaine';
-          } else if (tLower.includes('mois') || tLower.includes('mensuel')) {
-            t = 'Chaque mois';
-          }
+         
 
           const sLower = s.toLowerCase();
           if (sLower.includes('attente') || sLower.includes('wait')) {

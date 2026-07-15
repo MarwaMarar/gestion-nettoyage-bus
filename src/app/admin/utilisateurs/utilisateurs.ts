@@ -1,18 +1,23 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { UtilisateurService } from '../../service/utilisateur.service';
 import { parseCSV } from '../../utils/csv-parser';
+
 
 @Component({
   selector: 'app-utilisateurs',
-  imports: [CommonModule, FormsModule],
+  imports: [
+    CommonModule,
+    FormsModule
+  ],
   templateUrl: './utilisateurs.html',
   styleUrl: './utilisateurs.css',
 })
-export class Utilisateurs {
+export class Utilisateurs implements OnInit {
+
 
   afficherFormulaire = false;
-
   modeModification = false;
 
   utilisateurSelectionne: any = null;
@@ -20,6 +25,7 @@ export class Utilisateurs {
 
   afficherImport = false;
   isDragging = false;
+
   messageImport = '';
   typeMessageImport = '';
 
@@ -33,237 +39,380 @@ export class Utilisateurs {
   recherche = '';
 
 
+utilisateurs: any[] = [];
 
-  utilisateurs = [
-  {
-    nom: 'Ahmed',
-    matricule: 'MAT001',
-    telephone: '0612345678',
-    email: 'ahmed@gmail.com',
-    login: 'ahmed',
-    role: 'Nettoyeur'
-  },
-  {
-    nom: 'Admin',
-    matricule: 'ADM001',
-    telephone: '0600000000',
-    email: 'admin@gmail.com',
-    login: 'admin',
-    role: 'Administrateur'
+
+
+  constructor(
+    private utilisateurService: UtilisateurService
+  ) {}
+
+
+ngOnInit(): void {
+  this.chargerUtilisateurs();
+}
+chargerUtilisateurs() {
+
+  this.utilisateurService.getUtilisateurs()
+    .subscribe((data: any[]) => {
+
+      this.utilisateurs = data;
+
+    });
+
+}
+
+
+get utilisateursFiltres() {
+
+  if (!this.utilisateurs) {
+    return [];
   }
-];
+
+  if (!this.recherche) {
+    return this.utilisateurs;
+  }
+
+  const recherche = this.recherche.toLowerCase();
+
+  return this.utilisateurs.filter(utilisateur =>
+    (utilisateur.nom ?? '').toLowerCase().includes(recherche) ||
+    (utilisateur.email ?? '').toLowerCase().includes(recherche)
+  );
+
+}
 
 
-  ajouterUtilisateur() {
+
+
+  ajouterUtilisateur(): void {
 
     this.afficherFormulaire = true;
+
     this.modeModification = false;
 
     this.nom = '';
-  this.matricule = '';
-  this.telephone = '';
-  this.email = '';
-  this.login = '';
-  this.role = '';
+    this.matricule = '';
+    this.telephone = '';
+    this.email = '';
+    this.login = '';
+    this.role = '';
 
   }
 
-get utilisateursFiltres() {
-  return this.utilisateurs.filter(utilisateur =>
-    utilisateur.nom.toLowerCase().includes(this.recherche.toLowerCase()) ||
-    utilisateur.email.toLowerCase().includes(this.recherche.toLowerCase())
-  );
-}
 
 
-  enregistrerUtilisateur() {
 
-  if (this.modeModification) {
+  enregistrerUtilisateur(): void {
 
-    this.utilisateurSelectionne.nom = this.nom;
-    this.utilisateurSelectionne.matricule = this.matricule;
-    this.utilisateurSelectionne.telephone = this.telephone;
-    this.utilisateurSelectionne.email = this.email;
-    this.utilisateurSelectionne.login = this.login;
-    this.utilisateurSelectionne.role = this.role;
 
-  } else {
+    const utilisateur = {
 
-    this.utilisateurs.push({
+
       nom: this.nom,
+
       matricule: this.matricule,
+
       telephone: this.telephone,
+
       email: this.email,
+
       login: this.login,
-      role: this.role
-    });
-
-  }
-
-  this.nom = '';
-  this.matricule = '';
-  this.telephone = '';
-  this.email = '';
-  this.login = '';
-  this.role = '';
-
-  this.afficherFormulaire = false;
-  this.modeModification = false;
-
-}
-  supprimerUtilisateur(email: string) {
-
-    this.utilisateurs = this.utilisateurs.filter(
-      utilisateur => utilisateur.email !== email
-    );
-
-  }
 
 
-
-  modifierUtilisateur(utilisateur: any) {
-
-  this.utilisateurSelectionne = utilisateur;
-
-  this.nom = utilisateur.nom;
-  this.matricule = utilisateur.matricule;
-  this.telephone = utilisateur.telephone;
-  this.email = utilisateur.email;
-  this.login = utilisateur.login;
-  this.role = utilisateur.role;
-
-  this.afficherFormulaire = true;
-  this.modeModification = true;
-
-}
+      role: this.role === 'Administrateur'
+        ? 'ADMIN'
+        : this.role === 'Nettoyeur'
+        ? 'NETTOYEUR'
+        : 'SUPERVISEUR',
 
 
-  basculerImport() {
-    this.afficherImport = !this.afficherImport;
-    this.messageImport = '';
-  }
+      actif: true
 
 
-  onDragOver(event: DragEvent) {
-    event.preventDefault();
-    event.stopPropagation();
-    this.isDragging = true;
-  }
-
-  onDragLeave(event: DragEvent) {
-    event.preventDefault();
-    event.stopPropagation();
-    this.isDragging = false;
-  }
-
-  onDrop(event: DragEvent) {
-    event.preventDefault();
-    event.stopPropagation();
-    this.isDragging = false;
-
-    const files = event.dataTransfer?.files;
-    if (files && files.length > 0) {
-      const file = files[0];
-      if (file.name.endsWith('.csv')) {
-        this.lireFichier(file);
-      } else {
-        this.messageImport = 'Veuillez déposer un fichier au format .csv';
-        this.typeMessageImport = 'error';
-      }
-    }
-  }
-
-  onFileSelected(event: Event) {
-    const input = event.target as HTMLInputElement;
-    if (input.files && input.files.length > 0) {
-      const file = input.files[0];
-      this.lireFichier(file);
-    }
-  }
-
-  private lireFichier(file: File) {
-    const reader = new FileReader();
-    reader.onload = (e: any) => {
-      const text = e.target.result;
-      this.traiterCSV(text);
     };
-    reader.onerror = () => {
-      this.messageImport = 'Erreur lors de la lecture du fichier.';
-      this.typeMessageImport = 'error';
-    };
-    reader.readAsText(file, 'UTF-8');
-  }
 
-  private traiterCSV(content: string) {
-    try {
-      const data = parseCSV(content);
-      if (data.length === 0) {
-        this.messageImport = 'Le fichier CSV est vide ou invalide.';
-        this.typeMessageImport = 'error';
-        return;
-      }
 
-      const firstRow = data[0];
-      const keys = Object.keys(firstRow);
 
-      const nomKey = keys.find(k => k.toLowerCase().includes('nom') || k.toLowerCase() === 'name');
-      const emailKey = keys.find(k => k.toLowerCase().includes('mail') || k.toLowerCase() === 'email');
-      const roleKey = keys.find(k => k.toLowerCase().includes('role') || k.toLowerCase() === 'rôle');
 
-      if (!nomKey || !emailKey || !roleKey) {
-        this.messageImport = 'Le fichier CSV doit contenir les colonnes : nom, email, role';
-        this.typeMessageImport = 'error';
-        return;
-      }
+    if(this.modeModification){
 
-      let countImported = 0;
-      let countDuplicates = 0;
 
-      data.forEach(row => {
-        const uNom = (row[nomKey] || '').toString().trim();
-        const uEmail = (row[emailKey] || '').toString().trim();
-        let uRole = (row[roleKey] || '').toString().trim();
+      this.utilisateurService
+      .modifierUtilisateur(
+        this.utilisateurSelectionne.id,
+        utilisateur
+      )
+      .subscribe(()=>{
 
-        if (uRole.toLowerCase().startsWith('admin')) {
-          uRole = 'Administrateur';
-        } else if (uRole.toLowerCase().startsWith('super')) {
-          uRole = 'Superviseur';
-        } else {
-          uRole = 'Nettoyeur';
-        }
+        this.chargerUtilisateurs();
 
-        if (uNom && uEmail) {
-          const existe = this.utilisateurs.some(u => u.email.toLowerCase() === uEmail.toLowerCase());
-          if (!existe) {
-            this.utilisateurs.push({
-            nom: uNom,
-            matricule: '',
-            telephone: '',
-            email: uEmail,
-            login: '',
-            role: uRole
-});
-            countImported++;
-          } else {
-            countDuplicates++;
-          }
-        }
       });
 
-      if (countImported > 0) {
-        this.messageImport = `${countImported} utilisateur(s) importé(s) avec succès.${countDuplicates > 0 ? ` (${countDuplicates} doublon(s) ignoré(s))` : ''}`;
-        this.typeMessageImport = 'success';
-      } else if (countDuplicates > 0) {
-        this.messageImport = 'Aucun utilisateur importé. Tous les emails existent déjà (doublons).';
-        this.typeMessageImport = 'error';
-      } else {
-        this.messageImport = 'Aucune donnée valide trouvée dans le fichier CSV.';
-        this.typeMessageImport = 'error';
-      }
-    } catch (err: any) {
-      this.messageImport = `Erreur lors de l'analyse du CSV : ${err.message || err}`;
-      this.typeMessageImport = 'error';
+
     }
+
+    else{
+
+
+      this.utilisateurService
+      .ajouterUtilisateur(utilisateur)
+      .subscribe(()=>{
+
+        this.chargerUtilisateurs();
+
+      });
+
+
+    }
+
+
+
+    this.afficherFormulaire = false;
+
+    this.modeModification = false;
+
+
   }
+
+
+
+
+
+  modifierUtilisateur(u:any): void {
+
+
+    this.utilisateurSelectionne = u;
+
+
+    this.nom = u.nom;
+    this.matricule = u.matricule;
+    this.telephone = u.telephone;
+    this.email = u.email;
+    this.login = u.login;
+
+
+
+    if(u.role === 'ADMIN'){
+
+      this.role = 'Administrateur';
+
+    }
+
+    else if(u.role === 'NETTOYEUR'){
+
+      this.role = 'Nettoyeur';
+
+    }
+
+    else{
+
+      this.role = 'Superviseur';
+
+    }
+
+
+    this.afficherFormulaire = true;
+
+    this.modeModification = true;
+
+
+  }
+
+
+
+
+
+  supprimerUtilisateur(id:number): void {
+
+
+    this.utilisateurService
+    .supprimerUtilisateur(id)
+    .subscribe(()=>{
+
+
+      this.chargerUtilisateurs();
+
+
+    });
+
+
+  }
+
+
+
+
+
+  basculerImport(): void {
+
+    this.afficherImport =
+    !this.afficherImport;
+
+
+    this.messageImport = '';
+
+  }
+
+
+
+
+  onDragOver(event:DragEvent): void {
+
+    event.preventDefault();
+
+    this.isDragging = true;
+
+  }
+
+
+
+
+  onDragLeave(event:DragEvent): void {
+
+    event.preventDefault();
+
+    this.isDragging = false;
+
+  }
+
+
+
+
+
+  onDrop(event:DragEvent): void {
+
+
+    event.preventDefault();
+
+
+    this.isDragging = false;
+
+
+    const files =
+    event.dataTransfer?.files;
+
+
+    if(files && files.length > 0){
+
+      this.lireFichier(files[0]);
+
+    }
+
+
+  }
+
+
+
+
+
+  onFileSelected(event:Event): void {
+
+
+    const input =
+    event.target as HTMLInputElement;
+
+
+    if(input.files && input.files.length > 0){
+
+      this.lireFichier(input.files[0]);
+
+    }
+
+
+  }
+
+
+
+
+
+  private lireFichier(file:File): void {
+
+
+    const reader =
+    new FileReader();
+
+
+    reader.onload = (e:any)=>{
+
+
+      this.traiterCSV(e.target.result);
+
+
+    };
+
+
+    reader.readAsText(file);
+
+
+  }
+
+
+
+
+
+
+  private traiterCSV(content:string): void {
+
+
+    try{
+
+
+      const data =
+      parseCSV(content);
+
+
+
+      data.forEach((row:any)=>{
+
+
+        const utilisateur = {
+
+
+          nom: row.nom,
+
+          email: row.email,
+
+          role: row.role,
+
+
+          matricule:'',
+
+          telephone:'',
+
+          login:'',
+
+          actif:true
+
+
+        };
+
+
+
+        this.utilisateurService
+        .ajouterUtilisateur(utilisateur)
+        .subscribe(()=>{
+
+          this.chargerUtilisateurs();
+
+        });
+
+
+
+      });
+
+
+
+    }
+
+    catch(error){
+
+      console.error(error);
+
+    }
+
+
+  }
+
+
 
 }
