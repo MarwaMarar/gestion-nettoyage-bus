@@ -172,68 +172,69 @@
 
     </div>
 
-    <table>
+    <div class="table-responsive">
+      <table>
 
-      <thead>
-        <tr>
-          <th>Bus</th>
-          <th>Type</th>
-          <th>Nettoyeur</th>
-          <th>Superviseur</th>
-          <th>Date</th>
-          <th>Durée</th>
-          <th>Statut</th>
-        </tr>
-      </thead>
+        <thead>
+          <tr>
+            <th>Bus</th>
+            <th>Type</th>
+            <th>Nettoyeur</th>
+            <th>Superviseur</th>
+            <th>Date</th>
+            <th>Durée</th>
+            <th>Statut</th>
+          </tr>
+        </thead>
 
-      <tbody>
+        <tbody>
 
-        <tr *ngFor="let rapport of rapportsFiltres">
+          <tr *ngFor="let rapport of rapportsFiltres">
 
-          <td>{{ rapport.bus }}</td>
+            <td>{{ rapport.bus }}</td>
 
-          <td>{{ rapport.type }}</td>
+            <td>{{ rapport.type }}</td>
 
-          <td>{{ rapport.nettoyeur }}</td>
+            <td>{{ rapport.nettoyeur }}</td>
 
-          <td>{{ rapport.superviseur }}</td>
+            <td>{{ rapport.superviseur }}</td>
 
-          <td>{{ rapport.date }}</td>
+            <td>{{ rapport.date }}</td>
 
-          <td>{{ rapport.duree }}</td>
+            <td>{{ rapport.duree }}</td>
 
-          <td>
+            <td>
 
-            <span class="badge"
-                  [class.badge-valide]="rapport.statut==='Validé'"
-                  [class.badge-refuse]="rapport.statut==='Refusé'"
-                  [class.badge-attente]="rapport.statut==='En attente'">
+              <span class="badge"
+                    [class.badge-valide]="rapport.statut==='Validé'"
+                    [class.badge-refuse]="rapport.statut==='Refusé'"
+                    [class.badge-attente]="rapport.statut==='En attente'">
 
-              {{ rapport.statut }}
+                {{ rapport.statut }}
 
-            </span>
+              </span>
 
-          </td>
+            </td>
 
-        </tr>
+          </tr>
 
-        <tr *ngIf="rapportsFiltres.length===0">
+          <tr *ngIf="rapportsFiltres.length===0">
 
-          <td colspan="7">
+            <td colspan="7">
 
-            <div class="empty-state">
-              <i class="fa-solid fa-folder-open"></i>
-              <p>Aucun rapport trouvé.</p>
-            </div>
+              <div class="empty-state">
+                <i class="fa-solid fa-folder-open"></i>
+                <p>Aucun rapport trouvé.</p>
+              </div>
 
-          </td>
+            </td>
 
-        </tr>
+          </tr>
 
-      </tbody>
+        </tbody>
 
-    </table>
-
+      </table>
+    </div>
   </div>
 
 </div>

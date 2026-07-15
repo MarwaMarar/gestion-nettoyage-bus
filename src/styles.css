@@ -160,3 +160,10 @@ body {
   0%   { background-position: -200% 0; }
   100% { background-position:  200% 0; }
 }
+
+/* ── Utility: Responsive Table ── */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}

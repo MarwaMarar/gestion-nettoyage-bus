@@ -1,6 +1,12 @@
 
 <div class="layout">
 
+  <!-- Overlay sur mobile -->
+  <div class="sidebar-overlay" 
+       *ngIf="layoutService.sidebarOpen()" 
+       (click)="layoutService.closeSidebar()">
+  </div>
+
   <app-barre-laterale></app-barre-laterale>
 
   <div class="contenu-principal">

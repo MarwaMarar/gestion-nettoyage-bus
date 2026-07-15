@@ -1,41 +1,46 @@
-<div class="sidebar">
+<div class="sidebar" [class.open]="layoutService.sidebarOpen()">
 
-  
-  <a class="sidebar-logo" routerLink="/admin/tableau-de-bord">
-    <div class="sidebar-logo-icon">
-      <i class="fa-solid fa-bus"></i>
-    </div>
-    <div class="sidebar-logo-text">
-      <h2>ALSA</h2>
-      <span>Clean Fleet</span>
-    </div>
-  </a>
+  <div class="sidebar-header-mobile">
+    <a class="sidebar-logo" routerLink="/admin/tableau-de-bord" (click)="layoutService.closeSidebar()">
+      <div class="sidebar-logo-icon">
+        <i class="fa-solid fa-bus"></i>
+      </div>
+      <div class="sidebar-logo-text">
+        <h2>ALSA</h2>
+        <span>Clean Fleet</span>
+      </div>
+    </a>
+    
+    <button class="close-sidebar-btn" (click)="layoutService.closeSidebar()">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+  </div>
 
 
   <span class="sidebar-section-label">Menu principal</span>
 
   <nav>
-    <a routerLink="/admin/tableau-de-bord" routerLinkActive="active">
+    <a routerLink="/admin/tableau-de-bord" routerLinkActive="active" (click)="layoutService.closeSidebar()">
       <i class="fa-solid fa-gauge-high"></i>
       <span>Tableau de bord</span>
     </a>
 
-    <a routerLink="/admin/bus" routerLinkActive="active">
+    <a routerLink="/admin/bus" routerLinkActive="active" (click)="layoutService.closeSidebar()">
       <i class="fa-solid fa-bus"></i>
       <span>Bus</span>
     </a>
 
-    <a routerLink="/admin/utilisateurs" routerLinkActive="active">
+    <a routerLink="/admin/utilisateurs" routerLinkActive="active" (click)="layoutService.closeSidebar()">
       <i class="fa-solid fa-users"></i>
       <span>Utilisateurs</span>
     </a>
 
-    <a routerLink="/admin/nettoyages" routerLinkActive="active">
+    <a routerLink="/admin/nettoyages" routerLinkActive="active" (click)="layoutService.closeSidebar()">
       <i class="fa-solid fa-broom"></i>
       <span>Nettoyages</span>
     </a>
 
-    <a routerLink="/admin/rapports" routerLinkActive="active">
+    <a routerLink="/admin/rapports" routerLinkActive="active" (click)="layoutService.closeSidebar()">
       <i class="fa-solid fa-chart-line"></i>
       <span>Rapports</span>
     </a>
@@ -43,7 +48,7 @@
 
  
   <div class="sidebar-footer">
-    <a routerLink="/admin/parametres" routerLinkActive="active">
+    <a routerLink="/admin/parametres" routerLinkActive="active" (click)="layoutService.closeSidebar()">
       <i class="fa-solid fa-gear"></i>
       <span>Paramètres</span>
     </a>

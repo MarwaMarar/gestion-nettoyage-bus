@@ -1,12 +1,14 @@
-import { Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
-
+import { Component, inject } from '@angular/core';
+import { RouterModule } from '@angular/router';
+import { LayoutService } from '../../service/layout.service';
 
 @Component({
   selector: 'app-barre-laterale',
   standalone: true,
-  imports: [RouterLink,],
+  imports: [RouterModule],
   templateUrl: './barre-laterale.html',
-  styleUrl: './barre-laterale.css'
+  styleUrls: ['./barre-laterale.css']
 })
-export class BarreLaterale {}
+export class BarreLaterale {
+  layoutService = inject(LayoutService);
+}

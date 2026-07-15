@@ -112,63 +112,65 @@
       </div>
     </div>
 
-    <table>
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Numéro de bus</th>
-          <th>Immatriculation</th>
-          <th>Type de bus</th>
-          <th>Statut</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let b of busFiltres">
-          <td><span class="badge badge-neutral">#{{ b.id }}</span></td>
-          <td><strong>{{ b.numero }}</strong></td>
-          <td>{{ b.immatriculation }}</td>
-          <td>
-            <span class="badge"
-              [class.badge-BHNS]="b.assignation === 'BHNS'"
-              [class.badge-MERCEDES]="b.assignation === 'MERCEDES'"
-              [class.badge-KING-LONG]="b.assignation === 'KING-LONG'"
-              [class.badge-ISUZU]="b.assignation === 'ISUZU'"
-              [class.badge-MAN]="b.assignation === 'MAN'"
-              [class.badge-none]="!b.assignation">
-              {{ b.assignation || '—' }}
-            </span>
-          </td>
+    <div class="table-responsive">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Numéro de bus</th>
+            <th>Immatriculation</th>
+            <th>Type de bus</th>
+            <th>Statut</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let b of busFiltres">
+            <td><span class="badge badge-neutral">#{{ b.id }}</span></td>
+            <td><strong>{{ b.numero }}</strong></td>
+            <td>{{ b.immatriculation }}</td>
+            <td>
+              <span class="badge"
+                [class.badge-BHNS]="b.assignation === 'BHNS'"
+                [class.badge-MERCEDES]="b.assignation === 'MERCEDES'"
+                [class.badge-KING-LONG]="b.assignation === 'KING-LONG'"
+                [class.badge-ISUZU]="b.assignation === 'ISUZU'"
+                [class.badge-MAN]="b.assignation === 'MAN'"
+                [class.badge-none]="!b.assignation">
+                {{ b.assignation || '—' }}
+              </span>
+            </td>
 
-          <td>
-            <span class="badge"
-              [class.badge-actif]="b.statut === 'Actif'"
-              [class.badge-inactif]="b.statut === 'Inactif'">
-              {{ b.statut || '—' }}
-             </span>
-          </td>
+            <td>
+              <span class="badge"
+                [class.badge-actif]="b.statut === 'Actif'"
+                [class.badge-inactif]="b.statut === 'Inactif'">
+                {{ b.statut || '—' }}
+               </span>
+            </td>
 
-          <td>
-            <div class="td-actions">
-              <button class="btn-modifier" (click)="modifierBus(b)">
-                <i class="fa-solid fa-pen"></i> Modifier
-              </button>
-              <button class="btn-supprimer" (click)="supprimerBus(b.id)">
-                <i class="fa-solid fa-trash"></i> Désactiver
-              </button>
-            </div>
-          </td>
-        </tr>
-        <tr *ngIf="busFiltres.length === 0">
-          <td colspan="6">
-            <div class="empty-state">
-              <i class="fa-solid fa-bus-simple"></i>
-              <p>Aucun bus trouvé</p>
-            </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+            <td>
+              <div class="td-actions">
+                <button class="btn-modifier" (click)="modifierBus(b)">
+                  <i class="fa-solid fa-pen"></i> Modifier
+                </button>
+                <button class="btn-supprimer" (click)="supprimerBus(b.id)">
+                  <i class="fa-solid fa-trash"></i> Désactiver
+                </button>
+              </div>
+            </td>
+          </tr>
+          <tr *ngIf="busFiltres.length === 0">
+            <td colspan="6">
+              <div class="empty-state">
+                <i class="fa-solid fa-bus-simple"></i>
+                <p>Aucun bus trouvé</p>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 
 </div>

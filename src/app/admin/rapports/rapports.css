@@ -344,5 +344,6 @@ tbody tr:hover {
 
   .dates {
     flex-direction: column;
+    align-items: flex-end;
   }
 }

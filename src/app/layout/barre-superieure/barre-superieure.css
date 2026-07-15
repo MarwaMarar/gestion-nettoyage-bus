@@ -23,6 +23,11 @@
   gap: 10px;
 }
 
+.mobile-menu-btn {
+  display: none; /* Cacher sur PC */
+}
+
+
 .navbar-title {
   font-size: 15px;
   font-weight: 600;
@@ -199,6 +204,9 @@
   .navbar-profile-info { display: none; }
   .navbar {
     padding: 0 16px;
+  }
+  .mobile-menu-btn {
+    display: flex;
   }
 }
 

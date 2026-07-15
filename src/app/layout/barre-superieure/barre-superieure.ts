@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { LayoutService } from '../../service/layout.service';
 
 @Component({
   selector: 'app-barre-superieure',
@@ -13,6 +14,8 @@ export class BarreSuperieureComponent {
 
   notificationsOuvert = false;
   profilOuvert = false;
+
+  layoutService = inject(LayoutService);
 
   constructor(private router: Router) {}
 

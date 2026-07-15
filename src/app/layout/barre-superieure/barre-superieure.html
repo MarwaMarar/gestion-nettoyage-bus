@@ -1,7 +1,11 @@
 <div class="navbar">
 
   <!-- Partie gauche -->
-  <div class="navbar-left">
+<div class="navbar-left">
+
+    <button class="navbar-icon-btn mobile-menu-btn" (click)="layoutService.toggleSidebar()">
+      <i class="fa-solid fa-bars"></i>
+    </button>
 
     <span class="navbar-title">
       ALSA Clean Fleet
