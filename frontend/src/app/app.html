@@ -1,17 +1,21 @@
 
-<div class="layout">
+<div class="layout" [class.layout-login]="isLoginPage()">
 
-  <!-- Overlay sur mobile -->
-  <div class="sidebar-overlay" 
-       *ngIf="layoutService.sidebarOpen()" 
-       (click)="layoutService.closeSidebar()">
-  </div>
+  @if (!isLoginPage()) {
+    <!-- Overlay sur mobile -->
+    <div class="sidebar-overlay" 
+         *ngIf="layoutService.sidebarOpen()" 
+         (click)="layoutService.closeSidebar()">
+    </div>
 
-  <app-barre-laterale></app-barre-laterale>
+    <app-barre-laterale></app-barre-laterale>
+  }
 
-  <div class="contenu-principal">
+  <div class="contenu-principal" [class.no-sidebar]="isLoginPage()">
 
-    <app-barre-superieure></app-barre-superieure>
+    @if (!isLoginPage()) {
+      <app-barre-superieure></app-barre-superieure>
+    }
 
     <div class="page">
       <router-outlet></router-outlet>

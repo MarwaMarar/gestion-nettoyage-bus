@@ -1,9 +1,11 @@
-import { Component, inject, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component, inject, signal, computed } from '@angular/core';
+import { RouterOutlet, Router, NavigationEnd } from '@angular/router';
 import { BarreLaterale } from './layout/barre-laterale/barre-laterale';
 import { BarreSuperieureComponent } from './layout/barre-superieure/barre-superieure';
 import { CommonModule } from '@angular/common';
 import { LayoutService } from './service/layout.service';
+import { filter } from 'rxjs/operators';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-root',
@@ -20,4 +22,17 @@ import { LayoutService } from './service/layout.service';
 export class App {
   protected readonly title = signal('gestion-nettoyage-bus');
   layoutService = inject(LayoutService);
+  private router = inject(Router);
+
+  private currentUrl = toSignal(
+    this.router.events.pipe(
+      filter(e => e instanceof NavigationEnd),
+    ),
+    { initialValue: null }
+  );
+
+  isLoginPage = computed(() => {
+    this.currentUrl();
+    return this.router.url === '/login' || this.router.url === '/';
+  });
 }

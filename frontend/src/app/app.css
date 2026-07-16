@@ -4,6 +4,10 @@
   min-height: 100vh;
 }
 
+.layout-login {
+  display: block;
+}
+
 .contenu-principal {
   flex: 1;
   margin-left: var(--sidebar-w);
@@ -12,6 +16,10 @@
   display: flex;
   flex-direction: column;
   transition: margin-left var(--transition);
+}
+
+.contenu-principal.no-sidebar {
+  margin-left: 0;
 }
 
 .page {
@@ -23,6 +31,9 @@
 @media (max-width: 1024px) {
   .contenu-principal {
     margin-left: 72px;
+  }
+  .contenu-principal.no-sidebar {
+    margin-left: 0;
   }
 }
 

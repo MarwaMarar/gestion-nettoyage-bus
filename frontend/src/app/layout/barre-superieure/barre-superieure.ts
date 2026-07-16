@@ -22,7 +22,7 @@ export class BarreSuperieureComponent {
 
   deconnexion() {
 
-
+    localStorage.removeItem('adminConnecte');
     localStorage.removeItem('user');
     localStorage.removeItem('token');
 
@@ -32,13 +32,13 @@ export class BarreSuperieureComponent {
 
 
   allerProfil() {
-    this.router.navigate(['/profil']);
+    this.router.navigate(['/admin/profil']);
     this.profilOuvert = false;
   }
 
 
   allerParametres() {
-    this.router.navigate(['/parametres']);
+    this.router.navigate(['/admin/parametres']);
     this.profilOuvert = false;
   }
 
