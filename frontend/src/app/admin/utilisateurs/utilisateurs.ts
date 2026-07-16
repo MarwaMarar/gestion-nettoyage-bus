@@ -56,28 +56,24 @@ chargerUtilisateurs() {
   this.utilisateurService.getUtilisateurs()
     .subscribe((data: any[]) => {
 
+      console.log("DATA ARRIVED:", data);
+
       this.utilisateurs = data;
+
+      console.log("USERS VARIABLE:", this.utilisateurs);
 
     });
 
 }
 
-
 get utilisateursFiltres() {
 
-  if (!this.utilisateurs) {
-    return [];
-  }
-
-  if (!this.recherche) {
-    return this.utilisateurs;
-  }
-
-  const recherche = this.recherche.toLowerCase();
-
   return this.utilisateurs.filter(utilisateur =>
-    (utilisateur.nom ?? '').toLowerCase().includes(recherche) ||
-    (utilisateur.email ?? '').toLowerCase().includes(recherche)
+    (utilisateur.nom ?? '').toLowerCase()
+    .includes(this.recherche.toLowerCase()) ||
+
+    (utilisateur.email ?? '').toLowerCase()
+    .includes(this.recherche.toLowerCase())
   );
 
 }
