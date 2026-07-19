@@ -12,6 +12,9 @@ public class Bus {
 
     private String numeroBus;
 
+    @Column(unique = true)
+    private String immatriculation;
+
     private Boolean actif = true;
 
 
@@ -37,6 +40,16 @@ public class Bus {
     public void setNumeroBus(String numeroBus) {
         this.numeroBus = numeroBus;
     }
+
+
+    public String getImmatriculation() {
+        return immatriculation;
+    }
+
+    public void setImmatriculation(String immatriculation) {
+        this.immatriculation = immatriculation;
+    }
+
 
 
     public Boolean getActif() {
