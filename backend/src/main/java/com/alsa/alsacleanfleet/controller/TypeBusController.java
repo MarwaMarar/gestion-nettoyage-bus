@@ -29,6 +29,10 @@ public class TypeBusController {
     public List<TypeBus> getAll() {
         return typeBusService.getAllTypes();
     }
+    @GetMapping("/{id}")
+    public ResponseEntity<TypeBus> getById(@PathVariable Long id) {
+        return typeBusService.getById(id).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+    }
 
     @PostMapping
     public TypeBus ajouter(@RequestBody TypeBus typeBus) {

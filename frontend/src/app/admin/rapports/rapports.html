@@ -32,48 +32,20 @@
   </div>
 
   <!-- Statistiques -->
-  <div class="cartes">
-
-    <div class="carte carte-total">
-      <div class="carte-icon">
-        <i class="fa-solid fa-list-check"></i>
+  <div class="chart-panel">
+    <p *ngIf="loading" class="chart-message">Chargement…</p>
+    <p *ngIf="errorMessage" class="chart-message chart-error">{{ errorMessage }}</p>
+    <div class="chart-content" [class.chart-loading]="loading">
+      <div class="chart-canvas-wrap">
+        <canvas #statusChart aria-label="Répartition des nettoyages par statut"></canvas>
+        <span *ngIf="!loading && totalNettoyages === 0" class="chart-empty">Aucune donnée</span>
       </div>
-      <div class="carte-info">
-        <h3>{{ totalNettoyages }}</h3>
-        <p>Total Nettoyages</p>
-      </div>
-    </div>
-
-    <div class="carte carte-valide">
-      <div class="carte-icon">
-        <i class="fa-solid fa-circle-check"></i>
-      </div>
-      <div class="carte-info">
-        <h3>{{ nettoyagesValides }}</h3>
-        <p>Validés</p>
+      <div class="chart-legend">
+        <div><span class="legend-dot legend-valide"></span><span>Validés</span><strong>{{ nettoyagesValides }}</strong></div>
+        <div><span class="legend-dot legend-refuse"></span><span>Refusés</span><strong>{{ nettoyagesRefuses }}</strong></div>
+        <div><span class="legend-dot legend-attente"></span><span>En attente</span><strong>{{ nettoyagesEnAttente }}</strong></div>
       </div>
     </div>
-
-    <div class="carte carte-refuse">
-      <div class="carte-icon">
-        <i class="fa-solid fa-circle-xmark"></i>
-      </div>
-      <div class="carte-info">
-        <h3>{{ nettoyagesRefuses }}</h3>
-        <p>Refusés</p>
-      </div>
-    </div>
-
-    <div class="carte carte-attente">
-      <div class="carte-icon">
-        <i class="fa-solid fa-clock"></i>
-      </div>
-      <div class="carte-info">
-        <h3>{{ nettoyagesEnAttente }}</h3>
-        <p>En attente</p>
-      </div>
-    </div>
-
   </div>
 
   <!-- Filtres -->
@@ -148,7 +120,7 @@
         </select>
       </div>
 
-      <button class="btn-rechercher">
+      <button class="btn-rechercher" (click)="appliquerFiltres()">
         <i class="fa-solid fa-magnifying-glass"></i>
         Filtrer
       </button>

@@ -1,17 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { TableauDeBord } from './tableau-de-bord';
+import { TableauDeBordComponent } from './tableau-de-bord';
 
 describe('TableauDeBord', () => {
-  let component: TableauDeBord;
-  let fixture: ComponentFixture<TableauDeBord>;
+  let component: TableauDeBordComponent;
+  let fixture: ComponentFixture<TableauDeBordComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [TableauDeBord],
+      imports: [TableauDeBordComponent],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(TableauDeBord);
+    fixture = TestBed.createComponent(TableauDeBordComponent);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { AuthService } from '../service/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -17,19 +18,12 @@ export class Login {
   messageErreur: string = '';
   afficherMotDePasse: boolean = false;
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private auth: AuthService) {}
 
 
   seConnecter() {
 
-    const emailAdmin = "admin@alsa.ma";
-    const passwordAdmin = "123456";
-
-
-    if(this.email === emailAdmin && this.password === passwordAdmin) {
-
-      localStorage.setItem('adminConnecte', 'true');
-
+    if(this.auth.login(this.email, this.password)) {
       this.router.navigate(['/admin/tableau-de-bord']);
 
     } else {

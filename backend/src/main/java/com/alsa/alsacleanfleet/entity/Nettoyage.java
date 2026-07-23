@@ -15,19 +15,19 @@ public class Nettoyage {
     private Long id;
 
 
-    @ManyToOne
-    @JoinColumn(name = "bus_id")
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "bus_id", nullable = false)
     private Bus bus;
 
 
-    @ManyToOne
-    @JoinColumn(name = "type_nettoyage_id")
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "type_nettoyage_id", nullable = false)
     private TypeNettoyage typeNettoyage;
 
 
     // Le nettoyeur qui a effectué le nettoyage
-    @ManyToOne
-    @JoinColumn(name = "nettoyeur_id")
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "nettoyeur_id", nullable = false)
     private Utilisateur nettoyeur;
 
 
@@ -37,7 +37,8 @@ public class Nettoyage {
     private Utilisateur superviseur;
 
 
-    private LocalDate date;
+    @Column(name = "date_nettoyage", nullable = false)
+    private LocalDate dateNettoyage;
 
 
     private LocalDateTime heureDebut;
@@ -110,12 +111,12 @@ public class Nettoyage {
     }
 
 
-    public LocalDate getDate() {
-        return date;
+    public LocalDate getDateNettoyage() {
+        return dateNettoyage;
     }
 
-    public void setDate(LocalDate date) {
-        this.date = date;
+    public void setDateNettoyage(LocalDate dateNettoyage) {
+        this.dateNettoyage = dateNettoyage;
     }
 
 

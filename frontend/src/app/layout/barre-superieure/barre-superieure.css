@@ -199,6 +199,23 @@
   border-color: var(--border-hover);
 }
 
+@media (min-width: 1025px) {
+  .mobile-menu-btn,
+  .navbar-search {
+    display: none !important;
+  }
+}
+
+@media (max-width: 1024px) {
+  .mobile-menu-btn {
+    display: flex;
+  }
+
+  .navbar-search {
+    display: none;
+  }
+}
+
 @media (max-width: 640px) {
   .navbar-search { display: none; }
   .navbar-profile-info { display: none; }

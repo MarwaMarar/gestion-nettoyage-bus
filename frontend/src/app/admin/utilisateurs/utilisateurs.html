@@ -74,8 +74,10 @@
 
   <input
     type="text"
-    placeholder="Nom complet"
+    placeholder="Nom"
     [(ngModel)]="nom">
+
+  <input type="text" placeholder="Prénom" [(ngModel)]="prenom">
 
   <input
     type="text"
@@ -97,11 +99,13 @@
     placeholder="Login"
     [(ngModel)]="login">
 
+  <input type="password" [placeholder]="modeModification ? 'Nouveau mot de passe (facultatif)' : 'Mot de passe'" [(ngModel)]="motDePasse">
+
   <select [(ngModel)]="role">
     <option value="">Rôle</option>
-    <option value="Administrateur">Administrateur</option>
-    <option value="Nettoyeur">Nettoyeur</option>
-    <option value="Superviseur">Superviseur</option>
+    <option value="ADMINISTRATEUR">Administrateur</option>
+    <option value="NETTOYEUR">Nettoyeur</option>
+    <option value="SUPERVISEUR">Superviseur</option>
   </select>
 
   <button class="btn-formulaire" (click)="enregistrerUtilisateur()">
@@ -113,6 +117,7 @@
   </button>
 
 </div>
+<p *ngIf="messageFormulaire" class="import-feedback error">{{ messageFormulaire }}</p>
 
 
   <div class="table-card">
@@ -178,11 +183,11 @@
       <td>
         <span
           class="badge"
-          [class.badge-admin]="u.role === 'Administrateur'"
-          [class.badge-super]="u.role === 'Superviseur'"
-          [class.badge-nett]="u.role === 'Nettoyeur'">
+          [class.badge-admin]="u.role === 'ADMINISTRATEUR'"
+          [class.badge-super]="u.role === 'SUPERVISEUR'"
+          [class.badge-nett]="u.role === 'NETTOYEUR'">
 
-          {{ u.role }}
+          {{ u.roleLabel }}
 
         </span>
       </td>

@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common';
 import { LayoutService } from './service/layout.service';
 import { filter } from 'rxjs/operators';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { LanguageService } from './service/language.service';
 
 @Component({
   selector: 'app-root',
@@ -22,6 +23,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 export class App {
   protected readonly title = signal('gestion-nettoyage-bus');
   layoutService = inject(LayoutService);
+  private readonly languageService = inject(LanguageService);
   private router = inject(Router);
 
   private currentUrl = toSignal(

@@ -152,6 +152,83 @@
   margin: 0;
 }
 
+.chart-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px 24px;
+  margin-bottom: 24px;
+  box-shadow: var(--shadow-sm);
+}
+
+.chart-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 42px;
+  min-height: 230px;
+}
+
+.chart-loading {
+  opacity: .45;
+}
+
+.chart-canvas-wrap {
+  position: relative;
+  width: 220px;
+  height: 220px;
+  flex: 0 0 220px;
+}
+
+.chart-empty {
+  position: absolute;
+  left: 50%;
+  top: calc(50% + 42px);
+  transform: translate(-50%, -50%);
+  color: var(--text-muted);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.chart-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 190px;
+}
+
+.chart-legend > div {
+  display: grid;
+  grid-template-columns: 12px 1fr auto;
+  align-items: center;
+  gap: 10px;
+  color: var(--text-secondary);
+  font-size: 13.5px;
+}
+
+.chart-legend strong {
+  color: var(--text-primary);
+  font-size: 15px;
+}
+
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.legend-valide { background: #16a34a; }
+.legend-refuse { background: #dc2626; }
+.legend-attente { background: #d97706; }
+
+.chart-message {
+  margin: 0 0 8px;
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.chart-error { color: var(--danger); }
+
 
 
 .filtre-date {
@@ -345,5 +422,14 @@ tbody tr:hover {
   .dates {
     flex-direction: column;
     align-items: flex-end;
+  }
+
+  .chart-content {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .chart-legend {
+    width: 100%;
   }
 }

@@ -22,6 +22,15 @@
   margin-left: 0;
 }
 
+:host-context([dir="rtl"]) .contenu-principal {
+  margin-left: 0;
+  margin-right: var(--sidebar-w);
+}
+
+:host-context([dir="rtl"]) .contenu-principal.no-sidebar {
+  margin-right: 0;
+}
+
 .page {
   flex: 1;
   padding: 24px;
@@ -32,6 +41,10 @@
   .contenu-principal {
     margin-left: 72px;
   }
+  :host-context([dir="rtl"]) .contenu-principal {
+    margin-left: 0;
+    margin-right: 72px;
+  }
   .contenu-principal.no-sidebar {
     margin-left: 0;
   }
@@ -40,6 +53,9 @@
 @media (max-width: 640px) {
   .contenu-principal {
     margin-left: 0;
+  }
+  :host-context([dir="rtl"]) .contenu-principal {
+    margin-right: 0;
   }
   .page {
     padding: 16px;

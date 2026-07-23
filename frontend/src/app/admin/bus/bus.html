@@ -46,7 +46,7 @@
         <p class="format-help">
           Colonnes attendues :
           <code>numero</code>
-          <code>immatriculation</code>
+          <code>typeBus</code>
           <code>assignation</code>
           <code>statut</code>
         </p>
@@ -75,15 +75,9 @@
 
   <div class="formulaire" *ngIf="afficherFormulaire">
     <input type="text" placeholder="Numéro du bus"  [(ngModel)]="numero">
-    <input type="text" placeholder="Immatriculation" [(ngModel)]="immatriculation">
-
-    <select [(ngModel)]="assignation">
-       <option value="">Type de bus</option>
-       <option value="BHNS">BHNS</option>
-       <option value="MERCEDES">MERCEDES</option>
-       <option value="KING-LONG">KING-LONG</option>
-      <option value="ISUZU">ISUZU</option>
-      <option value="MAN">MAN</option>
+    <select name="typeBusId" [(ngModel)]="typeBusId">
+       <option [ngValue]="null" disabled>Sélectionner un type de bus</option>
+       <option *ngFor="let type of typesBus" [ngValue]="type.id">{{ type.libelle }}</option>
     </select>
 
     <select [(ngModel)]="statut">
@@ -99,6 +93,7 @@
       <i class="fa-solid" [class.fa-pen]="modeModification" [class.fa-plus]="!modeModification"></i>
       {{ modeModification ? 'Modifier' : 'Ajouter' }}
     </button>
+    <p *ngIf="messageFormulaire" class="import-feedback error">{{ messageFormulaire }}</p>
   </div>
 
 
@@ -118,7 +113,6 @@
           <tr>
             <th>ID</th>
             <th>Numéro de bus</th>
-            <th>Immatriculation</th>
             <th>Type de bus</th>
             <th>Statut</th>
             <th>Actions</th>
@@ -128,7 +122,6 @@
           <tr *ngFor="let b of busFiltres">
             <td><span class="badge badge-neutral">#{{ b.id }}</span></td>
             <td><strong>{{ b.numero }}</strong></td>
-            <td>{{ b.immatriculation }}</td>
             <td>
               <span class="badge"
                 [class.badge-BHNS]="b.assignation === 'BHNS'"

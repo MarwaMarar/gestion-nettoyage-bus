@@ -2,7 +2,7 @@ package com.alsa.alsacleanfleet.enums;
 
 public enum Role {
 
-    ADMIN,
+    ADMINISTRATEUR,
     NETTOYEUR,
     SUPERVISEUR
 

@@ -20,6 +20,7 @@ public class TypeBusService {
     public List<TypeBus> getAllTypes() {
         return typeBusRepository.findAll();
     }
+    public Optional<TypeBus> getById(Long id) { return typeBusRepository.findById(id); }
 
     public TypeBus ajouterType(TypeBus typeBus) {
         return typeBusRepository.save(typeBus);

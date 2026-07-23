@@ -1,5 +1,8 @@
 <div class="dashboard">
 
+  <p *ngIf="loading" class="import-feedback">Chargement des données…</p>
+  <p *ngIf="errorMessage" class="import-feedback error">{{ errorMessage }}</p>
+
 
   <div class="welcome-banner">
     <div class="welcome-text">

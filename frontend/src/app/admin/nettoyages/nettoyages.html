@@ -74,31 +74,35 @@
 
 
   <div class="formulaire" *ngIf="afficherFormulaire">
-    <select [(ngModel)]="busChoisi">
-      <option value="">Choisir un bus</option>
-      <option *ngFor="let b of bus" [value]="b">{{ b }}</option>
+    <select name="busId" [(ngModel)]="form.busId">
+      <option [ngValue]="null" disabled>Choisir un bus</option>
+      <option *ngFor="let b of bus" [ngValue]="b.id">Bus {{ b.numeroBus }}</option>
     </select>
 
-    <select [(ngModel)]="type">
-      <option value="">Type de nettoyage</option>
-      <option *ngFor="let t of typesNettoyage" [value]="t">
-              {{ t }}
+    <select name="typeNettoyageId" [(ngModel)]="form.typeNettoyageId">
+      <option [ngValue]="null" disabled>Type de nettoyage</option>
+      <option *ngFor="let t of typesNettoyage" [ngValue]="t.id">
+              {{ t.libelle }}
       </option>
     </select>
 
-    <input type="date" [(ngModel)]="date">
-
-    <select [(ngModel)]="statut">
-      <option value="">Statut</option>
-      <option value="En attente">En attente</option>
-      <option value="En cours">En cours</option>
-      <option value="Terminé">Terminé</option>
+    <select name="nettoyeurId" [(ngModel)]="form.nettoyeurId">
+      <option [ngValue]="null" disabled>Choisir un nettoyeur</option>
+      <option *ngFor="let u of nettoyeurs" [ngValue]="u.id">{{ u.prenom }} {{ u.nom }}</option>
     </select>
+
+    <select name="superviseurId" [(ngModel)]="form.superviseurId">
+      <option [ngValue]="null">Aucun superviseur</option>
+      <option *ngFor="let u of superviseurs" [ngValue]="u.id">{{ u.prenom }} {{ u.nom }}</option>
+    </select>
+
+    <input type="date" [(ngModel)]="form.dateNettoyage">
 
     <button class="btn-formulaire" (click)="enregistrerNettoyage()">
       <i class="fa-solid" [class.fa-pen]="modeModification" [class.fa-plus]="!modeModification"></i>
       {{ modeModification ? 'Modifier' : 'Ajouter' }}
     </button>
+    <p *ngIf="messageFormulaire" class="import-feedback error">{{ messageFormulaire }}</p>
   </div>
 
 
@@ -126,15 +130,15 @@
       <tbody>
         <tr *ngFor="let n of nettoyagesFiltres">
           <td><span class="badge badge-neutral">#{{ n.id }}</span></td>
-          <td><strong>{{ n.bus }}</strong></td>
+          <td><strong>{{ n.busLabel }}</strong></td>
           <td>{{ n.type }}</td>
-          <td>{{ n.date }}</td>
+          <td>{{ n.dateNettoyage }}</td>
           <td>
             <span class="badge"
-              [class.badge-en-attente]="n.statut === 'En attente'"
-              [class.badge-en-cours]="n.statut === 'En cours'"
-              [class.badge-termine]="n.statut === 'Terminé'">
-              {{ n.statut }}
+              [class.badge-en-attente]="n.statut === 'EN_ATTENTE'"
+              [class.badge-en-cours]="n.statut === 'REFUSE'"
+              [class.badge-termine]="n.statut === 'VALIDE'">
+              {{ n.statutLabel }}
             </span>
           </td>
           <td>

@@ -10,16 +10,14 @@ public class Bus {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "numero_bus", nullable = false, unique = true, length = 50)
     private String numeroBus;
-
-    @Column(unique = true)
-    private String immatriculation;
 
     private Boolean actif = true;
 
 
-    @ManyToOne
-    @JoinColumn(name = "type_bus_id")
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "type_bus_id", nullable = false)
     private TypeBus typeBus;
 
 
@@ -40,16 +38,6 @@ public class Bus {
     public void setNumeroBus(String numeroBus) {
         this.numeroBus = numeroBus;
     }
-
-
-    public String getImmatriculation() {
-        return immatriculation;
-    }
-
-    public void setImmatriculation(String immatriculation) {
-        this.immatriculation = immatriculation;
-    }
-
 
 
     public Boolean getActif() {

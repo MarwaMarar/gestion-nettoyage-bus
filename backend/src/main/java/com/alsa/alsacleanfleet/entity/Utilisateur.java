@@ -2,6 +2,7 @@ package com.alsa.alsacleanfleet.entity;
 
 import com.alsa.alsacleanfleet.enums.Role;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 
 @Entity
 @Table(name = "utilisateurs")
@@ -11,24 +12,27 @@ public class Utilisateur {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank @Column(nullable = false, length = 100)
     private String nom;
 
+    @NotBlank @Column(nullable = false, length = 100)
     private String prenom;
 
-    @Column(unique = true)
+    @NotBlank @Column(nullable = false, unique = true, length = 50)
     private String matricule;
 
     private String telephone;
 
-    @Column(unique = true)
+    @NotBlank @Email @Column(nullable = false, unique = true, length = 150)
     private String email;
 
-    @Column(unique = true)
+    @NotBlank @Column(nullable = false, unique = true, length = 100)
     private String login;
 
+    @Column(name = "mot_de_passe", nullable = false, length = 255)
     private String motDePasse;
 
-    @Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.STRING) @Column(nullable = false)
     private Role role;
 
     private Boolean actif = true;

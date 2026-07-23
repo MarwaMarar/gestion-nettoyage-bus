@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { Utilisateur, UtilisateurRequest } from './api.models';
+import { environment } from '../../environments/environment';
 
 
 @Injectable({
@@ -9,20 +11,21 @@ import { Observable } from 'rxjs';
 export class UtilisateurService {
 
 
-  private apiUrl = 'http://localhost:8080/api/utilisateurs';
+  private apiUrl = `${environment.apiUrl}/utilisateurs`;
 
 
   constructor(private http: HttpClient) {}
 
 
-  getUtilisateurs(): Observable<any[]> {
+  getUtilisateurs(): Observable<Utilisateur[]> {
 
-    return this.http.get<any[]>(this.apiUrl);
+    return this.http.get<Utilisateur[]>(this.apiUrl);
 
   }
+  getById(id: number): Observable<Utilisateur> { return this.http.get<Utilisateur>(`${this.apiUrl}/${id}`); }
 
 
-  ajouterUtilisateur(utilisateur:any): Observable<any>{
+  ajouterUtilisateur(utilisateur: UtilisateurRequest): Observable<Utilisateur>{
 
     return this.http.post<any>(
       this.apiUrl,
@@ -32,7 +35,7 @@ export class UtilisateurService {
   }
 
 
-  modifierUtilisateur(id:number, utilisateur:any): Observable<any>{
+  modifierUtilisateur(id:number, utilisateur: UtilisateurRequest): Observable<Utilisateur>{
 
     return this.http.put<any>(
       `${this.apiUrl}/${id}`,
@@ -42,7 +45,7 @@ export class UtilisateurService {
   }
 
 
-  supprimerUtilisateur(id:number): Observable<any>{
+  supprimerUtilisateur(id:number): Observable<void>{
 
     return this.http.delete<any>(
       `${this.apiUrl}/${id}`

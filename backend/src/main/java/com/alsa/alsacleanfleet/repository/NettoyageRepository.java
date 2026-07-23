@@ -16,11 +16,12 @@ public interface NettoyageRepository extends JpaRepository<Nettoyage, Long> {
 
     List<Nettoyage> findByStatut(StatutNettoyage statut);
 
-    List<Nettoyage> findByDateBetween(LocalDate debut, LocalDate fin);
+    List<Nettoyage> findByDateNettoyageBetween(LocalDate debut, LocalDate fin);
+    List<Nettoyage> findBySuperviseurId(Long superviseurId);
 
     @Query("SELECT COUNT(n) FROM Nettoyage n WHERE n.statut = :statut")
     long countByStatut(StatutNettoyage statut);
 
-    @Query("SELECT COUNT(n) FROM Nettoyage n WHERE n.date = :date")
-    long countByDate(LocalDate date);
+    @Query("SELECT COUNT(n) FROM Nettoyage n WHERE n.dateNettoyage = :date")
+    long countByDateNettoyage(LocalDate date);
 }

@@ -20,9 +20,6 @@
 
   </div>
 
-
-
-
   <!-- Cards -->
 
   <div class="parametres-grid">
@@ -171,13 +168,15 @@
           </label>
 
 
-          <select>
+          <select [selectedIndex]="languageIndex" (change)="changerLangue($event)">
 
             <option>Français</option>
 
             <option>Arabe</option>
 
             <option>English</option>
+
+            <option>Español</option>
 
           </select>
 
@@ -231,7 +230,7 @@
         </span>
 
         <strong>
-          1.0.0
+          1.0.1
         </strong>
 
       </div>
