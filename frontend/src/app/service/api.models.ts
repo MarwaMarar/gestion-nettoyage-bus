@@ -1,5 +1,5 @@
 export interface TypeBus { id: number; libelle: string; }
-export interface TypeNettoyage { id: number; libelle: string; description: string | null; }
+export interface TypeNettoyage { id: number; libelle: string; description: string | null; actif: boolean; }
 export interface Bus { id: number; numeroBus: string; typeBusId: number; typeBusLibelle: string; actif: boolean; }
 export interface BusRequest { numeroBus: string; typeBusId: number; actif: boolean; }
 export type Role = 'ADMINISTRATEUR' | 'NETTOYEUR' | 'SUPERVISEUR';

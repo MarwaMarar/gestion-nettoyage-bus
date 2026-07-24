@@ -23,14 +23,11 @@ export class Login {
 
   seConnecter() {
 
-    if(this.auth.login(this.email, this.password)) {
-      this.router.navigate(['/admin/tableau-de-bord']);
-
-    } else {
-
-      this.messageErreur = "Email ou mot de passe incorrect";
-
-    }
+    this.messageErreur = '';
+    this.auth.login(this.email, this.password).subscribe({
+      next: () => this.router.navigate(['/admin/tableau-de-bord']),
+      error: error => this.messageErreur = error?.error?.message || "Email ou mot de passe incorrect"
+    });
 
   }
 

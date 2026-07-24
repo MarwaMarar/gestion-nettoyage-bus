@@ -75,19 +75,16 @@
 
   <div class="formulaire" *ngIf="afficherFormulaire">
     <select name="busId" [(ngModel)]="form.busId">
-      <option [ngValue]="null" disabled>Choisir un bus</option>
       <option *ngFor="let b of bus" [ngValue]="b.id">Bus {{ b.numeroBus }}</option>
     </select>
 
     <select name="typeNettoyageId" [(ngModel)]="form.typeNettoyageId">
-      <option [ngValue]="null" disabled>Type de nettoyage</option>
       <option *ngFor="let t of typesNettoyage" [ngValue]="t.id">
               {{ t.libelle }}
       </option>
     </select>
 
     <select name="nettoyeurId" [(ngModel)]="form.nettoyeurId">
-      <option [ngValue]="null" disabled>Choisir un nettoyeur</option>
       <option *ngFor="let u of nettoyeurs" [ngValue]="u.id">{{ u.prenom }} {{ u.nom }}</option>
     </select>
 
