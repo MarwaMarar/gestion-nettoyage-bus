@@ -1,0 +1,150 @@
+<ion-content [fullscreen]="true">
+
+  <div class="dashboard-page">
+
+    <!-- ===========================
+          WELCOME
+    ============================ -->
+
+    <div class="welcome-card">
+
+      <div class="welcome-text">
+
+        <h2>Bonjour</h2>
+
+        <h1>Nettoyeur</h1>
+
+        <p>
+          Choisissez un bus puis un type de nettoyage.
+        </p>
+
+        <div class="today">
+
+          <ion-icon name="calendar-clear-outline"></ion-icon>
+
+          <span>{{ today }}</span>
+
+        </div>
+
+      </div>
+
+      <img
+        src="assets/images/alsa-logo.png"
+        alt="ALSA Logo"
+        class="logo">
+
+    </div>
+
+    <!-- ===========================
+          FORMULAIRE
+    ============================ -->
+
+    <div class="form-card">
+
+      <h3>Commencer un nettoyage</h3>
+
+      <!-- BUS -->
+
+      <div class="input-group">
+
+        <label class="input-label">
+
+          <div class="icon-box">
+
+            <ion-icon name="bus-outline"></ion-icon>
+
+          </div>
+
+          <span>Bus</span>
+
+        </label>
+
+        <ion-item
+          lines="none"
+          class="custom-item">
+
+          <ion-select
+
+            interface="action-sheet"
+
+            placeholder="Sélectionner un bus"
+
+            [(ngModel)]="selectedBus">
+
+            <ion-select-option
+              *ngFor="let bus of busList"
+              [value]="bus">
+
+              {{ bus }}
+
+            </ion-select-option>
+
+          </ion-select>
+
+        </ion-item>
+
+      </div>
+
+      <!-- TYPE -->
+
+      <div class="input-group">
+
+        <label class="input-label">
+
+          <div class="icon-box">
+
+            <ion-icon name="sparkles-outline"></ion-icon>
+
+          </div>
+
+          <span>Type de nettoyage</span>
+
+        </label>
+
+        <ion-item
+          lines="none"
+          class="custom-item">
+
+          <ion-select
+
+            interface="action-sheet"
+
+            placeholder="Sélectionner un type"
+
+            [(ngModel)]="selectedType">
+
+            <ion-select-option
+              *ngFor="let type of typeNettoyageList"
+              [value]="type">
+
+              {{ type }}
+
+            </ion-select-option>
+
+          </ion-select>
+
+        </ion-item>
+
+      </div>
+
+      <!-- BUTTON -->
+
+      <ion-button
+        expand="block"
+        class="start-btn"
+        (click)="commencerNettoyage()">
+
+        <ion-icon
+          slot="start"
+          name="play-circle-outline">
+        </ion-icon>
+
+        Commencer le nettoyage
+
+      </ion-button>
+
+    </div>
+
+  </div>
+
+</ion-content>

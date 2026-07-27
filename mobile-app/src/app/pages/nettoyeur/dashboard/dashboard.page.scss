@@ -1,0 +1,314 @@
+/* ===========================
+   PAGE
+=========================== */
+
+.dashboard-page {
+  min-height: 100%;
+  padding: 24px;
+  background: linear-gradient(
+    180deg,
+    var(--primary-light) 0%,
+    var(--bg) 100%
+  );
+}
+
+/* ===========================
+   WELCOME CARD
+=========================== */
+
+.welcome-card {
+
+  background: var(--surface);
+
+  border-radius: 24px;
+
+  padding: 24px;
+
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  box-shadow: var(--shadow-lg);
+
+  margin-bottom: 24px;
+
+}
+
+.welcome-text {
+
+  flex: 1;
+
+}
+
+.welcome-text h2 {
+
+  margin: 0;
+
+  font-size: 18px;
+
+  color: var(--text-secondary);
+
+}
+
+.welcome-text h1 {
+
+  margin: 6px 0;
+
+  font-size: 30px;
+
+  font-weight: 700;
+
+  color: var(--text-primary);
+
+}
+
+.welcome-text p {
+
+  margin: 10px 0 18px;
+
+  color: var(--text-muted);
+
+  line-height: 1.5;
+
+}
+
+.logo {
+
+  width: 90px;
+
+  height: auto;
+
+}
+
+/* ===========================
+   DATE CHIP
+=========================== */
+
+.today {
+
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 10px;
+
+  padding: 10px 16px;
+
+  background: var(--primary-light);
+
+  color: var(--primary);
+
+  border-radius: 999px;
+
+  font-weight: 600;
+
+}
+
+.today ion-icon {
+
+  font-size: 20px;
+
+}
+
+/* ===========================
+   FORM CARD
+=========================== */
+
+.form-card {
+
+  background: white;
+
+  border-radius: 24px;
+
+  padding: 24px;
+
+  box-shadow: var(--shadow-lg);
+
+}
+
+.form-card h3 {
+
+  margin: 0 0 24px;
+
+  font-size: 22px;
+
+  color: var(--text-primary);
+
+}
+
+/* ===========================
+   INPUTS
+=========================== */
+
+.input-group {
+
+  margin-bottom: 24px;
+
+}
+
+.input-label {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 14px;
+
+  margin-bottom: 12px;
+
+  font-size: 16px;
+
+  font-weight: 600;
+
+  color: var(--text-primary);
+
+}
+
+/* ===========================
+   ICON BOX
+=========================== */
+
+.icon-box {
+
+  width: 42px;
+
+  height: 42px;
+
+  border-radius: 14px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  background: var(--primary-light);
+
+  color: var(--primary);
+
+}
+
+.icon-box ion-icon {
+
+  font-size: 22px;
+
+}
+
+/* ===========================
+   SELECT
+=========================== */
+
+.custom-item {
+
+  --background: #ffffff;
+
+  --border-radius: 16px;
+
+  --padding-start: 14px;
+
+  --inner-padding-end: 14px;
+
+  border: 1px solid var(--border);
+
+  border-radius: 16px;
+
+  box-shadow: var(--shadow-sm);
+
+}
+
+ion-select {
+
+  width: 100%;
+
+  --placeholder-color: var(--text-muted);
+
+  --color: var(--text-primary);
+
+}
+
+/* ===========================
+   BUTTON
+=========================== */
+
+.start-btn {
+
+  margin-top: 10px;
+
+  height: 54px;
+
+  --background: var(--primary);
+
+  --background-hover: var(--primary-hover);
+
+   --color: #ffffff;
+
+  --border-radius: 16px;
+
+  font-size: 15px;
+
+  font-weight: 700;
+
+}
+
+.start-btn::part(native) {
+
+  transition: .25s;
+
+}
+
+.start-btn:hover::part(native) {
+
+  transform: translateY(-2px);
+
+}
+
+ion-select::part(text) {
+  color: #1F2937 !important;
+}
+
+ion-select::part(placeholder) {
+  color: #6B7280 !important;
+}
+
+ion-select {
+  color: #1F2937 !important;
+  --color: #1F2937 !important;
+}
+
+/* ===========================
+   RESPONSIVE
+=========================== */
+
+@media (max-width: 600px) {
+
+  .dashboard-page {
+
+    padding: 18px;
+
+  }
+
+  .welcome-card {
+
+    flex-direction: column-reverse;
+
+    text-align: center;
+
+    gap: 20px;
+
+  }
+
+  .logo {
+
+    width: 75px;
+
+  }
+
+  .welcome-text h1 {
+
+    font-size: 26px;
+
+  }
+
+}

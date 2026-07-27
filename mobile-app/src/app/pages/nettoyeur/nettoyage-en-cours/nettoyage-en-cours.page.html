@@ -1,0 +1,142 @@
+<ion-content [fullscreen]="true">
+
+  <div class="page">
+
+    <!-- Header -->
+
+    <div class="header-card">
+
+      <h2>Nettoyage en cours</h2>
+
+      <p>Le nettoyage est actuellement en cours.</p>
+
+    </div>
+
+    <!-- Informations -->
+
+    <div class="info-card">
+
+      <!-- Bus -->
+
+      <div class="info-row">
+
+        <div class="left">
+
+          <div class="icon-box">
+            <ion-icon name="bus-outline"></ion-icon>
+          </div>
+
+          <span>Bus</span>
+
+        </div>
+
+        <strong>{{ bus }}</strong>
+
+      </div>
+
+      <!-- Type -->
+
+      <div class="info-row">
+
+        <div class="left">
+
+          <div class="icon-box">
+            <ion-icon name="sparkles-outline"></ion-icon>
+          </div>
+
+          <span>Type de nettoyage</span>
+
+        </div>
+
+        <strong>{{ type }}</strong>
+
+      </div>
+
+      <!-- Date -->
+
+      <div class="info-row">
+
+        <div class="left">
+
+          <div class="icon-box">
+            <ion-icon name="calendar-clear-outline"></ion-icon>
+          </div>
+
+          <span>Date</span>
+
+        </div>
+
+        <strong>{{ today }}</strong>
+
+      </div>
+
+      <!-- Heure début -->
+
+      <div class="info-row">
+
+        <div class="left">
+
+          <div class="icon-box">
+            <ion-icon name="play-circle-outline"></ion-icon>
+          </div>
+
+          <span>Heure début</span>
+
+        </div>
+
+        <strong>{{ heureDebut }}</strong>
+
+      </div>
+
+    </div>
+
+    <!-- Timer -->
+
+    <div class="timer-card">
+
+      <div class="timer-header">
+
+        <div class="icon-box">
+          <ion-icon name="stopwatch-outline"></ion-icon>
+        </div>
+
+        <div>
+
+          <h3>Temps écoulé</h3>
+
+          <p>Chronomètre du nettoyage.</p>
+
+        </div>
+
+      </div>
+
+      <div class="timer">
+
+        {{ timer }}
+
+      </div>
+
+    </div>
+
+    <!-- Bouton -->
+
+    <ion-button
+
+      expand="block"
+
+      class="finish-btn"
+
+      (click)="terminerNettoyage()">
+
+      <ion-icon
+        slot="start"
+        name="checkmark-circle-outline">
+      </ion-icon>
+
+      Terminer le nettoyage
+
+    </ion-button>
+
+  </div>
+
+</ion-content>

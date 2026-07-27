@@ -1,0 +1,233 @@
+/* ===========================
+   PAGE
+=========================== */
+
+.dashboard-page {
+
+  min-height: 100%;
+
+  padding: 24px;
+
+  background: linear-gradient(
+    180deg,
+    var(--primary-light) 0%,
+    var(--bg) 100%
+  );
+
+}
+
+/* ===========================
+   WELCOME CARD
+=========================== */
+
+.welcome-card {
+
+  background: var(--surface);
+
+  border-radius: 24px;
+
+  padding: 24px;
+
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  box-shadow: var(--shadow-lg);
+
+  margin-bottom: 24px;
+
+}
+
+.welcome-text {
+
+  flex: 1;
+
+}
+
+.welcome-text h2 {
+
+  margin: 0;
+
+  font-size: 18px;
+
+  color: var(--text-secondary);
+
+}
+
+.welcome-text h1 {
+
+  margin: 6px 0;
+
+  font-size: 30px;
+
+  font-weight: 700;
+
+  color: var(--text-primary);
+
+}
+
+.welcome-text p {
+
+  margin-top: 10px;
+
+  color: var(--text-muted);
+
+  line-height: 1.5;
+
+}
+
+.logo {
+
+  width: 90px;
+
+  height: auto;
+
+}
+
+/* ===========================
+   STATS CARD
+=========================== */
+
+.stats-card {
+
+  background: white;
+
+  border-radius: 24px;
+
+  padding: 30px;
+
+  box-shadow: var(--shadow-lg);
+
+  text-align: center;
+
+  margin-bottom: 25px;
+
+}
+
+.stats-icon {
+
+  width: 75px;
+
+  height: 75px;
+
+  margin: 0 auto 20px;
+
+  border-radius: 20px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  background: var(--primary-light);
+
+  color: var(--primary);
+
+}
+
+.stats-icon ion-icon {
+
+  font-size: 40px;
+
+}
+
+.stats-card h3 {
+
+  margin: 0;
+
+  font-size: 46px;
+
+  font-weight: 700;
+
+  color: var(--primary);
+
+}
+
+.stats-card p {
+
+  margin-top: 8px;
+
+  font-size: 16px;
+
+  color: var(--text-secondary);
+
+}
+
+/* ===========================
+   BUTTON
+=========================== */
+
+.details-btn {
+
+  height: 54px;
+
+  --background: #2563EB;
+
+  --background-hover: #1D4ED8;
+
+  --color: #ffffff;
+
+  --border-radius: 16px;
+
+  font-size: 15px;
+
+  font-weight: 700;
+
+}
+
+.details-btn::part(native) {
+
+  transition: .25s;
+
+}
+
+.details-btn:hover::part(native) {
+
+  transform: translateY(-2px);
+
+}
+
+/* ===========================
+   MOBILE
+=========================== */
+
+@media (max-width: 600px) {
+
+  .dashboard-page {
+
+    padding: 18px;
+
+  }
+
+  .welcome-card {
+
+    flex-direction: column-reverse;
+
+    text-align: center;
+
+    gap: 20px;
+
+  }
+
+  .logo {
+
+    width: 75px;
+
+  }
+
+  .welcome-text h1 {
+
+    font-size: 26px;
+
+  }
+
+  .stats-card h3 {
+
+    font-size: 38px;
+
+  }
+
+}

@@ -1,0 +1,42 @@
+// For information on how to create your own theme, please refer to:
+// https://ionicframework.com/docs/theming/
+/* ==========================
+   ALSA Clean Fleet Theme
+========================== */
+
+:root {
+
+  /* Primary */
+  --primary: #0F766E;
+  --primary-hover: #0C5F59;
+  --primary-light: #DDF5F2;
+
+  /* Background */
+  --bg: #F5F7FA;
+  --surface: #FFFFFF;
+
+  /* Text */
+  --text-primary: #1F2937;
+  --text-secondary: #374151;
+  --text-muted: #6B7280;
+
+  /* Border */
+  --border: #E5E7EB;
+
+  /* Radius */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --radius-xl: 24px;
+  --radius-full: 999px;
+
+  /* Shadow */
+  --shadow-sm: 0 2px 8px rgba(0,0,0,.06);
+  --shadow-md: 0 8px 20px rgba(0,0,0,.08);
+  --shadow-lg: 0 14px 35px rgba(0,0,0,.12);
+
+  --shadow-glow: 0 0 0 4px rgba(15,118,110,.12);
+
+  /* Transition */
+  --transition: .25s ease;
+}

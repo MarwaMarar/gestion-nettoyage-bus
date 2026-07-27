@@ -1,0 +1,251 @@
+/* ===========================
+   PAGE
+=========================== */
+
+.page {
+
+  min-height: 100%;
+
+  padding: 24px;
+
+  background: linear-gradient(
+    180deg,
+    #EFF6FF 0%,
+    #F8FAFC 100%
+  );
+
+}
+
+/* ===========================
+   HEADER
+=========================== */
+
+.header-card {
+
+  background: #ffffff;
+
+  border-radius: 22px;
+
+  padding: 22px;
+
+  text-align: center;
+
+  margin-bottom: 22px;
+
+  box-shadow: 0 8px 24px rgba(15,23,42,.08);
+
+}
+
+.header-card h2 {
+
+  margin: 0;
+
+  font-size: 26px;
+
+  font-weight: 700;
+
+  color: #0F172A;
+
+}
+
+.header-card p {
+
+  margin-top: 8px;
+
+  color: #64748B;
+
+}
+
+/* ===========================
+   CARD
+=========================== */
+
+.cleaning-card {
+
+  background: #ffffff;
+
+  border-radius: 22px;
+
+  padding: 20px;
+
+  margin-bottom: 18px;
+
+  box-shadow: 0 8px 24px rgba(15,23,42,.08);
+
+  border-left: 6px solid #2563EB;
+
+}
+
+/* ===========================
+   ROW
+=========================== */
+
+.info-row {
+
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  padding: 14px 0;
+
+  border-bottom: 1px solid #E5E7EB;
+
+}
+
+.info-row:last-of-type {
+
+  border-bottom: none;
+
+}
+
+.left {
+
+  display: flex;
+
+  align-items: center;
+
+}
+
+.left span {
+
+  color: #475569;
+
+  font-size: 15px;
+
+  font-weight: 500;
+
+}
+
+.info-row strong {
+
+  color: #111827;
+
+  font-size: 15px;
+
+  font-weight: 700;
+
+}
+
+/* ===========================
+   ICONS
+=========================== */
+
+.icon-box {
+
+  width: 42px;
+
+  height: 42px;
+
+  margin-right: 14px;
+
+  border-radius: 14px;
+
+  display: flex;
+
+  justify-content: center;
+
+  align-items: center;
+
+  background: #DBEAFE;
+
+  color: #2563EB;
+
+}
+
+.icon-box ion-icon {
+
+  font-size: 22px;
+
+}
+
+/* ===========================
+   STATUS
+=========================== */
+
+.status-badge {
+
+  margin-top: 18px;
+
+  margin-bottom: 18px;
+
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 8px;
+
+  background: #FEF3C7;
+
+  color: #B45309;
+
+  padding: 8px 14px;
+
+  border-radius: 999px;
+
+  font-size: 14px;
+
+  font-weight: 600;
+
+}
+
+.status-badge ion-icon {
+
+  font-size: 18px;
+
+}
+
+/* ===========================
+   BUTTON
+=========================== */
+
+.details-btn {
+
+  height: 52px;
+
+  --background: #2563EB;
+
+  --background-hover: #1D4ED8;
+
+  --border-radius: 16px;
+
+  --color: white;
+
+  font-weight: 700;
+
+  font-size: 15px;
+
+}
+
+.details-btn::part(native) {
+
+  transition: .25s;
+
+}
+
+.details-btn:hover::part(native) {
+
+  transform: translateY(-2px);
+
+}
+
+/* ===========================
+   RESPONSIVE
+=========================== */
+
+@media (max-width:600px){
+
+  .page{
+
+    padding:18px;
+
+  }
+
+  .header-card h2{
+
+    font-size:22px;
+
+  }
+
+}

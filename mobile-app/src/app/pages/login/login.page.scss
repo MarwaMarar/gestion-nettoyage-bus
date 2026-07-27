@@ -1,0 +1,97 @@
+.login-page {
+  min-height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+
+  background: linear-gradient(
+    180deg,
+    var(--primary-light) 0%,
+    var(--bg) 100%
+  );
+}
+
+.login-card {
+  width: 100%;
+  max-width: 420px;
+
+  background: var(--surface);
+
+  border-radius: var(--radius-xl);
+
+  padding: 30px 22px;
+
+  box-shadow: var(--shadow-lg);
+}
+
+.login-header {
+  text-align: center;
+  margin-bottom: 35px;
+}
+
+.login-logo {
+  display: flex;
+  justify-content: center;
+}
+
+.login-logo img {
+  width: 120px;
+  max-width: 30%;
+  height: auto;
+  object-fit: contain;
+}
+
+.login-header h1 {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.login-header p {
+  margin-top: 8px;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+.custom-item {
+  --background: #fff;
+
+  --border-radius: 14px;
+
+  margin-bottom: 18px;
+
+  border: 1px solid var(--border);
+
+  box-shadow: var(--shadow-sm);
+}
+
+.login-btn {
+  margin-top: 25px;
+
+  --background: var(--primary);
+
+  --border-radius: 14px;
+
+  height: 48px;
+
+  font-size: 15px;
+
+  font-weight: 600;
+}
+
+.login-btn::part(native) {
+  transition: .25s;
+}
+
+.login-btn:hover::part(native) {
+  filter: brightness(.95);
+}
+
+.custom-item ion-input {
+  --color: #1f2937;
+  --placeholder-color: #9ca3af;
+  --highlight-color-focused: var(--primary);
+  --highlight-color-valid: var(--primary);
+}

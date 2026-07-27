@@ -1,0 +1,113 @@
+<ion-content [fullscreen]="true">
+
+  <div class="page">
+
+    <!-- Header -->
+
+    <div class="header-card">
+
+      <h2>Nettoyages en attente</h2>
+
+      <p>
+        Consultez les demandes envoyées par les nettoyeurs.
+      </p>
+
+    </div>
+
+    <!-- Liste des nettoyages -->
+
+    <div
+      class="cleaning-card"
+      *ngFor="let nettoyage of nettoyages">
+
+      <!-- Bus -->
+
+      <div class="info-row">
+
+        <div class="left">
+
+          <div class="icon-box">
+
+            <ion-icon name="bus-outline"></ion-icon>
+
+          </div>
+
+          <span>Bus</span>
+
+        </div>
+
+        <strong>{{ nettoyage.bus }}</strong>
+
+      </div>
+
+      <!-- Nettoyeur -->
+
+      <div class="info-row">
+
+        <div class="left">
+
+          <div class="icon-box">
+
+            <ion-icon name="person-outline"></ion-icon>
+
+          </div>
+
+          <span>Nettoyeur</span>
+
+        </div>
+
+        <strong>{{ nettoyage.nettoyeur }}</strong>
+
+      </div>
+
+      <!-- Type -->
+
+      <div class="info-row">
+
+        <div class="left">
+
+          <div class="icon-box">
+
+            <ion-icon name="sparkles-outline"></ion-icon>
+
+          </div>
+
+          <span>Type de nettoyage</span>
+
+        </div>
+
+        <strong>{{ nettoyage.type }}</strong>
+
+      </div>
+
+      <!-- Statut -->
+
+      <div class="status-badge">
+
+        <ion-icon name="hourglass-outline"></ion-icon>
+
+        <span>En attente</span>
+
+      </div>
+
+      <!-- Bouton -->
+
+      <ion-button
+        expand="block"
+        class="details-btn"
+        (click)="voirDetails(nettoyage)">
+
+        <ion-icon
+          slot="start"
+          name="eye-outline">
+        </ion-icon>
+
+        Voir
+
+      </ion-button>
+
+    </div>
+
+  </div>
+
+</ion-content>

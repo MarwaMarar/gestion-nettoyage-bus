@@ -1,0 +1,242 @@
+<ion-content [fullscreen]="true">
+
+  <div class="page">
+
+    <!-- Header -->
+
+    <div class="header-card">
+
+      <h2>Détails du nettoyage</h2>
+
+      <p>Vérifiez les informations avant validation.</p>
+
+    </div>
+
+    <!-- Informations -->
+
+    <div class="info-card">
+
+      <div class="info-row">
+
+        <div class="left">
+
+          <div class="icon-box">
+            <ion-icon name="bus-outline"></ion-icon>
+          </div>
+
+          <span>Bus</span>
+
+        </div>
+
+        <strong>{{ nettoyage.bus }}</strong>
+
+      </div>
+
+      <div class="info-row">
+
+        <div class="left">
+
+          <div class="icon-box">
+            <ion-icon name="person-outline"></ion-icon>
+          </div>
+
+          <span>Nettoyeur</span>
+
+        </div>
+
+        <strong>{{ nettoyage.nettoyeur }}</strong>
+
+      </div>
+
+      <div class="info-row">
+
+        <div class="left">
+
+          <div class="icon-box">
+            <ion-icon name="sparkles-outline"></ion-icon>
+          </div>
+
+          <span>Type de nettoyage</span>
+
+        </div>
+
+        <strong>{{ nettoyage.type }}</strong>
+
+      </div>
+
+      <div class="info-row">
+
+        <div class="left">
+
+          <div class="icon-box">
+            <ion-icon name="calendar-outline"></ion-icon>
+          </div>
+
+          <span>Date</span>
+
+        </div>
+
+        <strong>{{ nettoyage.date }}</strong>
+
+      </div>
+
+      <div class="info-row">
+
+        <div class="left">
+
+          <div class="icon-box">
+            <ion-icon name="play-circle-outline"></ion-icon>
+          </div>
+
+          <span>Heure début</span>
+
+        </div>
+
+        <strong>{{ nettoyage.heureDebut }}</strong>
+
+      </div>
+
+      <div class="info-row">
+
+        <div class="left">
+
+          <div class="icon-box">
+            <ion-icon name="stop-circle-outline"></ion-icon>
+          </div>
+
+          <span>Heure fin</span>
+
+        </div>
+
+        <strong>{{ nettoyage.heureFin }}</strong>
+
+      </div>
+
+      <div class="info-row">
+
+        <div class="left">
+
+          <div class="icon-box">
+            <ion-icon name="timer-outline"></ion-icon>
+          </div>
+
+          <span>Durée</span>
+
+        </div>
+
+        <strong>{{ nettoyage.duree }}</strong>
+
+      </div>
+
+      <div class="info-row last">
+
+        <div class="left">
+
+          <div class="icon-box">
+            <ion-icon name="chatbubble-ellipses-outline"></ion-icon>
+          </div>
+
+          <span>Remarque</span>
+
+        </div>
+
+        <strong>{{ nettoyage.remarque || 'Aucune remarque' }}</strong>
+
+      </div>
+
+    </div>
+
+    <!-- Bouton Valider -->
+
+    <ion-button
+      expand="block"
+      class="validate-btn"
+      (click)="valider()">
+
+      <ion-icon
+        slot="start"
+        name="checkmark-circle-outline">
+      </ion-icon>
+
+      Valider
+
+    </ion-button>
+
+    <!-- Bouton Refuser -->
+
+    <ion-button
+      expand="block"
+      class="reject-btn"
+      (click)="showRefus = true">
+
+      <ion-icon
+        slot="start"
+        name="close-circle-outline">
+      </ion-icon>
+
+      Refuser
+
+    </ion-button>
+
+    <!-- Motif du refus -->
+
+    <div
+      class="remark-card"
+      *ngIf="showRefus">
+
+      <div class="remark-header">
+
+        <div class="icon-box">
+          <ion-icon name="create-outline"></ion-icon>
+        </div>
+
+        <div>
+
+          <h3>Motif du refus</h3>
+
+          <p>Le commentaire est obligatoire.</p>
+
+        </div>
+
+      </div>
+
+      <ion-textarea
+
+        class="remark-textarea"
+
+        autoGrow="true"
+
+        fill="outline"
+
+        maxlength="200"
+
+        counter="true"
+
+        placeholder="Écrire le motif du refus..."
+
+        [(ngModel)]="motif">
+
+      </ion-textarea>
+
+      <ion-button
+
+        expand="block"
+
+        class="send-refuse-btn"
+
+        (click)="refuser()">
+
+        <ion-icon
+          slot="start"
+          name="paper-plane-outline">
+        </ion-icon>
+
+        Envoyer le refus
+
+      </ion-button>
+
+    </div>
+
+  </div>
+
+</ion-content>
