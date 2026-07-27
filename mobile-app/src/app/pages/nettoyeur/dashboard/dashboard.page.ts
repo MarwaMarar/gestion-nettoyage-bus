@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { RouterLink } from '@angular/router';
 
 import {
   IonContent,
@@ -18,7 +19,8 @@ import {
   busOutline,
   sparklesOutline,
   calendarClearOutline,
-  playCircleOutline
+  playCircleOutline,
+  notificationsOutline
 } from 'ionicons/icons';
 
 @Component({
@@ -34,7 +36,8 @@ import {
     IonSelect,
     IonSelectOption,
     IonButton,
-    IonIcon
+    IonIcon,
+    RouterLink
   ]
 })
 export class DashboardPage implements OnInit {
@@ -63,11 +66,12 @@ export class DashboardPage implements OnInit {
   constructor(private router: Router) {
 
     addIcons({
-      'bus-outline': busOutline,
-      'sparkles-outline': sparklesOutline,
-      'calendar-clear-outline': calendarClearOutline,
-      'play-circle-outline': playCircleOutline
-    });
+       'bus-outline': busOutline,
+       'sparkles-outline': sparklesOutline,
+       'calendar-clear-outline': calendarClearOutline,
+       'play-circle-outline': playCircleOutline,
+       'notifications-outline': notificationsOutline
+});
 
   }
 

@@ -18,17 +18,13 @@
 
 .welcome-card {
 
+  position: relative;
+
   background: var(--surface);
 
   border-radius: 24px;
 
   padding: 24px;
-
-  display: flex;
-
-  justify-content: space-between;
-
-  align-items: center;
 
   box-shadow: var(--shadow-lg);
 
@@ -37,8 +33,9 @@
 }
 
 .welcome-text {
-
   flex: 1;
+
+  margin-right: 20px;
 
 }
 
@@ -74,7 +71,129 @@
 
 }
 
+/* ===========================
+   WELCOME TOP
+=========================== */
+
+.welcome-top {
+
+  display: block;
+
+}
+
+/* ===========================
+   NOTIFICATION
+=========================== */
+
+.notification-btn {
+
+  position: absolute;
+
+  top: 24px;
+
+  right: 24px;
+
+  width: 54px;
+
+  height: 54px;
+
+  border-radius: 18px;
+
+  background: white;
+
+  display: flex;
+
+  justify-content: center;
+
+  align-items: center;
+
+  box-shadow: 0 8px 20px rgba(0,0,0,.12);
+
+  cursor: pointer;
+
+  transition: .25s;
+
+}
+
+.notification-btn:hover {
+
+  transform: translateY(-2px);
+
+}
+
+.notification-btn ion-icon {
+
+  font-size: 28px;
+
+  color: #F59E0B;
+
+}
+
+.notification-btn ion-icon {
+
+  font-size: 28px;
+
+  color: #2563EB;
+
+}
+
+.notification-btn ion-icon {
+
+  font-size: 24px;
+
+  color: white;
+
+}
+
+.notification-btn ion-icon {
+
+  font-size: 28px !important;
+
+  color: #2563EB !important;
+
+  opacity: 1 !important;
+
+}
+
+.badge {
+
+  position: absolute;
+
+  top: -6px;
+
+  right: -6px;
+
+  width: 22px;
+
+  height: 22px;
+
+  border-radius: 50%;
+
+  background: #EF4444;
+
+  color: white;
+
+  font-size: 11px;
+
+  font-weight: 700;
+
+  display: flex;
+
+  justify-content: center;
+
+  align-items: center;
+
+  border: 2px solid white;
+
+}
+
 .logo {
+
+  position: absolute;
+
+  right: 24px;
+
+  bottom: 24px;
 
   width: 90px;
 

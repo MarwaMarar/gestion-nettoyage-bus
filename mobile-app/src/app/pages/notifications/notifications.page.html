@@ -1,0 +1,122 @@
+<ion-content [fullscreen]="true">
+
+  <div class="page">
+
+    <!-- HEADER -->
+
+    <div class="back-button" routerLink="/dashboard">
+
+    <ion-icon name="arrow-back-outline"></ion-icon>
+
+    <span>Retour</span>
+
+</div>
+
+
+    <div class="header-card">
+
+      <div class="header-left">
+
+        <div class="icon-box">
+
+          <ion-icon name="notifications-outline"></ion-icon>
+
+        </div>
+
+        <div>
+
+          <h2>Notifications</h2>
+
+          <p>
+            Consultez toutes les notifications.
+          </p>
+
+        </div>
+
+      </div>
+
+      <div class="notification-count">
+
+        {{ notifications.length }}
+
+      </div>
+
+    </div>
+
+    <!-- LISTE -->
+
+    <div
+      class="notification-card"
+      *ngFor="let notification of notifications"
+      (click)="ouvrirNotification(notification)">
+
+      <!-- ICON -->
+
+      <div
+        class="notification-icon"
+
+        [ngClass]="notification.type">
+
+        <ion-icon
+
+          *ngIf="notification.type==='success'"
+
+          name="checkmark-circle-outline">
+
+        </ion-icon>
+
+        <ion-icon
+
+          *ngIf="notification.type==='danger'"
+
+          name="close-circle-outline">
+
+        </ion-icon>
+
+        <ion-icon
+
+          *ngIf="notification.type==='info'"
+
+          name="time-outline">
+
+        </ion-icon>
+
+      </div>
+
+      <!-- CONTENT -->
+
+      <div class="notification-content">
+
+       <div class="notification-header">
+
+         <h3>
+
+         {{ notification.titre }}
+
+        </h3>
+
+       <span class="new-dot" *ngIf="!notification.lu">
+
+       </span>
+
+     </div>
+
+        <p>
+
+          {{ notification.message }}
+
+        </p>
+
+        <span>
+
+          {{ notification.heure }}
+
+        </span>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</ion-content>

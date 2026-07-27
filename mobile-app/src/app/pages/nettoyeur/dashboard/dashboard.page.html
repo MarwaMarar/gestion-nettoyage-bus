@@ -8,21 +8,39 @@
 
     <div class="welcome-card">
 
-      <div class="welcome-text">
+      <div class="welcome-top">
 
-        <h2>Bonjour</h2>
+        <div class="welcome-text">
 
-        <h1>Nettoyeur</h1>
+          <h2>Bonjour</h2>
 
-        <p>
-          Choisissez un bus puis un type de nettoyage.
-        </p>
+          <h1>Nettoyeur</h1>
 
-        <div class="today">
+          <p>
+            Choisissez un bus puis un type de nettoyage.
+          </p>
 
-          <ion-icon name="calendar-clear-outline"></ion-icon>
+          <div class="today">
 
-          <span>{{ today }}</span>
+            <ion-icon name="calendar-clear-outline"></ion-icon>
+
+            <span>{{ today }}</span>
+
+          </div>
+
+        </div>
+
+        <div
+          class="notification-btn"
+          routerLink="/notifications">
+
+          <ion-icon name="notifications-outline"></ion-icon>
+
+          <span class="badge">
+
+            3
+
+          </span>
 
         </div>
 
@@ -64,11 +82,8 @@
           class="custom-item">
 
           <ion-select
-
             interface="action-sheet"
-
             placeholder="Sélectionner un bus"
-
             [(ngModel)]="selectedBus">
 
             <ion-select-option
@@ -106,11 +121,8 @@
           class="custom-item">
 
           <ion-select
-
             interface="action-sheet"
-
             placeholder="Sélectionner un type"
-
             [(ngModel)]="selectedType">
 
             <ion-select-option
