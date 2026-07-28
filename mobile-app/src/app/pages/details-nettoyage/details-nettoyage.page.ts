@@ -1,18 +1,15 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
-
+import { ActivatedRoute, Router } from '@angular/router';
 import {
-  IonContent,
+  AlertController,
   IonButton,
-  IonTextarea,
+  IonContent,
   IonIcon,
-  AlertController
+  IonTextarea
 } from '@ionic/angular/standalone';
-
 import { addIcons } from 'ionicons';
-
 import {
   busOutline,
   personOutline,
@@ -27,59 +24,29 @@ import {
   createOutline,
   paperPlaneOutline
 } from 'ionicons/icons';
+import { Nettoyage } from '../../models/api.models';
+import { NettoyageService } from '../../services/nettoyage.service';
 
 @Component({
   selector: 'app-details-nettoyage',
   templateUrl: './details-nettoyage.page.html',
   styleUrls: ['./details-nettoyage.page.scss'],
   standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    IonContent,
-    IonButton,
-    IonTextarea,
-    IonIcon
-  ]
+  imports: [CommonModule, FormsModule, IonContent, IonButton, IonTextarea, IonIcon]
 })
-export class DetailsNettoyagePage {
-
-  nettoyage: any;
-
+export class DetailsNettoyagePage implements OnInit {
+  nettoyage?: Nettoyage;
   showRefus = false;
-
   motif = '';
+  loading = false;
 
   constructor(
+    private route: ActivatedRoute,
     private router: Router,
-    private alertController: AlertController
+    private alertController: AlertController,
+    private nettoyages: NettoyageService
   ) {
-
-    const navigation = this.router.getCurrentNavigation();
-
-    if (navigation?.extras.state) {
-
-      this.nettoyage = navigation.extras.state;
-
-    } else {
-
-      this.nettoyage = {
-
-        bus: 'Bus 101',
-        nettoyeur: 'Adam Marar',
-        type: 'Nettoyage complet',
-        date: '24/07/2026',
-        heureDebut: '09:15',
-        heureFin: '09:42',
-        duree: '00:27:00',
-        remarque: 'Nettoyage terminé.'
-
-      };
-
-    }
-
     addIcons({
-
       'bus-outline': busOutline,
       'person-outline': personOutline,
       'sparkles-outline': sparklesOutline,
@@ -92,63 +59,62 @@ export class DetailsNettoyagePage {
       'close-circle-outline': closeCircleOutline,
       'create-outline': createOutline,
       'paper-plane-outline': paperPlaneOutline
-
     });
-
   }
 
-  async valider() {
-
-    const alert = await this.alertController.create({
-
-      header: 'Succès',
-
-      message: 'Le nettoyage a été validé avec succès.',
-
-      buttons: ['OK']
-
-    });
-
-    await alert.present();
-
-    this.router.navigate(['/liste-nettoyages']);
-
-  }
-
-  async refuser() {
-
-    if (this.motif.trim() === '') {
-
-      const alert = await this.alertController.create({
-
-        header: 'Attention',
-
-        message: 'Veuillez saisir le motif du refus.',
-
-        buttons: ['OK']
-
-      });
-
-      await alert.present();
-
+  ngOnInit(): void {
+    const id = Number(this.route.snapshot.paramMap.get('id'));
+    if (!Number.isInteger(id) || id <= 0) {
+      this.router.navigateByUrl('/liste-nettoyages');
       return;
-
     }
-
-    const alert = await this.alertController.create({
-
-      header: 'Refus envoyé',
-
-      message: 'Le nettoyage a été refusé avec succès.',
-
-      buttons: ['OK']
-
+    this.nettoyages.getById(id).subscribe({
+      next: value => this.nettoyage = value,
+      error: error => {
+        alert(error?.error?.message || 'Impossible de charger le nettoyage.');
+        this.router.navigateByUrl('/liste-nettoyages');
+      }
     });
-
-    await alert.present();
-
-    this.router.navigate(['/liste-nettoyages']);
-
   }
 
+  valider(): void {
+    if (!this.nettoyage || this.loading) return;
+    this.loading = true;
+    this.nettoyages.valider(this.nettoyage.id).subscribe({
+      next: async () => {
+        this.loading = false;
+        await this.showMessage('Succès', 'Le nettoyage a été validé avec succès.');
+        this.router.navigateByUrl('/liste-nettoyages');
+      },
+      error: error => {
+        this.loading = false;
+        this.showMessage('Erreur', error?.error?.message || 'Validation impossible.');
+      }
+    });
+  }
+
+  refuser(): void {
+    if (!this.nettoyage || this.loading) return;
+    if (!this.motif.trim()) {
+      this.showMessage('Attention', 'Veuillez saisir le motif du refus.');
+      return;
+    }
+    this.loading = true;
+    this.nettoyages.refuser(this.nettoyage.id, this.motif.trim()).subscribe({
+      next: async () => {
+        this.loading = false;
+        await this.showMessage('Refus envoyé', 'Le nettoyage a été refusé avec succès.');
+        this.router.navigateByUrl('/liste-nettoyages');
+      },
+      error: error => {
+        this.loading = false;
+        this.showMessage('Erreur', error?.error?.message || 'Refus impossible.');
+      }
+    });
+  }
+
+  private async showMessage(header: string, message: string): Promise<void> {
+    const alert = await this.alertController.create({ header, message, buttons: ['OK'] });
+    await alert.present();
+  }
 }

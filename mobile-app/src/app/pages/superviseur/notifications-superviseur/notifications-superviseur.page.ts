@@ -1,95 +1,70 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
-
-import {
-  IonContent,
-  IonIcon,
-  IonButton
-} from '@ionic/angular/standalone';
-
+import { Router, RouterLink } from '@angular/router';
+import { IonButton, IonContent, IonIcon } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-
 import {
   notificationsOutline,
   arrowBackOutline,
   checkmarkDoneOutline,
   busOutline
 } from 'ionicons/icons';
+import { Nettoyage } from '../../../models/api.models';
+import { NettoyageService } from '../../../services/nettoyage.service';
+
+interface SupervisorNotification {
+  nettoyage: Nettoyage;
+  titre: string;
+  message: string;
+  heure: string;
+  icon: string;
+  type: string;
+  lu: boolean;
+}
 
 @Component({
   selector: 'app-notifications-superviseur',
   templateUrl: './notifications-superviseur.page.html',
   styleUrls: ['./notifications-superviseur.page.scss'],
   standalone: true,
-  imports: [
-    CommonModule,
-    RouterLink,
-    IonContent,
-    IonIcon,
-    IonButton
-  ]
+  imports: [CommonModule, RouterLink, IonContent, IonIcon, IonButton]
 })
-export class NotificationsSuperviseurPage {
+export class NotificationsSuperviseurPage implements OnInit {
+  notifications: SupervisorNotification[] = [];
 
-  notifications = [
-
-    {
-      titre: 'Nouveau nettoyage soumis',
-      message: 'Bus 101 - Nettoyage complet envoyé par Adam Marar.',
-      heure: 'Il y a 2 min',
-      icon: 'bus-outline',
-      type: 'primary',
-      lu: false
-    },
-
-    {
-      titre: 'Nouveau nettoyage soumis',
-      message: 'Bus 205 - Nettoyage intérieur envoyé par Mohamed Ali.',
-      heure: 'Il y a 10 min',
-      icon: 'bus-outline',
-      type: 'primary',
-      lu: false
-    },
-
-    {
-      titre: 'Nouveau nettoyage soumis',
-      message: 'Bus 312 - Désinfection envoyée par Yassine.',
-      heure: 'Il y a 1 heure',
-      icon: 'bus-outline',
-      type: 'primary',
-      lu: true
-    }
-
-  ];
-
-  constructor() {
-
+  constructor(
+    private router: Router,
+    private nettoyages: NettoyageService
+  ) {
     addIcons({
-
       'notifications-outline': notificationsOutline,
       'arrow-back-outline': arrowBackOutline,
       'checkmark-done-outline': checkmarkDoneOutline,
       'bus-outline': busOutline
-
     });
-
   }
 
-  ouvrirNotification(notification: any) {
+  ngOnInit(): void {
+    this.nettoyages.enAttente().subscribe({
+      next: values => this.notifications = values.map(nettoyage => ({
+        nettoyage,
+        titre: 'Nouveau nettoyage soumis',
+        message: `${nettoyage.numeroBus} — ${nettoyage.typeNettoyageLibelle} — ${nettoyage.nettoyeurNom}`,
+        heure: new Date(nettoyage.heureFin ?? nettoyage.dateNettoyage).toLocaleString('fr-FR'),
+        icon: 'bus-outline',
+        type: 'primary',
+        lu: false
+      })),
+      error: error => alert(error?.error?.message || 'Impossible de charger les notifications.')
+    });
+  }
 
+  ouvrirNotification(notification: SupervisorNotification): void {
     notification.lu = true;
-
+    this.router.navigate(['/details-nettoyage', notification.nettoyage.id]);
   }
 
-  toutMarquerCommeLu() {
-
-    this.notifications.forEach(notification => {
-
-      notification.lu = true;
-
-    });
-
+  toutMarquerCommeLu(): void {
+    this.notifications.forEach(notification => notification.lu = true);
   }
-
 }

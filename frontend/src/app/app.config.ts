@@ -4,6 +4,7 @@ import { HttpInterceptorFn, provideHttpClient, withInterceptors } from '@angular
 import { finalize } from 'rxjs';
 
 import { routes } from './app.routes';
+import { authInterceptor } from './service/auth.interceptor';
 
 const refreshViewAfterHttp: HttpInterceptorFn = (request, next) => {
   const applicationRef = inject(ApplicationRef);
@@ -16,6 +17,6 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
-    provideHttpClient(withInterceptors([refreshViewAfterHttp]))
+    provideHttpClient(withInterceptors([authInterceptor, refreshViewAfterHttp]))
   ]
 };

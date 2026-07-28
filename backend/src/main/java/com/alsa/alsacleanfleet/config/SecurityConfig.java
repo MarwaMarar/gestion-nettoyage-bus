@@ -1,0 +1,90 @@
+package com.alsa.alsacleanfleet.config;
+
+import com.alsa.alsacleanfleet.security.JwtAuthenticationFilter;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+@Configuration
+@EnableMethodSecurity
+public class SecurityConfig {
+    @Bean
+    PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    UserDetailsService userDetailsService(com.alsa.alsacleanfleet.repository.UtilisateurRepository users) {
+        return identifier -> users
+                .findByEmailIgnoreCaseOrLoginIgnoreCase(identifier, identifier)
+                .map(com.alsa.alsacleanfleet.security.AuthenticatedUser::from)
+                .orElseThrow(() -> new org.springframework.security.core.userdetails.UsernameNotFoundException(
+                        "Utilisateur introuvable"
+                ));
+    }
+
+    @Bean
+    AuthenticationManager authenticationManager(
+            UserDetailsService userDetailsService,
+            PasswordEncoder passwordEncoder
+    ) {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider(userDetailsService);
+        provider.setPasswordEncoder(passwordEncoder);
+        return new ProviderManager(provider);
+    }
+
+    @Bean
+    SecurityFilterChain securityFilterChain(
+            HttpSecurity http,
+            JwtAuthenticationFilter jwtFilter
+    ) throws Exception {
+        http
+                .csrf(csrf -> csrf.disable())
+                .cors(cors -> {})
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .exceptionHandling(errors -> errors
+                        .authenticationEntryPoint((request, response, exception) ->
+                                response.sendError(HttpServletResponse.SC_UNAUTHORIZED))
+                        .accessDeniedHandler((request, response, exception) ->
+                                response.sendError(HttpServletResponse.SC_FORBIDDEN)))
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
+                        .requestMatchers("/api/auth/me").authenticated()
+
+                        .requestMatchers(HttpMethod.GET, "/api/bus/actifs")
+                        .hasAnyRole("NETTOYEUR", "ADMINISTRATEUR")
+                        .requestMatchers("/api/bus/**").hasRole("ADMINISTRATEUR")
+
+                        .requestMatchers(HttpMethod.GET, "/api/types-nettoyage", "/api/types-nettoyage/*")
+                        .authenticated()
+                        .requestMatchers("/api/types-nettoyage/**").hasRole("ADMINISTRATEUR")
+                        .requestMatchers("/api/types-bus/**").hasRole("ADMINISTRATEUR")
+                        .requestMatchers("/api/utilisateurs/**").hasRole("ADMINISTRATEUR")
+
+                        .requestMatchers("/api/nettoyages/statistiques").hasRole("ADMINISTRATEUR")
+                        .requestMatchers("/api/nettoyages/commencer", "/api/nettoyages/mes-nettoyages")
+                        .hasRole("NETTOYEUR")
+                        .requestMatchers("/api/nettoyages/*/terminer").hasRole("NETTOYEUR")
+                        .requestMatchers("/api/nettoyages/en-attente", "/api/nettoyages/*/valider",
+                                "/api/nettoyages/*/refuser")
+                        .hasAnyRole("SUPERVISEUR", "ADMINISTRATEUR")
+                        .requestMatchers(HttpMethod.GET, "/api/nettoyages/*").authenticated()
+                        .requestMatchers("/api/nettoyages/**").hasRole("ADMINISTRATEUR")
+                        .anyRequest().authenticated())
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+        return http.build();
+    }
+}

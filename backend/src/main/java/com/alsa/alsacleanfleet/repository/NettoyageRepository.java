@@ -13,8 +13,11 @@ public interface NettoyageRepository extends JpaRepository<Nettoyage, Long> {
     List<Nettoyage> findByBusId(Long busId);
 
     List<Nettoyage> findByNettoyeurId(Long nettoyeurId);
+    List<Nettoyage> findByNettoyeurIdOrderByDateNettoyageDescHeureDebutDesc(Long nettoyeurId);
+    boolean existsByNettoyeurIdAndStatut(Long nettoyeurId, StatutNettoyage statut);
 
     List<Nettoyage> findByStatut(StatutNettoyage statut);
+    List<Nettoyage> findByStatutOrderByHeureFinAsc(StatutNettoyage statut);
 
     List<Nettoyage> findByDateNettoyageBetween(LocalDate debut, LocalDate fin);
     List<Nettoyage> findBySuperviseurId(Long superviseurId);

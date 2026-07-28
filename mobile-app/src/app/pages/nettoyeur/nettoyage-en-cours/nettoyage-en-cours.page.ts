@@ -1,14 +1,8 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {
-  IonContent,
-  IonButton,
-  IonIcon
-} from '@ionic/angular/standalone';
+import { IonButton, IonContent, IonIcon } from '@ionic/angular/standalone';
 import { Router } from '@angular/router';
-
 import { addIcons } from 'ionicons';
-
 import {
   busOutline,
   sparklesOutline,
@@ -17,37 +11,29 @@ import {
   stopwatchOutline,
   checkmarkCircleOutline
 } from 'ionicons/icons';
+import { Nettoyage } from '../../../models/api.models';
+import { NettoyageService } from '../../../services/nettoyage.service';
 
 @Component({
   selector: 'app-nettoyage-en-cours',
   templateUrl: './nettoyage-en-cours.page.html',
   styleUrls: ['./nettoyage-en-cours.page.scss'],
   standalone: true,
-  imports: [
-    CommonModule,
-    IonContent,
-    IonButton,
-    IonIcon
-  ]
+  imports: [CommonModule, IonContent, IonButton, IonIcon]
 })
 export class NettoyageEnCoursPage implements OnInit, OnDestroy {
+  nettoyage: Nettoyage | null = null;
+  bus = '';
+  type = '';
+  today = '';
+  heureDebut = '';
+  timer = '00:00:00';
+  private interval?: ReturnType<typeof setInterval>;
 
-  bus: string = '';
-
-  type: string = '';
-
-  today: string = '';
-
-  heureDebut: string = '';
-
-  timer: string = '00:00:00';
-
-  private seconds = 0;
-
-  private interval: any;
-
-  constructor(private router: Router) {
-
+  constructor(
+    private router: Router,
+    private nettoyageService: NettoyageService
+  ) {
     addIcons({
       'bus-outline': busOutline,
       'sparkles-outline': sparklesOutline,
@@ -56,80 +42,74 @@ export class NettoyageEnCoursPage implements OnInit, OnDestroy {
       'stopwatch-outline': stopwatchOutline,
       'checkmark-circle-outline': checkmarkCircleOutline
     });
-
-    const navigation = this.router.getCurrentNavigation();
-
-    if (navigation?.extras.state) {
-
-      this.bus = navigation.extras.state['bus'];
-
-      this.type = navigation.extras.state['type'];
-
-    }
-
+    this.nettoyage = this.router.getCurrentNavigation()?.extras.state?.['nettoyage'] ?? null;
   }
 
   ngOnInit(): void {
+    if (this.nettoyage) {
+      this.initialize(this.nettoyage);
+      return;
+    }
+    this.nettoyageService.mesNettoyages().subscribe({
+      next: history => {
+        const active = history.find(item => item.statut === 'EN_COURS');
+        if (!active) {
+          this.router.navigateByUrl('/dashboard');
+          return;
+        }
+        this.initialize(active);
+      },
+      error: () => this.router.navigateByUrl('/dashboard')
+    });
+  }
 
-    const now = new Date();
+  terminerNettoyage(): void {
+    if (!this.nettoyage) return;
+    this.stopTimer();
+    this.router.navigate(['/fin-nettoyage'], {
+      state: { nettoyage: this.nettoyage, dureeAffichee: this.timer }
+    });
+  }
 
-    this.today = now.toLocaleDateString('fr-FR', {
+  ngOnDestroy(): void {
+    this.stopTimer();
+  }
+
+  private initialize(nettoyage: Nettoyage): void {
+    this.nettoyage = nettoyage;
+    this.bus = nettoyage.numeroBus;
+    this.type = nettoyage.typeNettoyageLibelle;
+    this.today = new Date(`${nettoyage.dateNettoyage}T00:00:00`).toLocaleDateString('fr-FR', {
       weekday: 'long',
       day: 'numeric',
       month: 'long',
       year: 'numeric'
     });
-
-    this.heureDebut = now.toLocaleTimeString('fr-FR', {
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-
-    this.startTimer();
-
+    this.heureDebut = nettoyage.heureDebut
+      ? new Date(nettoyage.heureDebut).toLocaleTimeString('fr-FR', {
+          hour: '2-digit',
+          minute: '2-digit'
+        })
+      : '';
+    this.updateTimer();
+    this.interval = setInterval(() => this.updateTimer(), 1000);
   }
 
-  startTimer() {
-
-    this.interval = setInterval(() => {
-
-      this.seconds++;
-
-      const h = Math.floor(this.seconds / 3600);
-
-      const m = Math.floor((this.seconds % 3600) / 60);
-
-      const s = this.seconds % 60;
-
-      this.timer =
-        String(h).padStart(2, '0') + ':' +
-        String(m).padStart(2, '0') + ':' +
-        String(s).padStart(2, '0');
-
-    }, 1000);
-
+  private updateTimer(): void {
+    if (!this.nettoyage?.heureDebut) return;
+    const seconds = Math.max(
+      0,
+      Math.floor((Date.now() - new Date(this.nettoyage.heureDebut).getTime()) / 1000)
+    );
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const remainingSeconds = seconds % 60;
+    this.timer = [hours, minutes, remainingSeconds]
+      .map(value => String(value).padStart(2, '0'))
+      .join(':');
   }
 
-  terminerNettoyage() {
-
-    clearInterval(this.interval);
-
-    this.router.navigate(['/fin-nettoyage'], {
-      state: {
-        bus: this.bus,
-        type: this.type,
-        date: this.today,
-        heureDebut: this.heureDebut,
-        duree: this.timer
-      }
-    });
-
+  private stopTimer(): void {
+    if (this.interval) clearInterval(this.interval);
   }
-
-  ngOnDestroy(): void {
-
-    clearInterval(this.interval);
-
-  }
-
 }

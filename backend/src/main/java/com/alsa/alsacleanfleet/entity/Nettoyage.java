@@ -59,6 +59,7 @@ public class Nettoyage {
 
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private StatutNettoyage statut;
 
 

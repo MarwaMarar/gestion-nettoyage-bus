@@ -9,8 +9,10 @@ import java.time.Instant;
 import java.util.*;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+ @ExceptionHandler(UnauthorizedException.class) ResponseEntity<?> unauthorized(Exception e,HttpServletRequest r){return body(HttpStatus.UNAUTHORIZED,e.getMessage(),r);}
  @ExceptionHandler(ResourceNotFoundException.class) ResponseEntity<?> notFound(Exception e,HttpServletRequest r){return body(HttpStatus.NOT_FOUND,e.getMessage(),r);}
  @ExceptionHandler(DuplicateResourceException.class) ResponseEntity<?> conflict(Exception e,HttpServletRequest r){return body(HttpStatus.CONFLICT,e.getMessage(),r);}
+ @ExceptionHandler(WorkflowConflictException.class) ResponseEntity<?> workflowConflict(Exception e,HttpServletRequest r){return body(HttpStatus.CONFLICT,e.getMessage(),r);}
  @ExceptionHandler({BusinessException.class,MethodArgumentNotValidException.class,HttpMessageNotReadableException.class}) ResponseEntity<?> bad(Exception e,HttpServletRequest r){
   String m=e instanceof MethodArgumentNotValidException v?v.getBindingResult().getFieldErrors().stream().map(x->x.getField()+": "+x.getDefaultMessage()).findFirst().orElse("Donnees invalides"):"Requete invalide: "+e.getMessage(); return body(HttpStatus.BAD_REQUEST,m,r);}
  @ExceptionHandler(DataIntegrityViolationException.class) ResponseEntity<?> integrity(Exception e,HttpServletRequest r){return body(HttpStatus.CONFLICT,"Cette ressource est deja utilisee ou existe deja",r);}

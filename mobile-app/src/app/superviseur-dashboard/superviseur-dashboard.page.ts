@@ -17,6 +17,7 @@ import {
   notificationsOutline,
   calendarClearOutline
 } from 'ionicons/icons';
+import { NettoyageService } from '../services/nettoyage.service';
 
 @Component({
   selector: 'app-superviseur-dashboard',
@@ -35,10 +36,9 @@ export class SuperviseurDashboardPage implements OnInit {
 
   today: string = '';
 
-  // Nombre de nettoyages en attente
-  totalEnAttente = 12;
+  totalEnAttente = 0;
 
-  constructor(private router: Router) {
+  constructor(private router: Router, private nettoyages: NettoyageService) {
 
    addIcons({
 
@@ -68,6 +68,10 @@ export class SuperviseurDashboardPage implements OnInit {
     year: 'numeric'
   });
 
+  this.nettoyages.enAttente().subscribe({
+    next: values => this.totalEnAttente = values.length,
+    error: error => alert(error?.error?.message || 'Impossible de charger les nettoyages en attente.')
+  });
 }
 
 }

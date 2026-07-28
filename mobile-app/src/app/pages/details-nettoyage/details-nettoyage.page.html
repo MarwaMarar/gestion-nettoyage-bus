@@ -28,7 +28,7 @@
 
         </div>
 
-        <strong>{{ nettoyage.bus }}</strong>
+        <strong>{{ nettoyage?.numeroBus }}</strong>
 
       </div>
 
@@ -44,7 +44,7 @@
 
         </div>
 
-        <strong>{{ nettoyage.nettoyeur }}</strong>
+        <strong>{{ nettoyage?.nettoyeurNom }}</strong>
 
       </div>
 
@@ -60,7 +60,7 @@
 
         </div>
 
-        <strong>{{ nettoyage.type }}</strong>
+        <strong>{{ nettoyage?.typeNettoyageLibelle }}</strong>
 
       </div>
 
@@ -76,7 +76,7 @@
 
         </div>
 
-        <strong>{{ nettoyage.date }}</strong>
+        <strong>{{ nettoyage?.dateNettoyage | date:'dd/MM/yyyy' }}</strong>
 
       </div>
 
@@ -92,7 +92,7 @@
 
         </div>
 
-        <strong>{{ nettoyage.heureDebut }}</strong>
+        <strong>{{ nettoyage?.heureDebut | date:'HH:mm' }}</strong>
 
       </div>
 
@@ -108,7 +108,7 @@
 
         </div>
 
-        <strong>{{ nettoyage.heureFin }}</strong>
+        <strong>{{ nettoyage?.heureFin | date:'HH:mm' }}</strong>
 
       </div>
 
@@ -124,7 +124,7 @@
 
         </div>
 
-        <strong>{{ nettoyage.duree }}</strong>
+        <strong>{{ nettoyage?.duree }} min</strong>
 
       </div>
 
@@ -140,7 +140,7 @@
 
         </div>
 
-        <strong>{{ nettoyage.remarque || 'Aucune remarque' }}</strong>
+        <strong>{{ nettoyage?.remarqueNettoyeur || 'Aucune remarque' }}</strong>
 
       </div>
 
@@ -151,6 +151,7 @@
     <ion-button
       expand="block"
       class="validate-btn"
+      [disabled]="loading"
       (click)="valider()">
 
       <ion-icon
@@ -167,6 +168,7 @@
     <ion-button
       expand="block"
       class="reject-btn"
+      [disabled]="loading"
       (click)="showRefus = true">
 
       <ion-icon
@@ -223,6 +225,7 @@
         expand="block"
 
         class="send-refuse-btn"
+        [disabled]="loading"
 
         (click)="refuser()">
 

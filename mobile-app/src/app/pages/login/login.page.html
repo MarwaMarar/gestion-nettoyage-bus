@@ -64,9 +64,10 @@
         <ion-button
           expand="block"
           class="login-btn"
+          [disabled]="loading"
           type="submit">
 
-          Se connecter
+          {{ loading ? 'Connexion…' : 'Se connecter' }}
 
         </ion-button>
 

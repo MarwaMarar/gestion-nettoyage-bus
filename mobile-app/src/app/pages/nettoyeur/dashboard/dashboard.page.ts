@@ -3,6 +3,11 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { RouterLink } from '@angular/router';
+import { forkJoin } from 'rxjs';
+import { Bus, Nettoyage, TypeNettoyage } from '../../../models/api.models';
+import { BusService } from '../../../services/bus.service';
+import { TypeNettoyageService } from '../../../services/type-nettoyage.service';
+import { NettoyageService } from '../../../services/nettoyage.service';
 
 import {
   IonContent,
@@ -10,7 +15,16 @@ import {
   IonSelect,
   IonSelectOption,
   IonButton,
-  IonIcon
+  IonIcon,
+  IonMenu,
+  IonMenuButton,
+  IonMenuToggle,
+  IonHeader,
+  IonToolbar,
+  IonButtons,
+  IonTitle,
+  IonList,
+  IonLabel
 } from '@ionic/angular/standalone';
 
 import { addIcons } from 'ionicons';
@@ -37,6 +51,15 @@ import {
     IonSelectOption,
     IonButton,
     IonIcon,
+    IonMenu,
+    IonMenuButton,
+    IonMenuToggle,
+    IonHeader,
+    IonToolbar,
+    IonButtons,
+    IonTitle,
+    IonList,
+    IonLabel,
     RouterLink
   ]
 })
@@ -44,26 +67,19 @@ export class DashboardPage implements OnInit {
 
   today: string = '';
 
-  busList = [
-    'Bus 101',
-    'Bus 102',
-    'Bus 103'
-  ];
+  busList: Bus[] = [];
+  typeNettoyageList: TypeNettoyage[] = [];
+  selectedBus: number | null = null;
+  selectedType: number | null = null;
+  notificationCount = 0;
+  loading = false;
 
-  typeNettoyageList = [
-    'Nettoyage intérieur',
-    'Nettoyage extérieur',
-    'Nettoyage complet',
-    'Désinfection',
-    'Lavage rapide',
-    'Nettoyage avant mise en service'
-  ];
-
-  selectedBus = '';
-
-  selectedType = '';
-
-  constructor(private router: Router) {
+  constructor(
+    private router: Router,
+    private busService: BusService,
+    private typeService: TypeNettoyageService,
+    private nettoyageService: NettoyageService
+  ) {
 
     addIcons({
        'bus-outline': busOutline,
@@ -86,11 +102,27 @@ export class DashboardPage implements OnInit {
       year: 'numeric'
     });
 
+    forkJoin({
+      buses: this.busService.active(),
+      types: this.typeService.all(),
+      history: this.nettoyageService.mesNettoyages()
+    }).subscribe({
+      next: ({ buses, types, history }) => {
+        this.busList = buses;
+        this.typeNettoyageList = types;
+        this.notificationCount = history.filter(item =>
+          item.statut === 'VALIDE' || item.statut === 'REFUSE'
+        ).length;
+        const active = history.find(item => item.statut === 'EN_COURS');
+        if (active) this.router.navigate(['/nettoyage-en-cours'], { state: { nettoyage: active } });
+      },
+      error: error => alert(error?.error?.message || 'Impossible de charger les données.')
+    });
   }
 
   commencerNettoyage() {
 
-    if (!this.selectedBus || !this.selectedType) {
+    if (this.selectedBus === null || this.selectedType === null) {
 
       alert('Veuillez sélectionner un bus et un type de nettoyage.');
 
@@ -98,15 +130,17 @@ export class DashboardPage implements OnInit {
 
     }
 
-    this.router.navigate(
-      ['/nettoyage-en-cours'],
-      {
-        state: {
-          bus: this.selectedBus,
-          type: this.selectedType
-        }
+    this.loading = true;
+    this.nettoyageService.commencer(this.selectedBus, this.selectedType).subscribe({
+      next: (nettoyage: Nettoyage) => {
+        this.loading = false;
+        this.router.navigate(['/nettoyage-en-cours'], { state: { nettoyage } });
+      },
+      error: error => {
+        this.loading = false;
+        alert(error?.error?.message || 'Impossible de commencer le nettoyage.');
       }
-    );
+    });
 
   }
 

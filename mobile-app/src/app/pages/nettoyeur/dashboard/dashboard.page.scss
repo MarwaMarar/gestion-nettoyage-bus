@@ -431,3 +431,112 @@ ion-select {
   }
 
 }
+
+/* Phone layout: keep the existing visual design while using the full viewport. */
+:host {
+  display: block;
+  width: 100%;
+  max-width: none;
+  overflow: hidden;
+}
+
+ion-header,
+ion-toolbar,
+ion-content {
+  width: 100%;
+  max-width: none;
+}
+
+ion-content::part(scroll) {
+  overflow-x: hidden;
+}
+
+.dashboard-page {
+  width: 100%;
+  max-width: none;
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+
+.welcome-card,
+.form-card,
+.custom-item {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.welcome-top,
+.welcome-text,
+.input-group {
+  min-width: 0;
+}
+
+.welcome-text {
+  padding-right: 70px;
+  margin-right: 0;
+}
+
+.logo {
+  position: static;
+  display: block;
+  width: 90px;
+  max-width: 30%;
+  margin: 18px 0 0 auto;
+}
+
+.today {
+  display: flex;
+  width: fit-content;
+  max-width: 100%;
+  box-sizing: border-box;
+  white-space: normal;
+}
+
+ion-select {
+  min-width: 0;
+  max-width: 100%;
+}
+
+@media (max-width: 600px) {
+  .dashboard-page {
+    padding: 16px;
+  }
+
+  .welcome-card {
+    text-align: left;
+    padding: 20px;
+  }
+
+  .form-card {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 360px) {
+  .dashboard-page {
+    padding: 12px;
+  }
+
+  .welcome-card,
+  .form-card {
+    padding: 18px;
+    border-radius: 20px;
+  }
+
+  .welcome-text {
+    padding-right: 58px;
+  }
+
+  .notification-btn {
+    top: 18px;
+    right: 18px;
+    width: 48px;
+    height: 48px;
+  }
+
+  .today {
+    padding: 9px 12px;
+  }
+}

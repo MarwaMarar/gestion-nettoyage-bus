@@ -13,6 +13,7 @@ import {
 
 import { addIcons } from 'ionicons';
 import { eyeOutline, eyeOffOutline } from 'ionicons/icons';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -35,8 +36,9 @@ export class LoginPage {
   password = '';
 
   showPassword = false;
+  loading = false;
 
-  constructor(private router: Router) {
+  constructor(private router: Router, private auth: AuthService) {
   addIcons({
     eyeOutline,
     eyeOffOutline
@@ -44,17 +46,28 @@ export class LoginPage {
   }
 
   seConnecter() {
-
-  if (this.login === 'nettoyeur' && this.password === '1234') {
-
-    this.router.navigate(['/dashboard']);
-
-  } else {
-
-    alert('Login ou mot de passe incorrect.');
-
+    if (!this.login.trim() || !this.password) {
+      alert('Veuillez saisir votre email ou login et votre mot de passe.');
+      return;
+    }
+    this.loading = true;
+    this.auth.login(this.login, this.password).subscribe({
+      next: user => {
+        this.loading = false;
+        if (user.role === 'NETTOYEUR') {
+          this.router.navigateByUrl('/dashboard');
+        } else if (user.role === 'SUPERVISEUR') {
+          this.router.navigateByUrl('/superviseur-dashboard');
+        } else {
+          this.auth.logout();
+          alert("Le compte administrateur doit utiliser l'application web.");
+        }
+      },
+      error: error => {
+        this.loading = false;
+        alert(error?.error?.message || 'Login ou mot de passe incorrect.');
+      }
+    });
   }
-
-}
 
 }
