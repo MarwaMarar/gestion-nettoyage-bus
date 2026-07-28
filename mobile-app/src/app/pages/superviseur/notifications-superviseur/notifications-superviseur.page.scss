@@ -1,0 +1,303 @@
+/* ===========================
+   PAGE
+=========================== */
+
+.page {
+
+  min-height: 100%;
+
+  padding: 22px;
+
+  background: linear-gradient(
+    180deg,
+    var(--primary-light) 0%,
+    #f8fbff 100%
+  );
+
+}
+
+/* ===========================
+   RETOUR
+=========================== */
+
+.back-button {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 8px;
+
+  color: var(--primary);
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  margin-bottom: 18px;
+
+}
+
+.back-button ion-icon {
+
+  font-size: 22px;
+
+}
+
+/* ===========================
+   HEADER
+=========================== */
+
+.header-card {
+
+  background: white;
+
+  border-radius: 22px;
+
+  padding: 22px;
+
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  box-shadow: var(--shadow-lg);
+
+}
+
+.header-text h1 {
+
+  margin: 0;
+
+  font-size: 28px;
+
+  color: var(--text-primary);
+
+}
+
+.header-text p {
+
+  margin-top: 8px;
+
+  color: var(--text-muted);
+
+  line-height: 1.5;
+
+}
+
+.header-icon {
+
+  width: 70px;
+
+  height: 70px;
+
+  border-radius: 18px;
+
+  background: rgba(37,99,235,.12);
+
+  display: flex;
+
+  justify-content: center;
+
+  align-items: center;
+
+}
+
+.header-icon ion-icon {
+
+  font-size: 34px;
+
+  color: var(--primary);
+
+}
+
+/* ===========================
+   ACTIONS
+=========================== */
+
+.actions {
+
+  display: flex;
+
+  justify-content: flex-end;
+
+  margin: 18px 0;
+
+}
+
+.mark-btn {
+
+  --background: #EEF6FF;
+
+  --color: #2563EB;
+
+  --border-radius: 14px;
+
+  font-weight: 700;
+
+  height: 42px;
+
+}
+
+.mark-btn::part(native){
+
+  border-radius:14px;
+
+}
+
+/* ===========================
+   CARD
+=========================== */
+
+.notification-card {
+
+  background: white;
+
+  border-radius: 18px;
+
+  padding: 18px;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 16px;
+
+  margin-bottom: 16px;
+
+  box-shadow: var(--shadow-md);
+
+  cursor: pointer;
+
+  transition: .25s;
+
+}
+
+.notification-card:hover {
+
+  transform: translateY(-3px);
+
+}
+
+.notification-card.read {
+
+  opacity: .75;
+
+}
+
+/* ===========================
+   ICON
+=========================== */
+
+.notification-icon {
+
+  width: 54px;
+
+  height: 54px;
+
+  border-radius: 16px;
+
+  display: flex;
+
+  justify-content: center;
+
+  align-items: center;
+
+  flex-shrink: 0;
+
+}
+
+.notification-icon.primary {
+
+  background: rgba(37,99,235,.12);
+
+  color: #2563EB;
+
+}
+
+.notification-icon ion-icon {
+
+  font-size: 26px;
+
+}
+
+/* ===========================
+   CONTENT
+=========================== */
+
+.notification-content {
+
+  flex: 1;
+
+}
+
+.notification-content h3 {
+
+  margin: 0;
+
+  font-size: 18px;
+
+  color: var(--text-primary);
+
+}
+
+.notification-content p {
+
+  margin: 8px 0;
+
+  color: var(--text-secondary);
+
+  line-height: 1.5;
+
+}
+
+.notification-content span {
+
+  font-size: 13px;
+
+  color: var(--text-muted);
+
+}
+
+/* ===========================
+   BLUE DOT
+=========================== */
+
+.dot {
+
+  width: 11px;
+
+  height: 11px;
+
+  border-radius: 50%;
+
+  background: #2563EB;
+
+}
+
+/* ===========================
+   RESPONSIVE
+=========================== */
+
+@media (max-width:600px){
+
+  .page{
+
+    padding:18px;
+
+  }
+
+  .header-card{
+
+    padding:18px;
+
+  }
+
+  .header-text h1{
+
+    font-size:24px;
+
+  }
+
+}

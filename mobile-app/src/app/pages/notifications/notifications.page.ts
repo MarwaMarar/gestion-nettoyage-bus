@@ -5,7 +5,8 @@ import { RouterLink } from '@angular/router';
 
 import {
   IonContent,
-  IonIcon
+  IonIcon,
+  IonButton
 } from '@ionic/angular/standalone';
 
 import { addIcons } from 'ionicons';
@@ -14,8 +15,9 @@ import {
   notificationsOutline,
   checkmarkCircleOutline,
   closeCircleOutline,
-  timeOutline
-} from 'ionicons/icons';
+  timeOutline,
+  checkmarkDoneOutline
+} from 'ionicons/icons';;
 
 @Component({
   selector: 'app-notifications',
@@ -26,6 +28,7 @@ import {
     CommonModule,
     IonContent,
     IonIcon,
+    IonButton,
     RouterLink
   ]
 })
@@ -67,7 +70,8 @@ constructor() {
     'checkmark-circle-outline': checkmarkCircleOutline,
     'close-circle-outline': closeCircleOutline,
     'time-outline': timeOutline,
-    'arrow-back-outline': arrowBackOutline
+    'arrow-back-outline': arrowBackOutline,
+    'checkmark-done-outline': checkmarkDoneOutline,
 
   });
 
@@ -78,4 +82,14 @@ ouvrirNotification(notification: any) {
   notification.lu = true;
 
 }
+
+toutMarquerCommeLu() {
+
+  this.notifications.forEach(notification => {
+
+    notification.lu = true;
+
+  });
+
+ }
 }

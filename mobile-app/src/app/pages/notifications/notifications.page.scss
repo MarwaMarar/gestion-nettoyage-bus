@@ -330,3 +330,56 @@
   box-shadow:0 15px 35px rgba(0,0,0,.12);
 
 }
+
+.actions{
+
+  display:flex;
+
+  justify-content:flex-end;
+
+  margin:18px 0;
+
+}
+
+.actions ion-button{
+
+  --background:#EEF6FF;
+
+  --color:#2563EB;
+
+  --border-radius:14px;
+
+  --padding-start:18px;
+
+  --padding-end:18px;
+
+  height:42px;
+
+  font-weight:700;
+
+  box-shadow:0 4px 12px rgba(37,99,235,.15);
+
+}
+
+.actions ion-button:hover{
+
+  --background:#DCEEFF;
+
+}
+
+.actions ion-button {
+
+  --background: #EEF6FF;
+  --color: #2563EB;
+  --border-radius: 14px;
+
+  overflow: hidden;
+
+}
+
+.actions ion-button::part(native) {
+
+  border-radius: 14px;
+  overflow: hidden;
+
+}

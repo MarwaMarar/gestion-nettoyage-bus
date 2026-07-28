@@ -8,22 +8,52 @@
 
     <div class="welcome-card">
 
-      <div class="welcome-text">
+      <div class="welcome-top">
 
-        <h2>Bonjour</h2>
+        <!-- LEFT -->
 
-        <h1>Superviseur</h1>
+        <div class="welcome-text">
 
-        <p>
-          Consultez les nettoyages en attente de validation.
-        </p>
+          <h2>Bonjour</h2>
+
+          <h1>Superviseur</h1>
+
+          <p>
+            Consultez les nettoyages en attente de validation.
+          </p>
+
+          <div class="today">
+
+            <ion-icon name="calendar-clear-outline"></ion-icon>
+
+            <span>{{ today }}</span>
+
+          </div>
+
+        </div>
+
+        <!-- RIGHT -->
+
+        <div class="right-side">
+
+          <div
+            class="notification-btn"
+            routerLink="/notifications-superviseur">
+
+            <ion-icon name="notifications-outline"></ion-icon>
+
+            <span class="badge">3</span>
+
+          </div>
+
+          <img
+            src="assets/images/alsa-logo.png"
+            alt="ALSA Logo"
+            class="logo">
+
+        </div>
 
       </div>
-
-      <img
-        src="assets/images/alsa-logo.png"
-        alt="ALSA Logo"
-        class="logo">
 
     </div>
 
@@ -50,11 +80,8 @@
     ============================ -->
 
     <ion-button
-
       expand="block"
-
       class="details-btn"
-
       (click)="voirDetails()">
 
       <ion-icon

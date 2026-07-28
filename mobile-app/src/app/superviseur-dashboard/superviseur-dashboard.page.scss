@@ -2,87 +2,159 @@
    PAGE
 =========================== */
 
-.dashboard-page {
-
-  min-height: 100%;
-
-  padding: 24px;
-
-  background: linear-gradient(
+.dashboard-page{
+  min-height:100%;
+  padding:24px;
+  background:linear-gradient(
     180deg,
     var(--primary-light) 0%,
     var(--bg) 100%
   );
-
 }
 
 /* ===========================
    WELCOME CARD
 =========================== */
 
-.welcome-card {
+.welcome-card{
+  background:var(--surface);
+  border-radius:24px;
+  padding:24px;
+  box-shadow:var(--shadow-lg);
+  margin-bottom:24px;
+}
 
-  background: var(--surface);
+/* ===========================
+   TOP
+=========================== */
 
-  border-radius: 24px;
+.welcome-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+}
 
-  padding: 24px;
+/* ===========================
+   TEXT
+=========================== */
 
+.welcome-text{
+  flex:1;
+}
+
+.welcome-text h2{
+  margin:0;
+  font-size:18px;
+  color:var(--text-secondary);
+}
+
+.welcome-text h1{
+  margin:6px 0;
+  font-size:30px;
+  font-weight:700;
+  color:var(--text-primary);
+}
+
+.welcome-text p{
+  margin:10px 0 18px;
+  color:var(--text-muted);
+  line-height:1.5;
+}
+
+/* ===========================
+   NOTIFICATION
+=========================== */
+
+.notification-btn{
+  position:relative;
+  width:56px;
+  height:56px;
+  border-radius:18px;
+  background:#ffffff;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  cursor:pointer;
+  box-shadow:0 10px 25px rgba(0,0,0,.08);
+  transition:.25s;
+}
+
+.notification-btn:hover{
+  transform:translateY(-2px);
+}
+
+.notification-btn ion-icon{
+  font-size:28px;
+  color:#2563EB;
+}
+
+.badge{
+  position:absolute;
+  top:-6px;
+  right:-4px;
+
+  width:24px;
+  height:24px;
+
+  border-radius:50%;
+
+  background:#EF4444;
+  color:white;
+
+  display:flex;
+  justify-content:center;
+  align-items:center;
+
+  font-size:12px;
+  font-weight:700;
+
+  border:2px solid white;
+}
+
+/* ===========================
+   DATE
+=========================== */
+
+.today{
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+
+  padding:10px 16px;
+
+  background:var(--primary-light);
+
+  color:var(--primary);
+
+  border-radius:999px;
+
+  font-weight:600;
+}
+
+.today ion-icon{
+  font-size:20px;
+}
+
+/* ===========================
+   LOGO
+=========================== */
+.right-side{
   display: flex;
 
-  justify-content: space-between;
+  flex-direction: column;
 
   align-items: center;
 
-  box-shadow: var(--shadow-lg);
-
-  margin-bottom: 24px;
-
+  gap: 16px;
 }
 
-.welcome-text {
-
-  flex: 1;
-
-}
-
-.welcome-text h2 {
-
-  margin: 0;
-
-  font-size: 18px;
-
-  color: var(--text-secondary);
-
-}
-
-.welcome-text h1 {
-
-  margin: 6px 0;
-
-  font-size: 30px;
-
-  font-weight: 700;
-
-  color: var(--text-primary);
-
-}
-
-.welcome-text p {
-
-  margin-top: 10px;
-
-  color: var(--text-muted);
-
-  line-height: 1.5;
-
-}
-
-.logo {
-
+.logo{
   width: 90px;
 
   height: auto;
+
+  margin: 0;
+
 
 }
 
@@ -90,144 +162,93 @@
    STATS CARD
 =========================== */
 
-.stats-card {
-
-  background: white;
-
-  border-radius: 24px;
-
-  padding: 30px;
-
-  box-shadow: var(--shadow-lg);
-
-  text-align: center;
-
-  margin-bottom: 25px;
-
+.stats-card{
+  background:white;
+  border-radius:24px;
+  padding:30px;
+  box-shadow:var(--shadow-lg);
+  text-align:center;
+  margin-bottom:24px;
 }
 
-.stats-icon {
+.stats-icon{
+  width:75px;
+  height:75px;
 
-  width: 75px;
+  margin:0 auto 20px;
 
-  height: 75px;
+  border-radius:20px;
 
-  margin: 0 auto 20px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
 
-  border-radius: 20px;
-
-  display: flex;
-
-  align-items: center;
-
-  justify-content: center;
-
-  background: var(--primary-light);
-
-  color: var(--primary);
-
+  background:var(--primary-light);
+  color:var(--primary);
 }
 
-.stats-icon ion-icon {
-
-  font-size: 40px;
-
+.stats-icon ion-icon{
+  font-size:40px;
 }
 
-.stats-card h3 {
-
-  margin: 0;
-
-  font-size: 46px;
-
-  font-weight: 700;
-
-  color: var(--primary);
-
+.stats-card h3{
+  margin:0;
+  font-size:46px;
+  font-weight:700;
+  color:var(--primary);
 }
 
-.stats-card p {
-
-  margin-top: 8px;
-
-  font-size: 16px;
-
-  color: var(--text-secondary);
-
+.stats-card p{
+  margin-top:8px;
+  color:var(--text-secondary);
+  font-size:16px;
 }
 
 /* ===========================
    BUTTON
 =========================== */
 
-.details-btn {
+.details-btn{
+  height:54px;
 
-  height: 54px;
+  --background:#2563EB;
+  --background-hover:#1D4ED8;
+  --color:white;
+  --border-radius:16px;
 
-  --background: #2563EB;
-
-  --background-hover: #1D4ED8;
-
-  --color: #ffffff;
-
-  --border-radius: 16px;
-
-  font-size: 15px;
-
-  font-weight: 700;
-
+  font-size:15px;
+  font-weight:700;
 }
 
-.details-btn::part(native) {
-
-  transition: .25s;
-
+.details-btn::part(native){
+  transition:.25s;
 }
 
-.details-btn:hover::part(native) {
-
-  transform: translateY(-2px);
-
+.details-btn:hover::part(native){
+  transform:translateY(-2px);
 }
 
 /* ===========================
    MOBILE
 =========================== */
 
-@media (max-width: 600px) {
+@media(max-width:600px){
 
-  .dashboard-page {
-
-    padding: 18px;
-
+  .dashboard-page{
+    padding:18px;
   }
 
-  .welcome-card {
-
-    flex-direction: column-reverse;
-
-    text-align: center;
-
-    gap: 20px;
-
+  .welcome-text h1{
+    font-size:26px;
   }
 
-  .logo {
-
-    width: 75px;
-
+  .logo{
+    width:75px;
+    margin-top:16px;
   }
 
-  .welcome-text h1 {
-
-    font-size: 26px;
-
-  }
-
-  .stats-card h3 {
-
-    font-size: 38px;
-
+  .stats-card h3{
+    font-size:38px;
   }
 
 }
