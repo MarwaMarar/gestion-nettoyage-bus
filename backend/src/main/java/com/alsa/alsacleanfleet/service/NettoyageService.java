@@ -96,7 +96,10 @@ public class NettoyageService {
             AuthenticatedUser principal
     ) {
         Utilisateur nettoyeur = currentUser(principal);
-        requireRole(nettoyeur, Role.NETTOYEUR);
+        if (nettoyeur.getRole() != Role.NETTOYEUR
+                && nettoyeur.getRole() != Role.ADMINISTRATEUR) {
+            throw new AccessDeniedException("Rôle nettoyeur requis");
+        }
         if (repo.existsByNettoyeurIdAndStatut(nettoyeur.getId(), StatutNettoyage.EN_COURS)) {
             throw new WorkflowConflictException("Un nettoyage est déjà en cours");
         }

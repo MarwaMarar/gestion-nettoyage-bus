@@ -46,6 +46,10 @@ export class AuthService {
     return localStorage.getItem(this.tokenKey);
   }
 
+  acceptTransferredSession(token: string): void {
+    localStorage.setItem(this.tokenKey, token);
+  }
+
   logout(): void {
     localStorage.removeItem(this.tokenKey);
     localStorage.removeItem(this.userKey);

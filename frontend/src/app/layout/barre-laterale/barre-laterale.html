@@ -44,6 +44,18 @@
       <i class="fa-solid fa-chart-line"></i>
       <span>Rapports</span>
     </a>
+
+    <a [href]="mobileAppUrl + '/superviseur-dashboard'"
+       (click)="ouvrirVueMobile('superviseur', $event)">
+      <i class="fa-solid fa-user-check"></i>
+      <span>Vue Superviseur</span>
+    </a>
+
+    <a [href]="mobileAppUrl + '/dashboard'"
+       (click)="ouvrirVueMobile('nettoyeur', $event)">
+      <i class="fa-solid fa-broom-ball"></i>
+      <span>Vue Nettoyeur</span>
+    </a>
   </nav>
 
  

@@ -76,8 +76,9 @@ public class SecurityConfig {
 
                         .requestMatchers("/api/nettoyages/statistiques").hasRole("ADMINISTRATEUR")
                         .requestMatchers("/api/nettoyages/commencer", "/api/nettoyages/mes-nettoyages")
-                        .hasRole("NETTOYEUR")
-                        .requestMatchers("/api/nettoyages/*/terminer").hasRole("NETTOYEUR")
+                        .hasAnyRole("NETTOYEUR", "ADMINISTRATEUR")
+                        .requestMatchers("/api/nettoyages/*/terminer")
+                        .hasAnyRole("NETTOYEUR", "ADMINISTRATEUR")
                         .requestMatchers("/api/nettoyages/en-attente", "/api/nettoyages/*/valider",
                                 "/api/nettoyages/*/refuser")
                         .hasAnyRole("SUPERVISEUR", "ADMINISTRATEUR")
