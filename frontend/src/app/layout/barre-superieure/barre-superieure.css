@@ -241,7 +241,7 @@
   position: absolute;
   top: 45px;
   right: 0;
-  width: 260px;
+  width: 320px;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
@@ -278,6 +278,32 @@
 .notification-item i {
   color: var(--primary);
 }
+
+.notification-message { flex: 1; min-width: 0; line-height: 1.4; }
+.notification-read { opacity: .72; }
+.notification-delete {
+  width: 32px;
+  height: 32px;
+  flex: 0 0 32px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  color: var(--text-muted);
+  background: transparent;
+  cursor: pointer;
+  opacity: 1;
+  transition: opacity var(--transition), color var(--transition), background var(--transition);
+}
+.notification-delete i { color: inherit; }
+.notification-delete:hover { color: var(--danger); background: var(--danger-light); }
+.notification-delete:disabled { cursor: wait; opacity: .7; }
+.notification-error { margin: 8px 10px 2px; color: var(--danger); font-size: 12px; }
+
+@media (hover: none) { .notification-delete { opacity: 1; } }
+
+@media (max-width: 400px) { .notification-menu { width: min(320px, calc(100vw - 24px)); right: -58px; } }
 
 
 

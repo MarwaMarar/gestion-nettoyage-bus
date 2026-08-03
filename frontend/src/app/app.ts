@@ -37,6 +37,10 @@ export class App {
 
   showAppLayout = computed(() => {
     this.currentUrl();
+<<<<<<< HEAD
     return !this.router.url.startsWith('/login') && !this.router.url.startsWith('/change-password');
+=======
+    return !this.router.url.startsWith('/login');
+>>>>>>> e35a0c0 (fully works)
   });
 }

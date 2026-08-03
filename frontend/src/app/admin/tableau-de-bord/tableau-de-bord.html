@@ -12,6 +12,23 @@
     <div class="welcome-icon">🚌</div>
   </div>
 
+  <div class="dashboard-filter" aria-label="Filtrer le tableau de bord par période">
+    <div class="date-field">
+      <label for="dashboard-date-debut">Date début</label>
+      <input id="dashboard-date-debut" type="date" [(ngModel)]="dateDebut" [max]="dateFin || null">
+    </div>
+    <div class="date-field">
+      <label for="dashboard-date-fin">Date fin</label>
+      <input id="dashboard-date-fin" type="date" [(ngModel)]="dateFin" [min]="dateDebut || null">
+    </div>
+    <div class="filter-controls">
+      <button type="button" (click)="appliquerFiltre()">
+        <i class="fa-solid fa-filter"></i> Filtrer
+      </button>
+    </div>
+  </div>
+  <p *ngIf="filterError" class="filter-error">{{ filterError }}</p>
+
 
   <div class="cards">
 
@@ -34,7 +51,7 @@
     <i class="fa-solid fa-broom"></i>
   </div>
   <div class="card-body">
-    <h3>Nettoyages du jour</h3>
+    <h3>Nettoyages — {{ libellePeriode }}</h3>
     <p>{{ nettoyagesJour }}</p>
   </div>
 </div>

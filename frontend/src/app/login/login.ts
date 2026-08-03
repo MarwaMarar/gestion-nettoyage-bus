@@ -33,11 +33,15 @@ export class Login {
     this.auth.login(this.login, this.password).subscribe({
       next: user => {
         this.connexionEnCours = false;
+<<<<<<< HEAD
         const destination = user.mustChangePassword
           ? '/change-password'
           : user.role === 'CONSULTANT'
           ? '/consultant/tableau-de-bord'
           : user.role === 'ADMINISTRATEUR'
+=======
+        const destination = user.role === 'ADMINISTRATEUR'
+>>>>>>> e35a0c0 (fully works)
           ? '/admin/tableau-de-bord'
           : user.role === 'NETTOYEUR'
             ? '/nettoyeur/tableau-de-bord'

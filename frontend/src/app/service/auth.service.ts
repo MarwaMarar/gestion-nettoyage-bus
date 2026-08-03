@@ -93,6 +93,22 @@ export class AuthService {
     );
   }
 
+  validateRoles(roles: AuthenticatedUser['role'][]): Observable<boolean> {
+    if (!this.getToken()) return of(false);
+    return this.http.get<AuthenticatedUser>(`${environment.apiUrl}/auth/me`).pipe(
+      tap(user => {
+        sessionStorage.setItem(this.sessionKey, JSON.stringify(user));
+        this.currentUser.set(user);
+        this.authenticated.set(true);
+      }),
+      map(user => user.actif && roles.includes(user.role)),
+      catchError(() => {
+        this.logout();
+        return of(false);
+      })
+    );
+  }
+
   logout(): void {
     sessionStorage.removeItem(this.tokenKey);
     sessionStorage.removeItem(this.sessionKey);
