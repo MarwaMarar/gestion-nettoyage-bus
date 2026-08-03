@@ -9,6 +9,7 @@ export class BusService {
   private readonly url = `${environment.apiUrl}/bus`;
   constructor(private http: HttpClient) {}
   getAll(): Observable<Bus[]> { return this.http.get<Bus[]>(this.url); }
+  getActive(): Observable<Bus[]> { return this.http.get<Bus[]>(`${this.url}/actifs`); }
   getById(id: number): Observable<Bus> { return this.http.get<Bus>(`${this.url}/${id}`); }
   create(value: BusRequest): Observable<Bus> { return this.http.post<Bus>(this.url, value); }
   update(id: number, value: BusRequest): Observable<Bus> { return this.http.put<Bus>(`${this.url}/${id}`, value); }

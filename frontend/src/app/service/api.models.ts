@@ -5,7 +5,7 @@ export interface BusRequest { numeroBus: string; typeBusId: number; actif: boole
 export type Role = 'ADMINISTRATEUR' | 'NETTOYEUR' | 'SUPERVISEUR';
 export interface Utilisateur { id: number; nom: string; prenom: string; matricule: string; telephone: string | null; email: string; login: string; role: Role; actif: boolean; }
 export interface UtilisateurRequest { nom:string; prenom:string; matricule:string; telephone:string|null; email:string; login:string; motDePasse?:string; role:Role; actif:boolean; }
-export type StatutNettoyage = 'EN_COURS' | 'EN_ATTENTE' | 'VALIDE' | 'REFUSE';
+export type StatutNettoyage = 'EN_ATTENTE' | 'VALIDE' | 'REFUSE';
 export interface Nettoyage {
   id: number; busId: number; numeroBus: string; typeNettoyageId: number; typeNettoyageLibelle: string;
   nettoyeurId: number; nettoyeurNom: string; superviseurId?: number; superviseurNom?: string; dateNettoyage: string; heureDebut?: string; heureFin?: string;

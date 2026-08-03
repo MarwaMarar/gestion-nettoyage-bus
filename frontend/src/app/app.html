@@ -1,7 +1,7 @@
 
-<div class="layout" [class.layout-login]="isLoginPage()">
+<div class="layout" [class.layout-login]="!showAppLayout()">
 
-  @if (!isLoginPage()) {
+  @if (showAppLayout()) {
     <!-- Overlay sur mobile -->
     <div class="sidebar-overlay" 
          *ngIf="layoutService.sidebarOpen()" 
@@ -11,9 +11,9 @@
     <app-barre-laterale></app-barre-laterale>
   }
 
-  <div class="contenu-principal" [class.no-sidebar]="isLoginPage()">
+  <div class="contenu-principal" [class.no-sidebar]="!showAppLayout()">
 
-    @if (!isLoginPage()) {
+    @if (showAppLayout()) {
       <app-barre-superieure></app-barre-superieure>
     }
 

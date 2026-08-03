@@ -1,7 +1,7 @@
 <div class="sidebar" [class.open]="layoutService.sidebarOpen()">
 
   <div class="sidebar-header-mobile">
-    <a class="sidebar-logo" routerLink="/admin/tableau-de-bord" (click)="layoutService.closeSidebar()">
+    <a class="sidebar-logo" [routerLink]="home" (click)="layoutService.closeSidebar()">
       <div class="sidebar-logo-icon">
         <i class="fa-solid fa-bus"></i>
       </div>
@@ -20,6 +20,7 @@
   <span class="sidebar-section-label">Menu principal</span>
 
   <nav>
+    @if (role === 'ADMINISTRATEUR') {
     <a routerLink="/admin/tableau-de-bord" routerLinkActive="active" (click)="layoutService.closeSidebar()">
       <i class="fa-solid fa-gauge-high"></i>
       <span>Tableau de bord</span>
@@ -45,25 +46,48 @@
       <span>Rapports</span>
     </a>
 
-    <a [href]="mobileAppUrl + '/superviseur-dashboard'"
-       (click)="ouvrirVueMobile('superviseur', $event)">
+    <a routerLink="/superviseur/tableau-de-bord" routerLinkActive="active" (click)="layoutService.closeSidebar()">
       <i class="fa-solid fa-user-check"></i>
       <span>Vue Superviseur</span>
     </a>
 
-    <a [href]="mobileAppUrl + '/dashboard'"
-       (click)="ouvrirVueMobile('nettoyeur', $event)">
+    <a routerLink="/nettoyeur/tableau-de-bord" routerLinkActive="active" (click)="layoutService.closeSidebar()">
       <i class="fa-solid fa-broom-ball"></i>
       <span>Vue Nettoyeur</span>
     </a>
+    }
+
+    @if (role === 'NETTOYEUR') {
+      <a routerLink="/nettoyeur/tableau-de-bord" routerLinkActive="active" (click)="layoutService.closeSidebar()">
+        <i class="fa-solid fa-gauge-high"></i>
+        <span>Tableau de bord</span>
+      </a>
+      <a routerLink="/nettoyeur/historique" routerLinkActive="active" (click)="layoutService.closeSidebar()">
+        <i class="fa-solid fa-clock-rotate-left"></i>
+        <span>Historique</span>
+      </a>
+    }
+
+    @if (role === 'SUPERVISEUR') {
+      <a routerLink="/superviseur/tableau-de-bord" routerLinkActive="active" (click)="layoutService.closeSidebar()">
+        <i class="fa-solid fa-gauge-high"></i>
+        <span>Tableau de bord</span>
+      </a>
+      <a routerLink="/superviseur/nettoyages" routerLinkActive="active" (click)="layoutService.closeSidebar()">
+        <i class="fa-solid fa-list-check"></i>
+        <span>Nettoyages en attente</span>
+      </a>
+    }
   </nav>
 
  
   <div class="sidebar-footer">
+    @if (role === 'ADMINISTRATEUR') {
     <a routerLink="/admin/parametres" routerLinkActive="active" (click)="layoutService.closeSidebar()">
       <i class="fa-solid fa-gear"></i>
       <span>Paramètres</span>
     </a>
+    }
   </div>
 
 </div>

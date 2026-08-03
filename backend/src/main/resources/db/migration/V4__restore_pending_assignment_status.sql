@@ -1,0 +1,6 @@
+UPDATE nettoyages
+SET statut = 'EN_ATTENTE'
+WHERE statut = 'ASSIGNE';
+
+ALTER TABLE nettoyages
+    MODIFY COLUMN statut ENUM('EN_COURS','EN_ATTENTE','VALIDE','REFUSE') NOT NULL;

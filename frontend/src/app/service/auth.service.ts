@@ -32,9 +32,9 @@ export class AuthService {
   isAuthenticated(): boolean { return this.authenticated(); }
   getToken(): string | null { return sessionStorage.getItem(this.tokenKey); }
 
-  login(identifier: string, password: string): Observable<AuthenticatedUser> {
+  login(login: string, password: string): Observable<AuthenticatedUser> {
     return this.http.post<LoginResponse>(`${environment.apiUrl}/auth/login`, {
-      email: identifier.trim(),
+      login: login.trim(),
       motDePasse: password
     }).pipe(
       tap(response => {
@@ -56,6 +56,22 @@ export class AuthService {
         this.authenticated.set(true);
       }),
       map(user => user.role === 'ADMINISTRATEUR' && user.actif),
+      catchError(() => {
+        this.logout();
+        return of(false);
+      })
+    );
+  }
+
+  validateRoles(roles: AuthenticatedUser['role'][]): Observable<boolean> {
+    if (!this.getToken()) return of(false);
+    return this.http.get<AuthenticatedUser>(`${environment.apiUrl}/auth/me`).pipe(
+      tap(user => {
+        sessionStorage.setItem(this.sessionKey, JSON.stringify(user));
+        this.currentUser.set(user);
+        this.authenticated.set(true);
+      }),
+      map(user => user.actif && roles.includes(user.role)),
       catchError(() => {
         this.logout();
         return of(false);

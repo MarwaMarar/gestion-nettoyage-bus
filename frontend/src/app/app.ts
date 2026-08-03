@@ -33,8 +33,8 @@ export class App {
     { initialValue: null }
   );
 
-  isLoginPage = computed(() => {
+  showAppLayout = computed(() => {
     this.currentUrl();
-    return this.router.url === '/login' || this.router.url === '/';
+    return !this.router.url.startsWith('/login');
   });
 }

@@ -30,10 +30,10 @@ public class AuthService {
 
     @Transactional(readOnly = true)
     public LoginResponseDTO login(LoginRequestDTO request) {
-        String identifiant = request.email().trim();
+        String login = request.login().trim();
         try {
             Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(identifiant, request.motDePasse())
+                    new UsernamePasswordAuthenticationToken(login, request.motDePasse())
             );
             AuthenticatedUser principal = (AuthenticatedUser) authentication.getPrincipal();
             Utilisateur utilisateur = utilisateurs.findById(principal.id())
@@ -45,7 +45,7 @@ public class AuthService {
                     dto(utilisateur)
             );
         } catch (org.springframework.security.core.AuthenticationException exception) {
-            throw new UnauthorizedException("Email, login ou mot de passe incorrect");
+            throw new UnauthorizedException("Login ou mot de passe incorrect");
         }
     }
 

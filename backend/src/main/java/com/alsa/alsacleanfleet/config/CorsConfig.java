@@ -17,11 +17,7 @@ public class CorsConfig {
                         .allowedOrigins(
                                 "http://localhost:4200",
                                 "http://127.0.0.1:4200",
-                                "http://localhost:8100",
-                                "http://127.0.0.1:8100",
-                                "http://localhost",
-                                "capacitor://localhost",
-                                "ionic://localhost"
+                                "http://localhost"
                         )
                         .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
                         .allowedHeaders("*")

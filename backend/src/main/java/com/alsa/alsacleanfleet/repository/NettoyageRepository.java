@@ -14,10 +14,19 @@ public interface NettoyageRepository extends JpaRepository<Nettoyage, Long> {
 
     List<Nettoyage> findByNettoyeurId(Long nettoyeurId);
     List<Nettoyage> findByNettoyeurIdOrderByDateNettoyageDescHeureDebutDesc(Long nettoyeurId);
-    boolean existsByNettoyeurIdAndStatut(Long nettoyeurId, StatutNettoyage statut);
+    boolean existsByNettoyeurIdAndStatutAndHeureDebutIsNotNullAndHeureFinIsNull(
+            Long nettoyeurId,
+            StatutNettoyage statut
+    );
 
     List<Nettoyage> findByStatut(StatutNettoyage statut);
     List<Nettoyage> findByStatutOrderByHeureFinAsc(StatutNettoyage statut);
+    List<Nettoyage> findByStatutAndHeureFinIsNotNullOrderByHeureFinAsc(StatutNettoyage statut);
+
+    @Query("SELECT n FROM Nettoyage n WHERE n.statut = :statut AND n.heureFin IS NOT NULL "
+            + "AND (n.superviseur IS NULL OR n.superviseur.id = :superviseurId) "
+            + "ORDER BY n.heureFin ASC")
+    List<Nettoyage> findPendingVisibleToSupervisor(StatutNettoyage statut, Long superviseurId);
 
     List<Nettoyage> findByDateNettoyageBetween(LocalDate debut, LocalDate fin);
     List<Nettoyage> findBySuperviseurId(Long superviseurId);

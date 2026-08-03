@@ -27,8 +27,8 @@ public class SecurityConfig {
 
     @Bean
     UserDetailsService userDetailsService(com.alsa.alsacleanfleet.repository.UtilisateurRepository users) {
-        return identifier -> users
-                .findByEmailIgnoreCaseOrLoginIgnoreCase(identifier, identifier)
+        return login -> users
+                .findByLoginIgnoreCase(login)
                 .map(com.alsa.alsacleanfleet.security.AuthenticatedUser::from)
                 .orElseThrow(() -> new org.springframework.security.core.userdetails.UsernameNotFoundException(
                         "Utilisateur introuvable"

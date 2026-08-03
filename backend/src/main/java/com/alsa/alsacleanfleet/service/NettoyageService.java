@@ -31,17 +31,20 @@ public class NettoyageService {
     private final BusRepository busRepo;
     private final TypeNettoyageRepository typeRepo;
     private final UtilisateurRepository userRepo;
+    private final NotificationService notifications;
 
     public NettoyageService(
             NettoyageRepository repo,
             BusRepository busRepo,
             TypeNettoyageRepository typeRepo,
-            UtilisateurRepository userRepo
+            UtilisateurRepository userRepo,
+            NotificationService notifications
     ) {
         this.repo = repo;
         this.busRepo = busRepo;
         this.typeRepo = typeRepo;
         this.userRepo = userRepo;
+        this.notifications = notifications;
     }
 
     @Transactional(readOnly = true)
@@ -61,6 +64,11 @@ public class NettoyageService {
                 && !nettoyage.getNettoyeur().getId().equals(principal.id())) {
             throw new AccessDeniedException("Ce nettoyage appartient à un autre nettoyeur");
         }
+        if (principal.role() == Role.SUPERVISEUR
+                && nettoyage.getSuperviseur() != null
+                && !nettoyage.getSuperviseur().getId().equals(principal.id())) {
+            throw new AccessDeniedException("Ce nettoyage est assigné à un autre superviseur");
+        }
         return dto(nettoyage);
     }
 
@@ -78,7 +86,12 @@ public class NettoyageService {
     public NettoyageResponseDTO create(NettoyageRequestDTO request) {
         Nettoyage nettoyage = new Nettoyage();
         applyAdministrativeRequest(nettoyage, request, true);
-        return dto(repo.save(nettoyage));
+        nettoyage = repo.save(nettoyage);
+        notifications.create(nettoyage.getNettoyeur(), nettoyage,
+                "Nouveau nettoyage assigné : bus " + nettoyage.getBus().getNumeroBus());
+        notifications.create(nettoyage.getSuperviseur(), nettoyage,
+                "Nouveau nettoyage assigné au nettoyeur " + nettoyage.getNettoyeur().getPrenom());
+        return dto(nettoyage);
     }
 
     public NettoyageResponseDTO update(Long id, NettoyageRequestDTO request) {
@@ -96,29 +109,31 @@ public class NettoyageService {
             AuthenticatedUser principal
     ) {
         Utilisateur nettoyeur = currentUser(principal);
-        if (nettoyeur.getRole() != Role.NETTOYEUR
-                && nettoyeur.getRole() != Role.ADMINISTRATEUR) {
+        if (nettoyeur.getRole() != Role.NETTOYEUR) {
             throw new AccessDeniedException("Rôle nettoyeur requis");
         }
-        if (repo.existsByNettoyeurIdAndStatut(nettoyeur.getId(), StatutNettoyage.EN_COURS)) {
+        if (repo.existsByNettoyeurIdAndStatutAndHeureDebutIsNotNullAndHeureFinIsNull(
+                nettoyeur.getId(), StatutNettoyage.EN_ATTENTE)) {
             throw new WorkflowConflictException("Un nettoyage est déjà en cours");
         }
 
-        Bus bus = busRepo.findById(request.busId())
-                .orElseThrow(() -> new ResourceNotFoundException("Bus introuvable"));
-        if (!Boolean.TRUE.equals(bus.getActif())) {
+        Nettoyage nettoyage = entity(request.nettoyageId());
+        if (!nettoyage.getNettoyeur().getId().equals(nettoyeur.getId())) {
+            throw new AccessDeniedException("Ce nettoyage est assigné à un autre nettoyeur");
+        }
+        if (nettoyage.getStatut() != StatutNettoyage.EN_ATTENTE
+                || nettoyage.getHeureDebut() != null
+                || nettoyage.getHeureFin() != null) {
+            throw new WorkflowConflictException("Seul un nettoyage assigné peut être commencé");
+        }
+        if (!Boolean.TRUE.equals(nettoyage.getBus().getActif())) {
             throw new WorkflowConflictException("Un bus inactif ne peut pas être nettoyé");
         }
 
         LocalDateTime now = LocalDateTime.now();
-        Nettoyage nettoyage = new Nettoyage();
-        nettoyage.setBus(bus);
-        nettoyage.setTypeNettoyage(typeRepo.findById(request.typeNettoyageId())
-                .orElseThrow(() -> new ResourceNotFoundException("Type de nettoyage introuvable")));
-        nettoyage.setNettoyeur(nettoyeur);
         nettoyage.setDateNettoyage(now.toLocalDate());
         nettoyage.setHeureDebut(now);
-        nettoyage.setStatut(StatutNettoyage.EN_COURS);
+        nettoyage.setStatut(StatutNettoyage.EN_ATTENTE);
         return dto(repo.save(nettoyage));
     }
 
@@ -131,7 +146,9 @@ public class NettoyageService {
         if (!nettoyage.getNettoyeur().getId().equals(principal.id())) {
             throw new AccessDeniedException("Ce nettoyage appartient à un autre nettoyeur");
         }
-        if (nettoyage.getStatut() != StatutNettoyage.EN_COURS) {
+        if (nettoyage.getStatut() != StatutNettoyage.EN_ATTENTE
+                || nettoyage.getHeureDebut() == null
+                || nettoyage.getHeureFin() != null) {
             throw new WorkflowConflictException("Seul un nettoyage en cours peut être terminé");
         }
 
@@ -143,7 +160,10 @@ public class NettoyageService {
         )));
         nettoyage.setRemarqueNettoyeur(normalize(request.remarqueNettoyeur()));
         nettoyage.setStatut(StatutNettoyage.EN_ATTENTE);
-        return dto(repo.save(nettoyage));
+        nettoyage = repo.save(nettoyage);
+        notifications.create(nettoyage.getSuperviseur(), nettoyage,
+                "Nettoyage terminé et prêt à valider : bus " + nettoyage.getBus().getNumeroBus());
+        return dto(nettoyage);
     }
 
     @Transactional(readOnly = true)
@@ -155,8 +175,11 @@ public class NettoyageService {
     }
 
     @Transactional(readOnly = true)
-    public List<NettoyageResponseDTO> enAttente() {
-        return repo.findByStatutOrderByHeureFinAsc(StatutNettoyage.EN_ATTENTE)
+    public List<NettoyageResponseDTO> enAttente(AuthenticatedUser principal) {
+        List<Nettoyage> values = principal.role() == Role.ADMINISTRATEUR
+                ? repo.findByStatutAndHeureFinIsNotNullOrderByHeureFinAsc(StatutNettoyage.EN_ATTENTE)
+                : repo.findPendingVisibleToSupervisor(StatutNettoyage.EN_ATTENTE, principal.id());
+        return values
                 .stream()
                 .map(this::dto)
                 .toList();
@@ -188,7 +211,8 @@ public class NettoyageService {
             AuthenticatedUser principal
     ) {
         Nettoyage nettoyage = entity(id);
-        if (nettoyage.getStatut() != StatutNettoyage.EN_ATTENTE) {
+        if (nettoyage.getStatut() != StatutNettoyage.EN_ATTENTE
+                || nettoyage.getHeureFin() == null) {
             throw new WorkflowConflictException("Ce nettoyage a déjà été traité ou n'est pas en attente");
         }
         Utilisateur superviseur = currentUser(principal);
@@ -196,11 +220,24 @@ public class NettoyageService {
                 && superviseur.getRole() != Role.ADMINISTRATEUR) {
             throw new AccessDeniedException("Rôle superviseur requis");
         }
+        if (superviseur.getRole() == Role.SUPERVISEUR
+                && nettoyage.getSuperviseur() != null
+                && !nettoyage.getSuperviseur().getId().equals(superviseur.getId())) {
+            throw new AccessDeniedException("Ce nettoyage est assigné à un autre superviseur");
+        }
         nettoyage.setSuperviseur(superviseur);
         nettoyage.setRemarqueSuperviseur(normalize(remark));
         nettoyage.setStatut(decision);
         nettoyage.setDateValidation(LocalDateTime.now());
-        return dto(repo.save(nettoyage));
+        nettoyage = repo.save(nettoyage);
+        String result = decision == StatutNettoyage.VALIDE ? "validé" : "refusé";
+        notifications.create(nettoyage.getNettoyeur(), nettoyage,
+                "Votre nettoyage du bus " + nettoyage.getBus().getNumeroBus() + " a été " + result);
+        for (Utilisateur admin : userRepo.findByRoleAndActifTrue(Role.ADMINISTRATEUR)) {
+            notifications.create(admin, nettoyage,
+                    "Nettoyage " + result + " : bus " + nettoyage.getBus().getNumeroBus());
+        }
+        return dto(nettoyage);
     }
 
     private void applyAdministrativeRequest(
@@ -225,10 +262,22 @@ public class NettoyageService {
                 ? null
                 : userRepo.findById(request.superviseurId())
                 .orElseThrow(() -> new ResourceNotFoundException("Superviseur introuvable"));
-        if (superviseur != null
-                && superviseur.getRole() != Role.SUPERVISEUR
-                && superviseur.getRole() != Role.ADMINISTRATEUR) {
-            throw new BusinessException("Rôle superviseur invalide");
+        boolean decided = request.statut() == StatutNettoyage.VALIDE
+                || request.statut() == StatutNettoyage.REFUSE;
+        boolean administrativeAssignment = request.statut() == StatutNettoyage.EN_ATTENTE
+                && request.heureDebut() == null
+                && request.heureFin() == null;
+        if (administrativeAssignment && superviseur == null) {
+            throw new BusinessException("Un superviseur est obligatoire pour une assignation");
+        }
+        if (superviseur != null) {
+            boolean validDecisionActor = decided && superviseur.getRole() == Role.ADMINISTRATEUR;
+            if (superviseur.getRole() != Role.SUPERVISEUR && !validDecisionActor) {
+                throw new BusinessException("Le rôle SUPERVISEUR est requis pour une assignation");
+            }
+            if (creating && !Boolean.TRUE.equals(superviseur.getActif())) {
+                throw new BusinessException("Un superviseur inactif ne peut pas être assigné");
+            }
         }
         if (request.heureDebut() != null
                 && request.heureFin() != null
@@ -236,10 +285,8 @@ public class NettoyageService {
             throw new BusinessException("heureFin ne peut pas précéder heureDebut");
         }
 
-        boolean decided = request.statut() == StatutNettoyage.VALIDE
-                || request.statut() == StatutNettoyage.REFUSE;
-        if (!decided && (request.dateValidation() != null || superviseur != null)) {
-            throw new BusinessException("Un nettoyage non traité ne doit pas avoir de validation");
+        if (!decided && request.dateValidation() != null) {
+            throw new BusinessException("Un nettoyage non traité ne doit pas avoir de date de validation");
         }
         if (decided && (superviseur == null || request.dateValidation() == null)) {
             throw new BusinessException("Superviseur et dateValidation sont obligatoires");

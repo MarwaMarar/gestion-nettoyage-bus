@@ -12,7 +12,7 @@ import { AuthService } from '../service/auth.service';
 })
 export class Login {
 
-  email: string = '';
+  login: string = '';
   password: string = '';
 
   messageErreur: string = '';
@@ -24,27 +24,27 @@ export class Login {
 
   seConnecter() {
     this.messageErreur = '';
-    if (!this.email.trim() || !this.password) {
-      this.messageErreur = 'Veuillez saisir votre email et votre mot de passe.';
+    if (!this.login.trim() || !this.password) {
+      this.messageErreur = 'Veuillez saisir votre login et votre mot de passe.';
       return;
     }
 
     this.connexionEnCours = true;
-    this.auth.login(this.email, this.password).subscribe({
+    this.auth.login(this.login, this.password).subscribe({
       next: user => {
         this.connexionEnCours = false;
-        if (user.role !== 'ADMINISTRATEUR') {
-          this.auth.logout();
-          this.messageErreur = "Ce compte doit utiliser l'application mobile.";
-          return;
-        }
-        this.router.navigateByUrl('/admin/tableau-de-bord');
+        const destination = user.role === 'ADMINISTRATEUR'
+          ? '/admin/tableau-de-bord'
+          : user.role === 'NETTOYEUR'
+            ? '/nettoyeur/tableau-de-bord'
+            : '/superviseur/tableau-de-bord';
+        this.router.navigateByUrl(destination);
       },
       error: error => {
         this.connexionEnCours = false;
         this.messageErreur = error.status === 0
           ? "Le serveur est inaccessible. Vérifiez que le backend est démarré sur le port 8080."
-          : error?.error?.message || "Email ou mot de passe incorrect.";
+          : error?.error?.message || "Login ou mot de passe incorrect.";
       }
     });
   }

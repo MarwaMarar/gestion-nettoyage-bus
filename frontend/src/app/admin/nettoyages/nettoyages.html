@@ -89,7 +89,7 @@
     </select>
 
     <select name="superviseurId" [(ngModel)]="form.superviseurId">
-      <option [ngValue]="null">Aucun superviseur</option>
+      <option [ngValue]="null" disabled>Sélectionner un superviseur</option>
       <option *ngFor="let u of superviseurs" [ngValue]="u.id">{{ u.prenom }} {{ u.nom }}</option>
     </select>
 
@@ -119,6 +119,8 @@
           <th>ID</th>
           <th>Bus</th>
           <th>Type</th>
+          <th>Nettoyeur</th>
+          <th>Superviseur</th>
           <th>Date</th>
           <th>Statut</th>
           <th>Actions</th>
@@ -129,6 +131,8 @@
           <td><span class="badge badge-neutral">#{{ n.id }}</span></td>
           <td><strong>{{ n.busLabel }}</strong></td>
           <td>{{ n.type }}</td>
+          <td>{{ n.nettoyeurNom }}</td>
+          <td>{{ n.superviseurNom || 'Non assigné' }}</td>
           <td>{{ n.dateNettoyage }}</td>
           <td>
             <span class="badge"
@@ -146,11 +150,26 @@
               <button class="btn-supprimer" (click)="supprimerNettoyage(n.id)">
                 <i class="fa-solid fa-trash"></i> Désactiver
               </button>
+              <button *ngIf="n.statut === 'REFUSE'" class="btn-modifier"
+                      (click)="detailsOuvertsId = detailsOuvertsId === n.id ? null : n.id">
+                <i class="fa-solid fa-eye"></i> Voir le motif du refus
+              </button>
+            </div>
+            <div *ngIf="detailsOuvertsId === n.id" class="refusal-details">
+              <strong>Détails du refus</strong>
+              <span><b>Superviseur :</b> {{ n.superviseurNom || '—' }}</span>
+              <span><b>Motif :</b> {{ n.remarqueSuperviseur || 'Aucun motif enregistré' }}</span>
+              <span><b>Nettoyeur :</b> {{ n.nettoyeurNom }}</span>
+              <span><b>Bus / type :</b> {{ n.numeroBus }} — {{ n.typeNettoyageLibelle }}</span>
+              <span><b>Date :</b> {{ n.dateNettoyage }}</span>
+              <span><b>Début / fin :</b> {{ n.heureDebut || '—' }} / {{ n.heureFin || '—' }}</span>
+              <span><b>Durée :</b> {{ n.duree != null ? n.duree + ' min' : '—' }}</span>
+              <span><b>Statut :</b> {{ n.statutLabel }}</span>
             </div>
           </td>
         </tr>
         <tr *ngIf="nettoyagesFiltres.length === 0">
-          <td colspan="6">
+          <td colspan="8">
             <div class="empty-state">
               <i class="fa-solid fa-broom"></i>
               <p>Aucun nettoyage trouvé</p>

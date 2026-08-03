@@ -57,8 +57,10 @@ public class NettoyageController {
     }
 
     @GetMapping("/en-attente")
-    public List<NettoyageResponseDTO> enAttente() {
-        return service.enAttente();
+    public List<NettoyageResponseDTO> enAttente(
+            @AuthenticationPrincipal AuthenticatedUser principal
+    ) {
+        return service.enAttente(principal);
     }
 
     @PutMapping("/{id}/valider")

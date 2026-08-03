@@ -47,11 +47,11 @@
       <button
         class="navbar-icon-btn"
         title="Notifications"
-        (click)="notificationsOuvert = !notificationsOuvert">
+        (click)="ouvrirNotifications()">
 
         <i class="fa-regular fa-bell"></i>
 
-        <span class="notif-dot"></span>
+        <span *ngIf="nombreNonLues > 0" class="notif-dot"></span>
 
       </button>
 
@@ -68,38 +68,12 @@
         </h4>
 
 
-        <div class="notification-item">
-
-          <i class="fa-solid fa-circle-check"></i>
-
-          <span>
-            Nettoyage validé
-          </span>
-
+        <div class="notification-item" *ngFor="let notification of notifications"
+             (click)="lireNotification(notification)" [class.notification-read]="notification.lue">
+          <i class="fa-solid fa-bell"></i><span>{{ notification.message }}</span>
         </div>
-
-
-
-        <div class="notification-item">
-
-          <i class="fa-solid fa-clock"></i>
-
-          <span>
-            Rapport en attente
-          </span>
-
-        </div>
-
-
-
-        <div class="notification-item">
-
-          <i class="fa-solid fa-bus"></i>
-
-          <span>
-            Nouveau bus ajouté
-          </span>
-
+        <div class="notification-item" *ngIf="notifications.length === 0">
+          <span>Aucune notification</span>
         </div>
 
 
@@ -118,21 +92,19 @@
       (click)="profilOuvert = !profilOuvert">
 
 
-      <div class="navbar-avatar">
-        AD
-      </div>
+      <div class="navbar-avatar">{{ initiales }}</div>
 
 
 
       <div class="navbar-profile-info">
 
         <span class="navbar-profile-name">
-          Administrateur
+          {{ nomAffiche }}
         </span>
 
 
         <span class="navbar-profile-role">
-          Super Admin
+          {{ roleAffiche }}
         </span>
 
       </div>
@@ -154,7 +126,7 @@
         *ngIf="profilOuvert">
 
 
-      <div class="profile-menu-item" (click)="allerProfil()">
+      <div *ngIf="utilisateur?.role === 'ADMINISTRATEUR'" class="profile-menu-item" (click)="allerProfil()">
 
         <i class="fa-solid fa-user"></i>
           Mon profil
@@ -162,7 +134,7 @@
       </div>
 
 
-       <div class="profile-menu-item"(click)="allerParametres()">
+       <div *ngIf="utilisateur?.role === 'ADMINISTRATEUR'" class="profile-menu-item"(click)="allerParametres()">
         <i class="fa-solid fa-gear"></i>
          Paramètres
 

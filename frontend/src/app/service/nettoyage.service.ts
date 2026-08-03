@@ -14,4 +14,22 @@ export class NettoyageService {
   create(value: NettoyageRequest): Observable<Nettoyage> { return this.http.post<Nettoyage>(this.url, value); }
   update(id: number, value: NettoyageRequest): Observable<Nettoyage> { return this.http.put<Nettoyage>(`${this.url}/${id}`, value); }
   delete(id: number): Observable<void> { return this.http.delete<void>(`${this.url}/${id}`); }
+  commencer(nettoyageId: number): Observable<Nettoyage> {
+    return this.http.post<Nettoyage>(`${this.url}/commencer`, { nettoyageId });
+  }
+  terminer(id: number, remarqueNettoyeur: string): Observable<Nettoyage> {
+    return this.http.put<Nettoyage>(`${this.url}/${id}/terminer`, { remarqueNettoyeur });
+  }
+  mesNettoyages(): Observable<Nettoyage[]> {
+    return this.http.get<Nettoyage[]>(`${this.url}/mes-nettoyages`);
+  }
+  enAttente(): Observable<Nettoyage[]> {
+    return this.http.get<Nettoyage[]>(`${this.url}/en-attente`);
+  }
+  valider(id: number, remarqueSuperviseur = ''): Observable<Nettoyage> {
+    return this.http.put<Nettoyage>(`${this.url}/${id}/valider`, { remarqueSuperviseur });
+  }
+  refuser(id: number, remarqueSuperviseur: string): Observable<Nettoyage> {
+    return this.http.put<Nettoyage>(`${this.url}/${id}/refuser`, { remarqueSuperviseur });
+  }
 }
