@@ -11,15 +11,11 @@ export const roleGuard = (roles: Role[]): CanActivateFn => () => {
     map(valid => {
       if (valid) return true;
       const role = auth.currentUser()?.role;
-<<<<<<< HEAD
       const destination = auth.currentUser()?.mustChangePassword
         ? '/change-password'
         : role === 'CONSULTANT'
         ? '/consultant/tableau-de-bord'
         : role === 'ADMINISTRATEUR'
-=======
-      const destination = role === 'ADMINISTRATEUR'
->>>>>>> e35a0c0 (fully works)
         ? '/admin/tableau-de-bord'
         : role === 'NETTOYEUR'
           ? '/nettoyeur/tableau-de-bord'

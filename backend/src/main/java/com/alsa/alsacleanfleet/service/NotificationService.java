@@ -16,9 +16,6 @@ public class NotificationService {
     public void create(Utilisateur recipient, Nettoyage cleaning, String message){if(recipient==null)return;Notification n=new Notification();n.setDestinataire(recipient);n.setNettoyage(cleaning);n.setMessage(message);n.setDateCreation(LocalDateTime.now());repo.save(n);}
     @Transactional(readOnly=true) public List<NotificationResponseDTO> mine(AuthenticatedUser user){return repo.findByDestinataireIdOrderByDateCreationDesc(user.id()).stream().map(this::dto).toList();}
     public NotificationResponseDTO read(Long id,AuthenticatedUser user){Notification n=repo.findById(id).orElseThrow(()->new ResourceNotFoundException("Notification introuvable"));if(!n.getDestinataire().getId().equals(user.id()))throw new AccessDeniedException("Notification interdite");n.setLue(true);return dto(n);}
-<<<<<<< HEAD
-=======
     public void delete(Long id,AuthenticatedUser user){Notification n=repo.findById(id).orElseThrow(()->new ResourceNotFoundException("Notification introuvable"));if(!n.getDestinataire().getId().equals(user.id()))throw new AccessDeniedException("Notification interdite");repo.delete(n);}
->>>>>>> e35a0c0 (fully works)
     private NotificationResponseDTO dto(Notification n){return new NotificationResponseDTO(n.getId(),n.getNettoyage()==null?null:n.getNettoyage().getId(),n.getMessage(),n.isLue(),n.getDateCreation());}
 }

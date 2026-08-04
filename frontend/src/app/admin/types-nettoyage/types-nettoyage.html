@@ -1,0 +1,71 @@
+<div class="types-nettoyage">
+  <div class="header-page">
+    <div class="header-page-left">
+      <h2><i class="fa-solid fa-spray-can-sparkles"></i> Types de nettoyage</h2>
+      <p>Gérez les catégories utilisées pour les opérations de nettoyage</p>
+    </div>
+    <div class="actions-header">
+      <input type="text" class="recherche" placeholder="Rechercher un type…" [(ngModel)]="recherche">
+      <button type="button" class="btn-ajouter" (click)="ouvrirAjout()">
+        <i class="fa-solid fa-plus"></i> Ajouter un type
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="succes" class="feedback success"><i class="fa-solid fa-circle-check"></i>{{ succes }}</div>
+  <div *ngIf="erreur && !afficherAjout" class="feedback error"><i class="fa-solid fa-circle-xmark"></i>{{ erreur }}</div>
+
+  <div class="table-card">
+    <div class="table-card-header">
+      <div class="table-card-title">
+        <i class="fa-solid fa-table-list"></i>
+        Types enregistrés
+        <span class="table-count">{{ typesFiltres.length }}</span>
+      </div>
+    </div>
+    <div class="table-responsive">
+      <table>
+        <thead><tr><th>ID</th><th>Libellé</th><th>Description</th><th>Actions</th></tr></thead>
+        <tbody>
+          <tr *ngFor="let type of typesFiltres">
+            <td><span class="badge-neutral">#{{ type.id }}</span></td>
+            <td><strong>{{ type.libelle }}</strong></td>
+            <td>{{ type.description || '—' }}</td>
+            <td>
+              <button type="button" class="btn-supprimer" (click)="demanderSuppression(type)">
+                <i class="fa-solid fa-trash"></i> Supprimer
+              </button>
+            </td>
+          </tr>
+          <tr *ngIf="!chargement && typesFiltres.length === 0">
+            <td colspan="4"><div class="empty-state"><i class="fa-solid fa-spray-can-sparkles"></i><p>Aucun type de nettoyage trouvé</p></div></td>
+          </tr>
+          <tr *ngIf="chargement"><td colspan="4"><div class="empty-state"><i class="fa-solid fa-spinner fa-spin"></i><p>Chargement…</p></div></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="modal-overlay" *ngIf="afficherAjout" (click)="fermerAjout()">
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="titre-ajout-type" (click)="$event.stopPropagation()">
+      <div class="modal-header"><h3 id="titre-ajout-type">Ajouter un type de nettoyage</h3><button type="button" class="modal-close" (click)="fermerAjout()" aria-label="Fermer"><i class="fa-solid fa-xmark"></i></button></div>
+      <div class="modal-body">
+        <label for="type-libelle">Libellé <span>*</span></label>
+        <input id="type-libelle" type="text" maxlength="100" [(ngModel)]="libelle" placeholder="Ex. Nettoyage approfondi" (keyup.enter)="ajouter()">
+        <label for="type-description">Description <small>(facultative)</small></label>
+        <textarea id="type-description" [(ngModel)]="description" placeholder="Décrivez ce type de nettoyage…"></textarea>
+        <div *ngIf="erreur" class="feedback error"><i class="fa-solid fa-circle-xmark"></i>{{ erreur }}</div>
+      </div>
+      <div class="modal-actions"><button type="button" class="btn-annuler" (click)="fermerAjout()" [disabled]="soumission">Annuler</button><button type="button" class="btn-confirmer" (click)="ajouter()" [disabled]="soumission"><i class="fa-solid" [class.fa-plus]="!soumission" [class.fa-spinner]="soumission" [class.fa-spin]="soumission"></i>{{ soumission ? 'Ajout…' : 'Ajouter' }}</button></div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" *ngIf="typeASupprimer" (click)="annulerSuppression()">
+    <div class="modal-card modal-confirmation" role="alertdialog" aria-modal="true" aria-labelledby="titre-suppression-type" (click)="$event.stopPropagation()">
+      <div class="delete-icon"><i class="fa-solid fa-trash"></i></div>
+      <h3 id="titre-suppression-type">Supprimer ce type ?</h3>
+      <p>Le type <strong>{{ typeASupprimer.libelle }}</strong> sera supprimé définitivement.</p>
+      <div class="modal-actions"><button type="button" class="btn-annuler" (click)="annulerSuppression()" [disabled]="soumission">Annuler</button><button type="button" class="btn-danger" (click)="supprimer()" [disabled]="soumission"><i class="fa-solid" [class.fa-trash]="!soumission" [class.fa-spinner]="soumission" [class.fa-spin]="soumission"></i>{{ soumission ? 'Suppression…' : 'Supprimer' }}</button></div>
+    </div>
+  </div>
+</div>

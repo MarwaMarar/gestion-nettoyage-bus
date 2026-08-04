@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 import { Component, OnDestroy, OnInit } from '@angular/core';
-=======
-import { Component, OnDestroy, OnInit, signal } from '@angular/core';
->>>>>>> e35a0c0 (fully works)
 import { Router } from '@angular/router';
 import { Nettoyage } from '../service/api.models';
 import { NettoyageService } from '../service/nettoyage.service';
@@ -11,23 +7,14 @@ import { WorkflowNav } from './workflow-nav';
 @Component({selector:'app-nettoyage-en-cours',standalone:true,imports:[WorkflowNav],styleUrl:'./workflow.css',template:`
 <app-workflow-nav section="nettoyeur"/><main class="workflow-page"><div class="workflow-container">
 <section class="hero-card"><h1>Nettoyage en cours</h1><p>Le nettoyage est actuellement en cours.</p></section>
-<<<<<<< HEAD
 <section class="info-card"><div class="info-row"><span class="label"><span class="icon-box"><i class="fa-solid fa-bus"></i></span>Bus</span><strong>{{nettoyage?.numeroBus}}</strong></div><div class="info-row"><span class="label"><span class="icon-box"><i class="fa-solid fa-sparkles"></i></span>Type</span><strong>{{nettoyage?.typeNettoyageLibelle}}</strong></div><div class="info-row"><span class="label"><span class="icon-box"><i class="fa-regular fa-calendar"></i></span>Date</span><strong>{{date}}</strong></div><div class="info-row"><span class="label"><span class="icon-box"><i class="fa-solid fa-play"></i></span>Heure début</span><strong>{{heureDebut}}</strong></div></section>
 <section class="timer-card"><h3>Temps écoulé</h3><p class="muted">Chronomètre du nettoyage</p><div class="timer-value">{{timer}}</div></section><button class="success-btn" (click)="terminer()"><i class="fa-solid fa-circle-check"></i> Terminer le nettoyage</button>
-=======
-<section class="info-card"><div class="info-row"><span class="label"><span class="icon-box"><i class="fa-solid fa-bus"></i></span>Bus</span><strong>{{nettoyage?.numeroBus}}</strong></div><div class="info-row"><span class="label"><span class="icon-box"><i class="fa-solid fa-broom"></i></span>Type</span><strong>{{nettoyage?.typeNettoyageLibelle}}</strong></div><div class="info-row"><span class="label"><span class="icon-box"><i class="fa-regular fa-calendar"></i></span>Date</span><strong>{{date}}</strong></div><div class="info-row"><span class="label"><span class="icon-box"><i class="fa-solid fa-play"></i></span>Heure début</span><strong>{{heureDebut}}</strong></div></section>
-<section class="timer-card"><div class="cleaning-icon" aria-hidden="true"><i class="fa-solid fa-broom-ball"></i></div><h3>Temps écoulé</h3><p class="muted">Chronomètre du nettoyage</p><div class="timer-value" aria-live="off">{{timer()}}</div></section><button class="success-btn" (click)="terminer()"><i class="fa-solid fa-circle-check"></i> Terminer le nettoyage</button>
->>>>>>> e35a0c0 (fully works)
 </div></main>`})
 export class NettoyageEnCours implements OnInit, OnDestroy {
   nettoyage: Nettoyage | null = null;
   date = '';
   heureDebut = '';
-<<<<<<< HEAD
   timer = '00:00:00';
-=======
-  readonly timer = signal('00:00:00');
->>>>>>> e35a0c0 (fully works)
   private interval?: ReturnType<typeof setInterval>;
 
   constructor(private router: Router, private service: NettoyageService) {
@@ -49,11 +36,7 @@ export class NettoyageEnCours implements OnInit, OnDestroy {
 
   terminer(): void {
     if (this.nettoyage) this.router.navigate(['/nettoyeur/fin-nettoyage'], {
-<<<<<<< HEAD
       state: { nettoyage: this.nettoyage, duree: this.timer }
-=======
-      state: { nettoyage: this.nettoyage, duree: this.timer() }
->>>>>>> e35a0c0 (fully works)
     });
   }
 
@@ -71,12 +54,7 @@ export class NettoyageEnCours implements OnInit, OnDestroy {
   private tick(): void {
     if (!this.nettoyage?.heureDebut) return;
     const seconds = Math.max(0, Math.floor((Date.now() - new Date(this.nettoyage.heureDebut).getTime()) / 1000));
-<<<<<<< HEAD
     this.timer = [Math.floor(seconds / 3600), Math.floor(seconds % 3600 / 60), seconds % 60]
       .map(value => String(value).padStart(2, '0')).join(':');
-=======
-    this.timer.set([Math.floor(seconds / 3600), Math.floor(seconds % 3600 / 60), seconds % 60]
-      .map(value => String(value).padStart(2, '0')).join(':'));
->>>>>>> e35a0c0 (fully works)
   }
 }

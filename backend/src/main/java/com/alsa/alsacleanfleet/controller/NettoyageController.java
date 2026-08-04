@@ -66,7 +66,6 @@ public class NettoyageController {
             @AuthenticationPrincipal AuthenticatedUser principal
     ) {
         return service.enAttente(principal);
-<<<<<<< HEAD
     }
 
     @GetMapping("/admin/nettoyeur/page")
@@ -93,8 +92,6 @@ public class NettoyageController {
     ) {
         return service.adminSupervisorPage(principal, userId, dateDebut, dateFin, busId, PageRequest.of(page, size,
                 Sort.by(Sort.Order.desc("dateNettoyage"), Sort.Order.desc("heureFin"), Sort.Order.desc("id"))));
-=======
->>>>>>> e35a0c0 (fully works)
     }
 
     @PutMapping("/{id}/valider")

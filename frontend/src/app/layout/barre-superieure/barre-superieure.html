@@ -70,22 +70,8 @@
 
         <div class="notification-item" *ngFor="let notification of notifications"
              (click)="lireNotification(notification)" [class.notification-read]="notification.lue">
-<<<<<<< HEAD
           <i class="fa-solid fa-bell"></i><span>{{ notification.message }}</span>
         </div>
-=======
-          <i class="fa-solid fa-bell notification-bell"></i>
-          <span class="notification-message">{{ notification.message }}</span>
-          <button type="button" class="notification-delete"
-                  [disabled]="notificationsSuppression.has(notification.id)"
-                  (click)="supprimerNotification($event, notification)"
-                  [attr.aria-label]="'Supprimer : ' + notification.message"
-                  title="Supprimer la notification">
-            <i class="fa-solid" [class.fa-trash]="!notificationsSuppression.has(notification.id)" [class.fa-spinner]="notificationsSuppression.has(notification.id)" [class.fa-spin]="notificationsSuppression.has(notification.id)"></i>
-          </button>
-        </div>
-        <p class="notification-error" *ngIf="notificationError">{{ notificationError }}</p>
->>>>>>> e35a0c0 (fully works)
         <div class="notification-item" *ngIf="notifications.length === 0">
           <span>Aucune notification</span>
         </div>

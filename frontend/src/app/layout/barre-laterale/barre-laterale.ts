@@ -17,13 +17,9 @@ export class BarreLaterale {
   get role() { return this.auth.currentUser()?.role; }
 
   get home(): string {
-<<<<<<< HEAD
     return this.role === 'CONSULTANT'
       ? '/consultant/tableau-de-bord'
       : this.role === 'NETTOYEUR'
-=======
-    return this.role === 'NETTOYEUR'
->>>>>>> e35a0c0 (fully works)
       ? '/nettoyeur/tableau-de-bord'
       : this.role === 'SUPERVISEUR'
         ? '/superviseur/tableau-de-bord'

@@ -9,8 +9,4 @@ export class NotificationService {
   constructor(private http:HttpClient){}
   getMine():Observable<AppNotification[]>{return this.http.get<AppNotification[]>(this.url);}
   markRead(id:number):Observable<AppNotification>{return this.http.put<AppNotification>(`${this.url}/${id}/lire`,{});}
-<<<<<<< HEAD
-=======
-  delete(id:number):Observable<void>{return this.http.delete<void>(`${this.url}/${id}`);}
->>>>>>> e35a0c0 (fully works)
 }

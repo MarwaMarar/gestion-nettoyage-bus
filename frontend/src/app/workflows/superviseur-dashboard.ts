@@ -3,12 +3,8 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { forkJoin } from 'rxjs';
-<<<<<<< HEAD
 import { Bus, Nettoyage, Utilisateur } from '../service/api.models';
 import { BusService } from '../service/bus.service';
-=======
-import { Nettoyage, Utilisateur } from '../service/api.models';
->>>>>>> e35a0c0 (fully works)
 import { AuthService } from '../service/auth.service';
 import { NettoyageService } from '../service/nettoyage.service';
 import { UtilisateurService } from '../service/utilisateur.service';
@@ -55,10 +51,7 @@ import { WorkflowNav } from './workflow-nav';
                 }
               </select>
             </div>
-<<<<<<< HEAD
             <div class="filters"><div class="field"><label>Date début</label><input type="date" [(ngModel)]="filterDateStart"></div><div class="field"><label>Date fin</label><input type="date" [(ngModel)]="filterDateEnd"></div><div class="field"><label>Bus</label><select [(ngModel)]="filterBusId"><option [ngValue]="null">Tous les bus</option>@for(bus of buses;track bus.id){<option [ngValue]="bus.id">{{bus.numeroBus}}</option>}</select></div><div class="filter-actions"><button class="primary-btn search-btn" type="button" [disabled]="adminLoading" (click)="searchAdmin()">{{adminLoading?'Recherche…':'Rechercher'}}</button><button class="secondary-btn reset-btn" type="button" [disabled]="adminLoading" (click)="resetAdminFilters()">Réinitialiser les filtres</button></div></div>
-=======
->>>>>>> e35a0c0 (fully works)
           </section>
           @for (value of adminValues; track value.id) {
             <article class="list-card">
@@ -111,7 +104,6 @@ import { WorkflowNav } from './workflow-nav';
           } @empty {
             <div class="panel-card empty">
               {{
-<<<<<<< HEAD
                 !selectedUserId
                   ? 'Sélectionnez un superviseur.'
                   : hasSearched ? 'Aucun nettoyage pour ce superviseur.' : 'Cliquez sur Rechercher pour afficher les nettoyages.'
@@ -119,14 +111,6 @@ import { WorkflowNav } from './workflow-nav';
             </div>
           }
           @if(totalElements>0){<nav class="pagination"><span class="results-count">{{totalElements}} résultat{{totalElements>1?'s':''}}</span><div class="page-buttons"><button (click)="goToPage(page-1)" [disabled]="page===0">Précédent</button>@for(item of pageItems;track $index){@if(item==='…'){<span class="ellipsis">…</span>}@else{<button [class.active]="item===page+1" (click)="goToPage(+item-1)">{{item}}</button>}}<button (click)="goToPage(page+1)" [disabled]="page>=totalPages-1">Suivant</button></div></nav>}
-=======
-                selectedUserId
-                  ? 'Aucun nettoyage pour ce superviseur.'
-                  : 'Sélectionnez un superviseur.'
-              }}
-            </div>
-          }
->>>>>>> e35a0c0 (fully works)
         } @else {
           <section class="stats-card">
             <div class="stats-number">{{ total }}</div>
@@ -153,15 +137,12 @@ export class SuperviseurDashboard implements OnInit {
   users: Utilisateur[] = [];
   allValues: Nettoyage[] = [];
   adminValues: Nettoyage[] = [];
-<<<<<<< HEAD
   buses: Bus[] = [];
   filterDateStart = ''; filterDateEnd = ''; filterBusId: number|null = null;
   appliedDateStart = ''; appliedDateEnd = ''; appliedBusId: number|null = null;
   hasSearched = false;
   adminLoading = false;
   page = 0; readonly size = 10; totalElements = 0; totalPages = 0;
-=======
->>>>>>> e35a0c0 (fully works)
   selectedUserId: number | null = null;
   total = 0;
   error = '';
@@ -171,7 +152,6 @@ export class SuperviseurDashboard implements OnInit {
     private cdr: ChangeDetectorRef,
     private auth: AuthService,
     private userService: UtilisateurService,
-<<<<<<< HEAD
     private busService: BusService,
   ) {}
   ngOnInit(): void {
@@ -184,19 +164,6 @@ export class SuperviseurDashboard implements OnInit {
         next: (data) => {
           this.users = data.users.filter((user) => user.role === 'SUPERVISEUR');
           this.buses = data.buses;
-=======
-  ) {}
-  ngOnInit(): void {
-    this.adminMode = this.auth.currentUser()?.role === 'ADMINISTRATEUR';
-    if (this.adminMode) {
-      forkJoin({
-        users: this.userService.getUtilisateurs(),
-        values: this.service.getAll(),
-      }).subscribe({
-        next: (data) => {
-          this.users = data.users.filter((user) => user.role === 'SUPERVISEUR');
-          this.allValues = data.values;
->>>>>>> e35a0c0 (fully works)
           this.selectedUserId = this.users[0]?.id ?? null;
           this.filtrerAdmin();
         },
@@ -219,7 +186,6 @@ export class SuperviseurDashboard implements OnInit {
     });
   }
   filtrerAdmin(): void {
-<<<<<<< HEAD
     this.filterDateStart='';this.filterDateEnd='';this.filterBusId=null;
     this.appliedDateStart='';this.appliedDateEnd='';this.appliedBusId=null;
     this.page=0;this.adminValues=[];this.totalElements=0;this.totalPages=0;this.error='';
@@ -230,12 +196,3 @@ export class SuperviseurDashboard implements OnInit {
   searchAdmin():void{this.hasSearched=true;this.appliedDateStart=this.filterDateStart;this.appliedDateEnd=this.filterDateEnd;this.appliedBusId=this.filterBusId;this.page=0;this.loadAdmin();}resetAdminFilters():void{this.filterDateStart='';this.filterDateEnd='';this.filterBusId=null;this.searchAdmin();}goToPage(page:number):void{if(page>=0&&page<this.totalPages&&page!==this.page){this.page=page;this.loadAdmin();}}get pageItems():(number|string)[]{return compactPages(this.page+1,this.totalPages);}
 }
 function compactPages(current:number,total:number):(number|string)[]{const pages=new Set([1,total,current-1,current,current+1]);const valid=[...pages].filter(p=>p>=1&&p<=total).sort((a,b)=>a-b);const result:(number|string)[]=[];valid.forEach((p,i)=>{if(i&&p-valid[i-1]>1)result.push('…');result.push(p);});return result;}
-=======
-    this.adminValues =
-      this.selectedUserId === null
-        ? []
-        : this.allValues.filter((value) => value.superviseurId === Number(this.selectedUserId));
-    this.cdr.detectChanges();
-  }
-}
->>>>>>> e35a0c0 (fully works)

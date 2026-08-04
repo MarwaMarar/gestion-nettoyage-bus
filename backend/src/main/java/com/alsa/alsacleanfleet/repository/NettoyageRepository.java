@@ -5,8 +5,6 @@ import com.alsa.alsacleanfleet.enums.StatutNettoyage;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.EntityGraph;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.domain.Page;
@@ -22,13 +20,10 @@ public interface NettoyageRepository extends JpaRepository<Nettoyage, Long>, Jpa
     Page<Nettoyage> findAll(Specification<Nettoyage> specification, Pageable pageable);
 
     List<Nettoyage> findByBusId(Long busId);
+    boolean existsByTypeNettoyageId(Long typeNettoyageId);
 
     List<Nettoyage> findByNettoyeurId(Long nettoyeurId);
     List<Nettoyage> findByNettoyeurIdOrderByDateNettoyageDescHeureDebutDesc(Long nettoyeurId);
-<<<<<<< HEAD
-
-=======
->>>>>>> e35a0c0 (fully works)
     boolean existsByNettoyeurIdAndStatutAndHeureDebutIsNotNullAndHeureFinIsNull(
             Long nettoyeurId,
             StatutNettoyage statut
@@ -42,10 +37,6 @@ public interface NettoyageRepository extends JpaRepository<Nettoyage, Long>, Jpa
             + "AND (n.superviseur IS NULL OR n.superviseur.id = :superviseurId) "
             + "ORDER BY n.heureFin ASC")
     List<Nettoyage> findPendingVisibleToSupervisor(StatutNettoyage statut, Long superviseurId);
-<<<<<<< HEAD
-
-=======
->>>>>>> e35a0c0 (fully works)
 
     List<Nettoyage> findByDateNettoyageBetween(LocalDate debut, LocalDate fin);
     List<Nettoyage> findBySuperviseurId(Long superviseurId);
