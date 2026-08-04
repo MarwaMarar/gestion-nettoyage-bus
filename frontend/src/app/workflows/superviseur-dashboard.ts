@@ -3,7 +3,8 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { forkJoin } from 'rxjs';
-import { Nettoyage, Utilisateur } from '../service/api.models';
+import { Bus, Nettoyage, Utilisateur } from '../service/api.models';
+import { BusService } from '../service/bus.service';
 import { AuthService } from '../service/auth.service';
 import { NettoyageService } from '../service/nettoyage.service';
 import { UtilisateurService } from '../service/utilisateur.service';
@@ -50,6 +51,7 @@ import { WorkflowNav } from './workflow-nav';
                 }
               </select>
             </div>
+            <div class="filters"><div class="field"><label>Date début</label><input type="date" [(ngModel)]="filterDateStart"></div><div class="field"><label>Date fin</label><input type="date" [(ngModel)]="filterDateEnd"></div><div class="field"><label>Bus</label><select [(ngModel)]="filterBusId"><option [ngValue]="null">Tous les bus</option>@for(bus of buses;track bus.id){<option [ngValue]="bus.id">{{bus.numeroBus}}</option>}</select></div><div class="filter-actions"><button class="primary-btn search-btn" type="button" [disabled]="adminLoading" (click)="searchAdmin()">{{adminLoading?'Recherche…':'Rechercher'}}</button><button class="secondary-btn reset-btn" type="button" [disabled]="adminLoading" (click)="resetAdminFilters()">Réinitialiser les filtres</button></div></div>
           </section>
           @for (value of adminValues; track value.id) {
             <article class="list-card">
@@ -102,12 +104,13 @@ import { WorkflowNav } from './workflow-nav';
           } @empty {
             <div class="panel-card empty">
               {{
-                selectedUserId
-                  ? 'Aucun nettoyage pour ce superviseur.'
-                  : 'Sélectionnez un superviseur.'
+                !selectedUserId
+                  ? 'Sélectionnez un superviseur.'
+                  : hasSearched ? 'Aucun nettoyage pour ce superviseur.' : 'Cliquez sur Rechercher pour afficher les nettoyages.'
               }}
             </div>
           }
+          @if(totalElements>0){<nav class="pagination"><span class="results-count">{{totalElements}} résultat{{totalElements>1?'s':''}}</span><div class="page-buttons"><button (click)="goToPage(page-1)" [disabled]="page===0">Précédent</button>@for(item of pageItems;track $index){@if(item==='…'){<span class="ellipsis">…</span>}@else{<button [class.active]="item===page+1" (click)="goToPage(+item-1)">{{item}}</button>}}<button (click)="goToPage(page+1)" [disabled]="page>=totalPages-1">Suivant</button></div></nav>}
         } @else {
           <section class="stats-card">
             <div class="stats-number">{{ total }}</div>
@@ -134,6 +137,12 @@ export class SuperviseurDashboard implements OnInit {
   users: Utilisateur[] = [];
   allValues: Nettoyage[] = [];
   adminValues: Nettoyage[] = [];
+  buses: Bus[] = [];
+  filterDateStart = ''; filterDateEnd = ''; filterBusId: number|null = null;
+  appliedDateStart = ''; appliedDateEnd = ''; appliedBusId: number|null = null;
+  hasSearched = false;
+  adminLoading = false;
+  page = 0; readonly size = 10; totalElements = 0; totalPages = 0;
   selectedUserId: number | null = null;
   total = 0;
   error = '';
@@ -143,17 +152,18 @@ export class SuperviseurDashboard implements OnInit {
     private cdr: ChangeDetectorRef,
     private auth: AuthService,
     private userService: UtilisateurService,
+    private busService: BusService,
   ) {}
   ngOnInit(): void {
-    this.adminMode = this.auth.currentUser()?.role === 'ADMINISTRATEUR';
+    this.adminMode = ['ADMINISTRATEUR','CONSULTANT'].includes(this.auth.currentUser()?.role ?? '');
     if (this.adminMode) {
       forkJoin({
         users: this.userService.getUtilisateurs(),
-        values: this.service.getAll(),
+        buses: this.busService.getAll(),
       }).subscribe({
         next: (data) => {
           this.users = data.users.filter((user) => user.role === 'SUPERVISEUR');
-          this.allValues = data.values;
+          this.buses = data.buses;
           this.selectedUserId = this.users[0]?.id ?? null;
           this.filtrerAdmin();
         },
@@ -176,10 +186,13 @@ export class SuperviseurDashboard implements OnInit {
     });
   }
   filtrerAdmin(): void {
-    this.adminValues =
-      this.selectedUserId === null
-        ? []
-        : this.allValues.filter((value) => value.superviseurId === Number(this.selectedUserId));
-    this.cdr.detectChanges();
+    this.filterDateStart='';this.filterDateEnd='';this.filterBusId=null;
+    this.appliedDateStart='';this.appliedDateEnd='';this.appliedBusId=null;
+    this.page=0;this.adminValues=[];this.totalElements=0;this.totalPages=0;this.error='';
+    this.hasSearched=this.selectedUserId!==null;
+    if(this.selectedUserId!==null)this.loadAdmin();else this.cdr.detectChanges();
   }
+  loadAdmin():void{if(this.selectedUserId===null){this.adminValues=[];this.totalElements=0;this.totalPages=0;return;}this.error='';this.adminLoading=true;this.service.adminSupervisorPage(this.selectedUserId,this.page,this.size,this.appliedDateStart||undefined,this.appliedDateEnd||undefined,this.appliedBusId??undefined).subscribe({next:r=>{if(r.totalPages>0&&this.page>=r.totalPages){this.page=r.totalPages-1;this.loadAdmin();return;}this.adminValues=r.content;this.totalElements=r.totalElements;this.totalPages=r.totalPages;this.adminLoading=false;this.cdr.detectChanges();},error:e=>{this.adminLoading=false;this.error=e?.error?.message||'Impossible de charger la vue superviseur.';this.cdr.detectChanges();}});}
+  searchAdmin():void{this.hasSearched=true;this.appliedDateStart=this.filterDateStart;this.appliedDateEnd=this.filterDateEnd;this.appliedBusId=this.filterBusId;this.page=0;this.loadAdmin();}resetAdminFilters():void{this.filterDateStart='';this.filterDateEnd='';this.filterBusId=null;this.searchAdmin();}goToPage(page:number):void{if(page>=0&&page<this.totalPages&&page!==this.page){this.page=page;this.loadAdmin();}}get pageItems():(number|string)[]{return compactPages(this.page+1,this.totalPages);}
 }
+function compactPages(current:number,total:number):(number|string)[]{const pages=new Set([1,total,current-1,current,current+1]);const valid=[...pages].filter(p=>p>=1&&p<=total).sort((a,b)=>a-b);const result:(number|string)[]=[];valid.forEach((p,i)=>{if(i&&p-valid[i-1]>1)result.push('…');result.push(p);});return result;}

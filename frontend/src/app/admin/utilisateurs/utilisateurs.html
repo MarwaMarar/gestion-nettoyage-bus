@@ -105,6 +105,7 @@
     <option value="ADMINISTRATEUR">Administrateur</option>
     <option value="NETTOYEUR">Nettoyeur</option>
     <option value="SUPERVISEUR">Superviseur</option>
+    <option value="CONSULTANT">Consultant</option>
   </select>
 
   <button class="btn-formulaire" (click)="enregistrerUtilisateur()">
@@ -182,7 +183,7 @@
       <td>
         <span
           class="badge"
-          [class.badge-admin]="u.role === 'ADMINISTRATEUR'"
+          [class.badge-admin]="u.role === 'ADMINISTRATEUR' || u.role === 'CONSULTANT'"
           [class.badge-super]="u.role === 'SUPERVISEUR'"
           [class.badge-nett]="u.role === 'NETTOYEUR'">
 

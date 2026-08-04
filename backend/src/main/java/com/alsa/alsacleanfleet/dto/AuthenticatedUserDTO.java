@@ -10,5 +10,6 @@ public record AuthenticatedUserDTO(
         String email,
         String login,
         Role role,
-        Boolean actif
+        Boolean actif,
+        Boolean mustChangePassword
 ) {}

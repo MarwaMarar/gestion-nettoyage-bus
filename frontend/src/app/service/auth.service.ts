@@ -9,8 +9,9 @@ export interface AuthenticatedUser {
   prenom: string;
   email: string;
   login: string;
-  role: 'ADMINISTRATEUR' | 'SUPERVISEUR' | 'NETTOYEUR';
+  role: 'ADMINISTRATEUR' | 'SUPERVISEUR' | 'NETTOYEUR' | 'CONSULTANT';
   actif: boolean;
+  mustChangePassword: boolean;
 }
 
 interface LoginResponse {
@@ -18,6 +19,7 @@ interface LoginResponse {
   tokenType: 'Bearer';
   expiresIn: number;
   utilisateur: AuthenticatedUser;
+  mustChangePassword: boolean;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -47,6 +49,18 @@ export class AuthService {
     );
   }
 
+  changePassword(newPassword: string, confirmPassword: string): Observable<AuthenticatedUser> {
+    return this.http.post<LoginResponse>(`${environment.apiUrl}/auth/change-password`, { newPassword, confirmPassword }).pipe(
+      tap(response => {
+        sessionStorage.setItem(this.tokenKey, response.accessToken);
+        sessionStorage.setItem(this.sessionKey, JSON.stringify(response.utilisateur));
+        this.currentUser.set(response.utilisateur);
+        this.authenticated.set(true);
+      }),
+      map(response => response.utilisateur)
+    );
+  }
+
   validateSession(): Observable<boolean> {
     if (!this.getToken()) return of(false);
     return this.http.get<AuthenticatedUser>(`${environment.apiUrl}/auth/me`).pipe(
@@ -55,7 +69,7 @@ export class AuthService {
         this.currentUser.set(user);
         this.authenticated.set(true);
       }),
-      map(user => user.role === 'ADMINISTRATEUR' && user.actif),
+      map(user => user.actif),
       catchError(() => {
         this.logout();
         return of(false);
@@ -71,7 +85,7 @@ export class AuthService {
         this.currentUser.set(user);
         this.authenticated.set(true);
       }),
-      map(user => user.actif && roles.includes(user.role)),
+      map(user => user.actif && !user.mustChangePassword && roles.includes(user.role)),
       catchError(() => {
         this.logout();
         return of(false);

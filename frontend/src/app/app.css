@@ -1,5 +1,7 @@
 
 .layout {
+  position: relative;
+  z-index: 1;
   display: flex;
   min-height: 100vh;
 }
@@ -12,7 +14,7 @@
   flex: 1;
   margin-left: var(--sidebar-w);
   min-height: 100vh;
-  background: var(--bg);
+  background: transparent;
   display: flex;
   flex-direction: column;
   transition: margin-left var(--transition);

@@ -57,6 +57,24 @@
     </a>
     }
 
+    @if (role === 'CONSULTANT') {
+    <a routerLink="/consultant/tableau-de-bord" routerLinkActive="active" (click)="layoutService.closeSidebar()">
+      <i class="fa-solid fa-gauge-high"></i><span>Tableau de bord</span>
+    </a>
+    <a routerLink="/consultant/nettoyages" routerLinkActive="active" (click)="layoutService.closeSidebar()">
+      <i class="fa-solid fa-broom"></i><span>Nettoyages</span>
+    </a>
+    <a routerLink="/consultant/rapports" routerLinkActive="active" (click)="layoutService.closeSidebar()">
+      <i class="fa-solid fa-chart-line"></i><span>Rapports</span>
+    </a>
+    <a routerLink="/consultant/vue-superviseur" routerLinkActive="active" (click)="layoutService.closeSidebar()">
+      <i class="fa-solid fa-user-check"></i><span>Vue Superviseur</span>
+    </a>
+    <a routerLink="/consultant/vue-nettoyeur" routerLinkActive="active" (click)="layoutService.closeSidebar()">
+      <i class="fa-solid fa-broom-ball"></i><span>Vue Nettoyeur</span>
+    </a>
+    }
+
     @if (role === 'NETTOYEUR') {
       <a routerLink="/nettoyeur/tableau-de-bord" routerLinkActive="active" (click)="layoutService.closeSidebar()">
         <i class="fa-solid fa-gauge-high"></i>

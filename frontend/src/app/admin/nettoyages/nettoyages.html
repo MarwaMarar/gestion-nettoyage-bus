@@ -13,12 +13,12 @@
         placeholder="🔍 Rechercher un nettoyage…"
         [(ngModel)]="recherche">
 
-      <button class="btn-import-toggle" (click)="basculerImport()">
+      <button *ngIf="!readOnly" class="btn-import-toggle" (click)="basculerImport()">
         <i class="fa-solid fa-file-import"></i>
         Importer CSV
       </button>
 
-      <button class="btn-ajouter" (click)="ajouterNettoyage()">
+      <button *ngIf="!readOnly" class="btn-ajouter" (click)="ajouterNettoyage()">
         <i class="fa-solid fa-plus"></i>
         Ajouter un nettoyage
       </button>
@@ -27,7 +27,7 @@
 
 
 
-  <div class="import-csv-container" *ngIf="afficherImport">
+  <div class="import-csv-container" *ngIf="afficherImport && !readOnly">
     <div
       class="drag-drop-zone"
       [class.dragover]="isDragging"
@@ -73,7 +73,7 @@
 
 
 
-  <div class="formulaire" *ngIf="afficherFormulaire">
+  <div class="formulaire" *ngIf="afficherFormulaire && !readOnly">
     <select name="busId" [(ngModel)]="form.busId">
       <option *ngFor="let b of bus" [ngValue]="b.id">Bus {{ b.numeroBus }}</option>
     </select>
@@ -144,10 +144,10 @@
           </td>
           <td>
             <div class="td-actions">
-              <button class="btn-modifier" (click)="modifierNettoyage(n)">
+              <button *ngIf="!readOnly" class="btn-modifier" (click)="modifierNettoyage(n)">
                 <i class="fa-solid fa-pen"></i> Modifier
               </button>
-              <button class="btn-supprimer" (click)="supprimerNettoyage(n.id)">
+              <button *ngIf="!readOnly" class="btn-supprimer" (click)="supprimerNettoyage(n.id)">
                 <i class="fa-solid fa-trash"></i> Désactiver
               </button>
               <button *ngIf="n.statut === 'REFUSE'" class="btn-modifier"

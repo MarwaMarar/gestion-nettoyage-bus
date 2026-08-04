@@ -4,5 +4,6 @@ public record LoginResponseDTO(
         String accessToken,
         String tokenType,
         long expiresIn,
-        AuthenticatedUserDTO utilisateur
+        AuthenticatedUserDTO utilisateur,
+        boolean mustChangePassword
 ) {}

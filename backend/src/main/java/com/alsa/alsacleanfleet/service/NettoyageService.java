@@ -15,6 +15,9 @@ import com.alsa.alsacleanfleet.repository.TypeNettoyageRepository;
 import com.alsa.alsacleanfleet.repository.UtilisateurRepository;
 import com.alsa.alsacleanfleet.security.AuthenticatedUser;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -185,6 +188,26 @@ public class NettoyageService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
+    public Page<NettoyageResponseDTO> adminCleanerPage(
+            AuthenticatedUser principal, Long nettoyeurId, LocalDate dateDebut, LocalDate dateFin,
+            Long busId, Pageable pageable
+    ) {
+        requireReadViewerAndTargetRole(principal, nettoyeurId, Role.NETTOYEUR);
+        return repo.findAll(adminViewSpecification("nettoyeur", nettoyeurId, dateDebut, dateFin, busId), pageable)
+                .map(this::dto);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<NettoyageResponseDTO> adminSupervisorPage(
+            AuthenticatedUser principal, Long superviseurId, LocalDate dateDebut, LocalDate dateFin,
+            Long busId, Pageable pageable
+    ) {
+        requireReadViewerAndTargetRole(principal, superviseurId, Role.SUPERVISEUR);
+        return repo.findAll(adminViewSpecification("superviseur", superviseurId, dateDebut, dateFin, busId), pageable)
+                .map(this::dto);
+    }
+
     public NettoyageResponseDTO valider(
             Long id,
             DecisionNettoyageRequestDTO request,
@@ -321,6 +344,33 @@ public class NettoyageService {
         if (user.getRole() != role) {
             throw new BusinessException("Le rôle " + role + " est requis");
         }
+    }
+
+    private void requireReadViewerAndTargetRole(AuthenticatedUser principal, Long userId, Role role) {
+        if (principal.role() != Role.ADMINISTRATEUR && principal.role() != Role.CONSULTANT) {
+            throw new AccessDeniedException("Rôle de consultation requis");
+        }
+        Utilisateur target = userRepo.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Utilisateur introuvable"));
+        requireRole(target, role);
+    }
+
+    private Specification<Nettoyage> adminViewSpecification(
+            String relation, Long userId, LocalDate dateDebut, LocalDate dateFin, Long busId
+    ) {
+        if (dateDebut != null && dateFin != null && dateDebut.isAfter(dateFin)) {
+            throw new BusinessException("La date de début doit précéder la date de fin");
+        }
+        return (root, query, builder) -> {
+            var predicate = builder.equal(root.get(relation).get("id"), userId);
+            if (dateDebut != null) predicate = builder.and(predicate,
+                    builder.greaterThanOrEqualTo(root.get("dateNettoyage"), dateDebut));
+            if (dateFin != null) predicate = builder.and(predicate,
+                    builder.lessThanOrEqualTo(root.get("dateNettoyage"), dateFin));
+            if (busId != null) predicate = builder.and(predicate,
+                    builder.equal(root.get("bus").get("id"), busId));
+            return predicate;
+        };
     }
 
     private Nettoyage entity(Long id) {

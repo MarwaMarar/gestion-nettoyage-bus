@@ -27,7 +27,7 @@ export class BarreSuperieureComponent {
   get nombreNonLues(): number { return this.notifications.filter(value => !value.lue).length; }
   chargerNotifications(): void { this.notificationService.getMine().subscribe({next:values=>this.notifications=values,error:()=>this.notifications=[]}); }
   ouvrirNotifications(): void { this.notificationsOuvert=!this.notificationsOuvert; if(this.notificationsOuvert)this.chargerNotifications(); }
-  lireNotification(value:AppNotification):void { if(value.lue)return;this.notificationService.markRead(value.id).subscribe({next:updated=>value.lue=updated.lue}); }
+  lireNotification(value:AppNotification):void { if(value.lue||this.utilisateur?.role==='CONSULTANT')return;this.notificationService.markRead(value.id).subscribe({next:updated=>value.lue=updated.lue}); }
 
   get utilisateur() { return this.auth.currentUser(); }
   get nomAffiche(): string {
@@ -36,6 +36,7 @@ export class BarreSuperieureComponent {
   }
   get roleAffiche(): string {
     return this.utilisateur?.role === 'ADMINISTRATEUR' ? 'Administrateur'
+      : this.utilisateur?.role === 'CONSULTANT' ? 'Consultant'
       : this.utilisateur?.role === 'SUPERVISEUR' ? 'Superviseur' : 'Nettoyeur';
   }
   get initiales(): string {

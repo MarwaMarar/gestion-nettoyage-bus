@@ -1,0 +1,18 @@
+<div class="dynamic-background" aria-hidden="true">
+  <div class="foam-layer">
+    <span></span><span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span><span></span><span></span>
+  </div>
+
+  @for (bubble of bubbles; track bubble.id) {
+    <span
+      class="soap-bubble"
+      [style.--bubble-left]="bubble.left"
+      [style.--bubble-size]="bubble.size"
+      [style.--bubble-duration]="bubble.duration"
+      [style.--bubble-delay]="bubble.delay"
+      [style.--bubble-drift]="bubble.drift"
+      [style.--bubble-opacity]="bubble.opacity"
+    ></span>
+  }
+</div>

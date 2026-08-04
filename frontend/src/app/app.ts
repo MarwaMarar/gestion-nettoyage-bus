@@ -7,6 +7,7 @@ import { LayoutService } from './service/layout.service';
 import { filter } from 'rxjs/operators';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { LanguageService } from './service/language.service';
+import { GlobalDynamicBackgroundComponent } from './layout/global-dynamic-background/global-dynamic-background';
 
 @Component({
   selector: 'app-root',
@@ -15,7 +16,8 @@ import { LanguageService } from './service/language.service';
     CommonModule,
     RouterOutlet,
     BarreLaterale,
-    BarreSuperieureComponent
+    BarreSuperieureComponent,
+    GlobalDynamicBackgroundComponent
   ],
   templateUrl: './app.html',
   styleUrl: './app.css'
@@ -35,6 +37,6 @@ export class App {
 
   showAppLayout = computed(() => {
     this.currentUrl();
-    return !this.router.url.startsWith('/login');
+    return !this.router.url.startsWith('/login') && !this.router.url.startsWith('/change-password');
   });
 }

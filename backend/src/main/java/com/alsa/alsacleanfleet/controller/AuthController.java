@@ -3,6 +3,7 @@ package com.alsa.alsacleanfleet.controller;
 import com.alsa.alsacleanfleet.dto.LoginRequestDTO;
 import com.alsa.alsacleanfleet.dto.LoginResponseDTO;
 import com.alsa.alsacleanfleet.dto.AuthenticatedUserDTO;
+import com.alsa.alsacleanfleet.dto.ChangePasswordRequestDTO;
 import com.alsa.alsacleanfleet.security.AuthenticatedUser;
 import com.alsa.alsacleanfleet.service.AuthService;
 import jakarta.validation.Valid;
@@ -30,5 +31,13 @@ public class AuthController {
     @GetMapping("/me")
     public AuthenticatedUserDTO me(@AuthenticationPrincipal AuthenticatedUser principal) {
         return authService.me(principal);
+    }
+
+    @PostMapping("/change-password")
+    public LoginResponseDTO changePassword(
+            @Valid @RequestBody ChangePasswordRequestDTO request,
+            @AuthenticationPrincipal AuthenticatedUser principal
+    ) {
+        return authService.changePassword(request, principal);
     }
 }

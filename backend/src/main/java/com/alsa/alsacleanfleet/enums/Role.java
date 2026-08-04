@@ -4,6 +4,7 @@ public enum Role {
 
     ADMINISTRATEUR,
     NETTOYEUR,
-    SUPERVISEUR
+    SUPERVISEUR,
+    CONSULTANT
 
 }

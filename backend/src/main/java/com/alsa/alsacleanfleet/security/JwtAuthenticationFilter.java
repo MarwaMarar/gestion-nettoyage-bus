@@ -34,10 +34,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 && authorization.startsWith("Bearer ")
                 && SecurityContextHolder.getContext().getAuthentication() == null) {
             try {
-                Long userId = jwtService.extractUserId(authorization.substring(7));
+                String token = authorization.substring(7);
+                Long userId = jwtService.extractUserId(token);
                 users.findById(userId)
                         .filter(user -> Boolean.TRUE.equals(user.getActif()))
                         .map(AuthenticatedUser::from)
+                        .filter(principal -> principal.mustChangePassword() == jwtService.requiresPasswordChange(token))
                         .ifPresent(principal -> SecurityContextHolder.getContext().setAuthentication(
                                 new UsernamePasswordAuthenticationToken(
                                         principal,

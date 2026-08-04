@@ -6,11 +6,16 @@ import com.alsa.alsacleanfleet.service.NettoyageService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.time.LocalDate;
 
 @RestController
 @RequestMapping("/api/nettoyages")
@@ -61,6 +66,32 @@ public class NettoyageController {
             @AuthenticationPrincipal AuthenticatedUser principal
     ) {
         return service.enAttente(principal);
+    }
+
+    @GetMapping("/admin/nettoyeur/page")
+    public Page<NettoyageResponseDTO> adminCleanerPage(
+            @RequestParam Long userId, @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateDebut,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateFin,
+            @RequestParam(required = false) Long busId,
+            @AuthenticationPrincipal AuthenticatedUser principal
+    ) {
+        return service.adminCleanerPage(principal, userId, dateDebut, dateFin, busId, PageRequest.of(page, size,
+                Sort.by(Sort.Order.desc("dateNettoyage"), Sort.Order.desc("heureDebut"), Sort.Order.desc("id"))));
+    }
+
+    @GetMapping("/admin/superviseur/page")
+    public Page<NettoyageResponseDTO> adminSupervisorPage(
+            @RequestParam Long userId, @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateDebut,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateFin,
+            @RequestParam(required = false) Long busId,
+            @AuthenticationPrincipal AuthenticatedUser principal
+    ) {
+        return service.adminSupervisorPage(principal, userId, dateDebut, dateFin, busId, PageRequest.of(page, size,
+                Sort.by(Sort.Order.desc("dateNettoyage"), Sort.Order.desc("heureFin"), Sort.Order.desc("id"))));
     }
 
     @PutMapping("/{id}/valider")

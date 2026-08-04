@@ -37,6 +37,9 @@ public class Utilisateur {
 
     private Boolean actif = true;
 
+    @Column(name = "doit_changer_mot_de_passe", nullable = false)
+    private Boolean doitChangerMotDePasse = false;
+
 
     public Utilisateur() {
     }
@@ -117,4 +120,7 @@ public class Utilisateur {
     public void setActif(Boolean actif) {
         this.actif = actif;
     }
+
+    public Boolean getDoitChangerMotDePasse() { return doitChangerMotDePasse; }
+    public void setDoitChangerMotDePasse(Boolean value) { this.doitChangerMotDePasse = value; }
 }

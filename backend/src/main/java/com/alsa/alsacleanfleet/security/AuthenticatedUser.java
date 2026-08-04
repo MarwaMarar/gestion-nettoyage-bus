@@ -14,7 +14,8 @@ public record AuthenticatedUser(
         String email,
         String password,
         Role role,
-        boolean active
+        boolean active,
+        boolean mustChangePassword
 ) implements UserDetails {
     public static AuthenticatedUser from(Utilisateur user) {
         return new AuthenticatedUser(
@@ -22,7 +23,8 @@ public record AuthenticatedUser(
                 user.getEmail(),
                 user.getMotDePasse(),
                 user.getRole(),
-                Boolean.TRUE.equals(user.getActif())
+                Boolean.TRUE.equals(user.getActif()),
+                Boolean.TRUE.equals(user.getDoitChangerMotDePasse())
         );
     }
 

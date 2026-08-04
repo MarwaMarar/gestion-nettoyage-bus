@@ -29,6 +29,7 @@ public class JwtService {
         return Jwts.builder()
                 .subject(user.id().toString())
                 .claim("role", user.role().name())
+                .claim("pwd_change", user.mustChangePassword())
                 .issuedAt(Date.from(now))
                 .expiration(Date.from(now.plusSeconds(expirationSeconds)))
                 .signWith(key)
@@ -42,6 +43,11 @@ public class JwtService {
                 .parseSignedClaims(token)
                 .getPayload();
         return Long.valueOf(claims.getSubject());
+    }
+
+    public boolean requiresPasswordChange(String token) {
+        Claims claims = Jwts.parser().verifyWith(key).build().parseSignedClaims(token).getPayload();
+        return Boolean.TRUE.equals(claims.get("pwd_change", Boolean.class));
     }
 
     public long expirationSeconds() {
