@@ -279,6 +279,14 @@
   color: var(--primary);
 }
 
+.notification-item > span { flex: 1; }
+.notification-delete { border: 0; background: transparent; color: var(--danger); cursor: pointer; padding: 5px; font: inherit; font-size: 11px; display: inline-flex; gap: 4px; align-items: center; }
+.notification-delete i { color: var(--danger); }
+.notification-delete:disabled { opacity: .5; cursor: wait; }
+.notification-feedback { padding: 8px; margin-bottom: 8px; border-radius: var(--radius-sm); font-size: 12px; }
+.notification-feedback.success { color: var(--success); background: var(--success-light); }
+.notification-feedback.error { color: var(--danger); background: var(--danger-light); }
+
 
 
 /* =========================

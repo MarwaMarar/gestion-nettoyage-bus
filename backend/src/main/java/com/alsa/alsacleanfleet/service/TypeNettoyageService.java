@@ -34,6 +34,7 @@ public class TypeNettoyageService {
         TypeNettoyage type = new TypeNettoyage();
         type.setLibelle(libelle);
         type.setDescription(normalizeDescription(input.description()));
+        type.setFrequence(input.frequence().trim());
         return toDTO(repository.save(type));
     }
     public void delete(Long id) {
@@ -46,7 +47,7 @@ public class TypeNettoyageService {
     }
 
     private TypeNettoyageDTO toDTO(TypeNettoyage type) {
-        return new TypeNettoyageDTO(type.getId(), type.getLibelle(), type.getDescription());
+        return new TypeNettoyageDTO(type.getId(), type.getLibelle(), type.getDescription(), type.getFrequence());
     }
 
     private String normalizeDescription(String description) {

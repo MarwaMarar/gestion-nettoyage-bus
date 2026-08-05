@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../service/auth.service';
@@ -10,7 +10,7 @@ import { AuthService } from '../service/auth.service';
   templateUrl: './login.html',
   styleUrl: './login.css',
 })
-export class Login {
+export class Login implements OnInit {
 
   login: string = '';
   password: string = '';
@@ -20,6 +20,10 @@ export class Login {
   connexionEnCours = false;
 
   constructor(private router: Router, private auth: AuthService) {}
+
+  ngOnInit(): void {
+    this.auth.logout();
+  }
 
 
   seConnecter() {

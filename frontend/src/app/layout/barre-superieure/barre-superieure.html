@@ -68,9 +68,16 @@
         </h4>
 
 
+        <div class="notification-feedback success" *ngIf="notificationMessage">{{ notificationMessage }}</div>
+        <div class="notification-feedback error" *ngIf="notificationError">{{ notificationError }}</div>
         <div class="notification-item" *ngFor="let notification of notifications"
              (click)="lireNotification(notification)" [class.notification-read]="notification.lue">
           <i class="fa-solid fa-bell"></i><span>{{ notification.message }}</span>
+          <button type="button" class="notification-delete" title="Supprimer"
+                  [disabled]="deletingNotificationId === notification.id"
+                  (click)="supprimerNotification($event, notification)">
+            <i class="fa-solid fa-trash"></i><span>Supprimer</span>
+          </button>
         </div>
         <div class="notification-item" *ngIf="notifications.length === 0">
           <span>Aucune notification</span>

@@ -100,7 +100,12 @@ public class NettoyageService {
     public NettoyageResponseDTO update(Long id, NettoyageRequestDTO request) {
         Nettoyage nettoyage = entity(id);
         applyAdministrativeRequest(nettoyage, request, false);
-        return dto(repo.save(nettoyage));
+        resetForCleaner(nettoyage, null);
+        nettoyage = repo.save(nettoyage);
+        notifications.create(nettoyage.getNettoyeur(), nettoyage,
+                "Nettoyage modifie par l'administrateur et remis a disposition : bus "
+                        + nettoyage.getBus().getNumeroBus());
+        return dto(nettoyage);
     }
 
     public void delete(Long id) {
@@ -124,9 +129,11 @@ public class NettoyageService {
         if (!nettoyage.getNettoyeur().getId().equals(nettoyeur.getId())) {
             throw new AccessDeniedException("Ce nettoyage est assigné à un autre nettoyeur");
         }
-        if (nettoyage.getStatut() != StatutNettoyage.EN_ATTENTE
-                || nettoyage.getHeureDebut() != null
-                || nettoyage.getHeureFin() != null) {
+        boolean legacyRefusal = nettoyage.getStatut() == StatutNettoyage.REFUSE;
+        boolean availableAssignment = nettoyage.getStatut() == StatutNettoyage.EN_ATTENTE
+                && nettoyage.getHeureDebut() == null
+                && nettoyage.getHeureFin() == null;
+        if (!legacyRefusal && !availableAssignment) {
             throw new WorkflowConflictException("Seul un nettoyage assigné peut être commencé");
         }
         if (!Boolean.TRUE.equals(nettoyage.getBus().getActif())) {
@@ -136,6 +143,10 @@ public class NettoyageService {
         LocalDateTime now = LocalDateTime.now();
         nettoyage.setDateNettoyage(now.toLocalDate());
         nettoyage.setHeureDebut(now);
+        nettoyage.setHeureFin(null);
+        nettoyage.setDuree(null);
+        nettoyage.setRemarqueNettoyeur(null);
+        nettoyage.setDateValidation(null);
         nettoyage.setStatut(StatutNettoyage.EN_ATTENTE);
         return dto(repo.save(nettoyage));
     }
@@ -249,9 +260,13 @@ public class NettoyageService {
             throw new AccessDeniedException("Ce nettoyage est assigné à un autre superviseur");
         }
         nettoyage.setSuperviseur(superviseur);
-        nettoyage.setRemarqueSuperviseur(normalize(remark));
-        nettoyage.setStatut(decision);
-        nettoyage.setDateValidation(LocalDateTime.now());
+        if (decision == StatutNettoyage.REFUSE) {
+            resetForCleaner(nettoyage, remark);
+        } else {
+            nettoyage.setRemarqueSuperviseur(normalize(remark));
+            nettoyage.setStatut(decision);
+            nettoyage.setDateValidation(LocalDateTime.now());
+        }
         nettoyage = repo.save(nettoyage);
         String result = decision == StatutNettoyage.VALIDE ? "validé" : "refusé";
         notifications.create(nettoyage.getNettoyeur(), nettoyage,
@@ -261,6 +276,16 @@ public class NettoyageService {
                     "Nettoyage " + result + " : bus " + nettoyage.getBus().getNumeroBus());
         }
         return dto(nettoyage);
+    }
+
+    private void resetForCleaner(Nettoyage nettoyage, String refusalReason) {
+        nettoyage.setStatut(StatutNettoyage.EN_ATTENTE);
+        nettoyage.setHeureDebut(null);
+        nettoyage.setHeureFin(null);
+        nettoyage.setDuree(null);
+        nettoyage.setRemarqueNettoyeur(null);
+        nettoyage.setRemarqueSuperviseur(normalize(refusalReason));
+        nettoyage.setDateValidation(null);
     }
 
     private void applyAdministrativeRequest(

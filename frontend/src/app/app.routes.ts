@@ -1,11 +1,11 @@
 import { Routes } from '@angular/router';
-import { loginGuard, passwordChangeGuard } from './auth-guard';
+import { passwordChangeGuard } from './auth-guard';
 import { roleGuard } from './role-guard';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
 
-  { path: 'login', loadComponent: () => import('./login/login').then(m => m.Login), canActivate: [loginGuard] },
+  { path: 'login', loadComponent: () => import('./login/login').then(m => m.Login) },
   { path: 'change-password', loadComponent: () => import('./login/change-password').then(m => m.ChangePassword), canActivate: [passwordChangeGuard] },
 
   { path: 'admin/tableau-de-bord', loadComponent: () => import('./admin/tableau-de-bord/tableau-de-bord').then(m => m.TableauDeBordComponent), canActivate: [roleGuard(['ADMINISTRATEUR'])] },

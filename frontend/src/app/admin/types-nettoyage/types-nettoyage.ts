@@ -16,6 +16,7 @@ export class TypesNettoyage implements OnInit {
   recherche = '';
   libelle = '';
   description = '';
+  frequence = '';
   afficherAjout = false;
   typeASupprimer: TypeNettoyage | null = null;
   chargement = false;
@@ -31,13 +32,14 @@ export class TypesNettoyage implements OnInit {
     const terme = this.recherche.trim().toLocaleLowerCase('fr');
     if (!terme) return this.types;
     return this.types.filter(type =>
-      `${type.libelle} ${type.description ?? ''}`.toLocaleLowerCase('fr').includes(terme)
+      `${type.libelle} ${type.description ?? ''} ${type.frequence ?? ''}`.toLocaleLowerCase('fr').includes(terme)
     );
   }
 
   ouvrirAjout(): void {
     this.libelle = '';
     this.description = '';
+    this.frequence = '';
     this.erreur = '';
     this.succes = '';
     this.afficherAjout = true;
@@ -47,13 +49,14 @@ export class TypesNettoyage implements OnInit {
 
   ajouter(): void {
     const libelle = this.libelle.trim();
-    if (!libelle) {
-      this.erreur = 'Le libellé est obligatoire.';
+    const frequence = this.frequence.trim();
+    if (!libelle || !frequence) {
+      this.erreur = 'Le libellé et la fréquence sont obligatoires.';
       return;
     }
     this.soumission = true;
     this.erreur = '';
-    this.api.create({ libelle, description: this.description.trim() || null }).subscribe({
+    this.api.create({ libelle, description: this.description.trim() || null, frequence }).subscribe({
       next: () => {
         this.afficherAjout = false;
         this.soumission = false;

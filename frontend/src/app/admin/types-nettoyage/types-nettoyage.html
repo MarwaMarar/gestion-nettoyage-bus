@@ -25,12 +25,13 @@
     </div>
     <div class="table-responsive">
       <table>
-        <thead><tr><th>ID</th><th>Libellé</th><th>Description</th><th>Actions</th></tr></thead>
+        <thead><tr><th>ID</th><th>Libellé</th><th>Description</th><th>Fréquence</th><th>Actions</th></tr></thead>
         <tbody>
           <tr *ngFor="let type of typesFiltres">
             <td><span class="badge-neutral">#{{ type.id }}</span></td>
             <td><strong>{{ type.libelle }}</strong></td>
             <td>{{ type.description || '—' }}</td>
+            <td>{{ type.frequence || '—' }}</td>
             <td>
               <button type="button" class="btn-supprimer" (click)="demanderSuppression(type)">
                 <i class="fa-solid fa-trash"></i> Supprimer
@@ -38,9 +39,9 @@
             </td>
           </tr>
           <tr *ngIf="!chargement && typesFiltres.length === 0">
-            <td colspan="4"><div class="empty-state"><i class="fa-solid fa-spray-can-sparkles"></i><p>Aucun type de nettoyage trouvé</p></div></td>
+            <td colspan="5"><div class="empty-state"><i class="fa-solid fa-spray-can-sparkles"></i><p>Aucun type de nettoyage trouvé</p></div></td>
           </tr>
-          <tr *ngIf="chargement"><td colspan="4"><div class="empty-state"><i class="fa-solid fa-spinner fa-spin"></i><p>Chargement…</p></div></td></tr>
+          <tr *ngIf="chargement"><td colspan="5"><div class="empty-state"><i class="fa-solid fa-spinner fa-spin"></i><p>Chargement…</p></div></td></tr>
         </tbody>
       </table>
     </div>
@@ -54,6 +55,8 @@
         <input id="type-libelle" type="text" maxlength="100" [(ngModel)]="libelle" placeholder="Ex. Nettoyage approfondi" (keyup.enter)="ajouter()">
         <label for="type-description">Description <small>(facultative)</small></label>
         <textarea id="type-description" [(ngModel)]="description" placeholder="Décrivez ce type de nettoyage…"></textarea>
+        <label for="type-frequence">Fréquence <span>*</span></label>
+        <input id="type-frequence" type="text" maxlength="100" [(ngModel)]="frequence" placeholder="Ex. 7 fois par semaine" (keyup.enter)="ajouter()">
         <div *ngIf="erreur" class="feedback error"><i class="fa-solid fa-circle-xmark"></i>{{ erreur }}</div>
       </div>
       <div class="modal-actions"><button type="button" class="btn-annuler" (click)="fermerAjout()" [disabled]="soumission">Annuler</button><button type="button" class="btn-confirmer" (click)="ajouter()" [disabled]="soumission"><i class="fa-solid" [class.fa-plus]="!soumission" [class.fa-spinner]="soumission" [class.fa-spin]="soumission"></i>{{ soumission ? 'Ajout…' : 'Ajouter' }}</button></div>

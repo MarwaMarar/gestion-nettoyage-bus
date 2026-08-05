@@ -17,6 +17,9 @@ export class BarreSuperieureComponent {
   notificationsOuvert = false;
   profilOuvert = false;
   notifications: AppNotification[] = [];
+  notificationMessage = '';
+  notificationError = '';
+  deletingNotificationId: number | null = null;
 
   layoutService = inject(LayoutService);
 
@@ -28,6 +31,18 @@ export class BarreSuperieureComponent {
   chargerNotifications(): void { this.notificationService.getMine().subscribe({next:values=>this.notifications=values,error:()=>this.notifications=[]}); }
   ouvrirNotifications(): void { this.notificationsOuvert=!this.notificationsOuvert; if(this.notificationsOuvert)this.chargerNotifications(); }
   lireNotification(value:AppNotification):void { if(value.lue||this.utilisateur?.role==='CONSULTANT')return;this.notificationService.markRead(value.id).subscribe({next:updated=>value.lue=updated.lue}); }
+  supprimerNotification(event:Event,value:AppNotification):void {
+    event.stopPropagation();
+    this.notificationMessage='';this.notificationError='';
+    const index=this.notifications.findIndex(item=>item.id===value.id);
+    if(index<0)return;
+    this.notifications=this.notifications.filter(item=>item.id!==value.id);
+    this.deletingNotificationId=value.id;
+    this.notificationService.delete(value.id).subscribe({
+      next:()=>{this.deletingNotificationId=null;this.notificationMessage='Notification supprimée.';},
+      error:error=>{this.notifications=[...this.notifications.slice(0,index),value,...this.notifications.slice(index)];this.deletingNotificationId=null;this.notificationError=error?.error?.message||'Impossible de supprimer la notification.';}
+    });
+  }
 
   get utilisateur() { return this.auth.currentUser(); }
   get nomAffiche(): string {

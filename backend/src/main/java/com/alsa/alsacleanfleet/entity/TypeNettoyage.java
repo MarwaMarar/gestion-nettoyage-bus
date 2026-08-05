@@ -16,6 +16,9 @@ public class TypeNettoyage {
     @Column(columnDefinition = "TEXT")
     private String description;
 
+    @Column(length = 100)
+    private String frequence;
+
 
     public TypeNettoyage() {
     }
@@ -47,5 +50,13 @@ public class TypeNettoyage {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getFrequence() {
+        return frequence;
+    }
+
+    public void setFrequence(String frequence) {
+        this.frequence = frequence;
     }
 }

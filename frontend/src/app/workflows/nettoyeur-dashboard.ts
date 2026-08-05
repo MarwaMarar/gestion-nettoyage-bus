@@ -58,48 +58,16 @@ import { WorkflowNav } from './workflow-nav';
           @for (value of adminValues; track value.id) {
             <article class="list-card">
               <div class="info-row">
-                <span class="label">ID</span><strong>#{{ value.id }}</strong>
+                <span class="label">Nom du bus</span><strong>{{ value.numeroBus }}</strong>
               </div>
               <div class="info-row">
-                <span class="label">Bus</span><strong>{{ value.numeroBus }}</strong>
-              </div>
-              <div class="info-row">
-                <span class="label">Type</span><strong>{{ value.typeNettoyageLibelle }}</strong>
-              </div>
-              <div class="info-row">
-                <span class="label">Superviseur</span
-                ><strong>{{ value.superviseurNom || '—' }}</strong>
-              </div>
-              <div class="info-row">
-                <span class="label">Date</span
-                ><strong>{{ value.dateNettoyage | date: 'dd/MM/yyyy' }}</strong>
-              </div>
-              <div class="info-row">
-                <span class="label">Début</span
-                ><strong>{{
-                  value.heureDebut ? (value.heureDebut | date: 'HH:mm:ss') : '—'
-                }}</strong>
-              </div>
-              <div class="info-row">
-                <span class="label">Fin</span
-                ><strong>{{ value.heureFin ? (value.heureFin | date: 'HH:mm:ss') : '—' }}</strong>
-              </div>
-              <div class="info-row">
-                <span class="label">Durée</span
-                ><strong>{{ value.duree != null ? value.duree + ' min' : '—' }}</strong>
-              </div>
-              <div class="info-row">
-                <span class="label">Remarque nettoyeur</span
-                ><strong>{{ value.remarqueNettoyeur || '—' }}</strong>
-              </div>
-              <div class="info-row">
-                <span class="label">Remarque superviseur</span
-                ><strong>{{ value.remarqueSuperviseur || '—' }}</strong>
+                <span class="label">Type de nettoyage</span><strong>{{ value.typeNettoyageLibelle }}</strong>
               </div>
               <div class="info-row">
                 <span class="label">Statut</span>
                 <span class="badge {{ value.statut }}">{{ value.statut }}</span>
               </div>
+              <button class="secondary-btn" type="button" (click)="openDetails(value)">Voir détails</button>
             </article>
           } @empty {
             <div class="panel-card empty">
@@ -108,7 +76,8 @@ import { WorkflowNav } from './workflow-nav';
               }}
             </div>
           }
-          @if(totalElements>0){<nav class="pagination"><span class="results-count">{{totalElements}} résultat{{totalElements>1?'s':''}}</span><div class="page-buttons"><button (click)="goToPage(page-1)" [disabled]="page===0">Précédent</button>@for(item of pageItems;track $index){@if(item==='…'){<span class="ellipsis">…</span>}@else{<button [class.active]="item===page+1" (click)="goToPage(+item-1)">{{item}}</button>}}<button (click)="goToPage(page+1)" [disabled]="page>=totalPages-1">Suivant</button></div></nav>}
+          @if(totalElements>size){<nav class="pagination"><span class="results-count">{{totalElements}} résultat{{totalElements>1?'s':''}}</span><div class="page-buttons"><button (click)="goToPage(page-1)" [disabled]="page===0">Précédent</button>@for(item of pageItems;track $index){@if(item==='…'){<span class="ellipsis">…</span>}@else{<button [class.active]="item===page+1" (click)="goToPage(+item-1)">{{item}}</button>}}<button (click)="goToPage(page+1)" [disabled]="page>=totalPages-1">Suivant</button></div></nav>}
+          @if(selectedDetails){<div class="details-overlay" (click)="closeDetails()"><section class="details-panel" (click)="$event.stopPropagation()"><h2>Détails du nettoyage #{{selectedDetails.id}}</h2><div class="info-row"><span class="label">Bus</span><strong>{{selectedDetails.numeroBus}}</strong></div><div class="info-row"><span class="label">Type</span><strong>{{selectedDetails.typeNettoyageLibelle}}</strong></div><div class="info-row"><span class="label">Nettoyeur</span><strong>{{selectedDetails.nettoyeurNom}}</strong></div><div class="info-row"><span class="label">Superviseur</span><strong>{{selectedDetails.superviseurNom||'—'}}</strong></div><div class="info-row"><span class="label">Date</span><strong>{{selectedDetails.dateNettoyage|date:'dd/MM/yyyy'}}</strong></div><div class="info-row"><span class="label">Début</span><strong>{{selectedDetails.heureDebut?(selectedDetails.heureDebut|date:'HH:mm:ss'):'—'}}</strong></div><div class="info-row"><span class="label">Fin</span><strong>{{selectedDetails.heureFin?(selectedDetails.heureFin|date:'HH:mm:ss'):'—'}}</strong></div><div class="info-row"><span class="label">Durée</span><strong>{{selectedDetails.duree!=null?selectedDetails.duree+' min':'—'}}</strong></div><div class="info-row"><span class="label">Remarque nettoyeur</span><strong>{{selectedDetails.remarqueNettoyeur||'—'}}</strong></div><div class="info-row"><span class="label">Remarque superviseur</span><strong>{{selectedDetails.remarqueSuperviseur||'—'}}</strong></div><div class="info-row"><span class="label">Statut</span><span class="badge {{selectedDetails.statut}}">{{selectedDetails.statut}}</span></div><button class="secondary-btn details-close" type="button" (click)="closeDetails()">Fermer</button></section></div>}
         } @else {
           <section class="panel-card">
             <h2>Commencer un nettoyage</h2>
@@ -191,7 +160,8 @@ export class NettoyeurDashboard implements OnInit {
   appliedDateStart = ''; appliedDateEnd = ''; appliedBusId: number|null = null;
   hasSearched = false;
   adminLoading = false;
-  page = 0; readonly size = 10; totalElements = 0; totalPages = 0;
+  page = 0; readonly size = 5; totalElements = 0; totalPages = 0;
+  selectedDetails: Nettoyage | null = null;
   selectedUserId: number | null = null;
   assignations: Nettoyage[] = [];
   selectedAssignmentId: number | null = null;
@@ -236,7 +206,8 @@ export class NettoyeurDashboard implements OnInit {
           return;
         }
         this.assignations = history.filter(
-          (value) => value.statut === 'EN_ATTENTE' && !value.heureDebut && !value.heureFin,
+          (value) => (value.statut === 'EN_ATTENTE' && !value.heureDebut && !value.heureFin)
+            || value.statut === 'REFUSE',
         );
         this.cdr.detectChanges();
       },
@@ -255,6 +226,8 @@ export class NettoyeurDashboard implements OnInit {
   }
   loadAdmin():void { if(this.selectedUserId===null){this.adminValues=[];this.totalElements=0;this.totalPages=0;return;}this.error='';this.adminLoading=true;this.clean.adminCleanerPage(this.selectedUserId,this.page,this.size,this.appliedDateStart||undefined,this.appliedDateEnd||undefined,this.appliedBusId??undefined).subscribe({next:r=>{if(r.totalPages>0&&this.page>=r.totalPages){this.page=r.totalPages-1;this.loadAdmin();return;}this.adminValues=r.content;this.totalElements=r.totalElements;this.totalPages=r.totalPages;this.adminLoading=false;this.cdr.detectChanges();},error:e=>{this.adminLoading=false;this.error=e?.error?.message||'Impossible de charger la vue nettoyeur.';this.cdr.detectChanges();}});}
   searchAdmin():void{this.hasSearched=true;this.appliedDateStart=this.filterDateStart;this.appliedDateEnd=this.filterDateEnd;this.appliedBusId=this.filterBusId;this.page=0;this.loadAdmin();}resetAdminFilters():void{this.filterDateStart='';this.filterDateEnd='';this.filterBusId=null;this.searchAdmin();}goToPage(page:number):void{if(page>=0&&page<this.totalPages&&page!==this.page){this.page=page;this.loadAdmin();}}get pageItems():(number|string)[]{return compactPages(this.page+1,this.totalPages);}
+  openDetails(value:Nettoyage):void{this.selectedDetails=value;}
+  closeDetails():void{this.selectedDetails=null;}
   selectionnerAssignation(id: number | null): void {
     this.selectedAssignment =
       id === null ? null : (this.assignations.find((value) => value.id === Number(id)) ?? null);
