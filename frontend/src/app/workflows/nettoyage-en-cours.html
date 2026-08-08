@@ -1,0 +1,71 @@
+<app-workflow-nav section="nettoyeur" />
+
+<main class="workflow-page">
+  <div class="workflow-container">
+    <section class="hero-card">
+      <h1>Nettoyage en cours</h1>
+      <p>Le nettoyage est actuellement en cours.</p>
+    </section>
+
+    @if (nettoyage) {
+      <section class="info-card">
+        <div class="info-row">
+          <span class="label"><span class="icon-box"><i class="fa-solid fa-bus"></i></span>Bus</span>
+          <strong>{{ nettoyage.numeroBus }}</strong>
+        </div>
+        <div class="info-row">
+          <span class="label"><span class="icon-box"><i class="fa-solid fa-broom"></i></span>Type</span>
+          <strong>{{ nettoyage.typeNettoyageLibelle }}</strong>
+        </div>
+        <div class="info-row">
+          <span class="label"><span class="icon-box"><i class="fa-regular fa-calendar"></i></span>Date</span>
+          <strong>{{ date }}</strong>
+        </div>
+        <div class="info-row">
+          <span class="label"><span class="icon-box"><i class="fa-solid fa-play"></i></span>Heure début</span>
+          <strong>{{ heureDebut }}</strong>
+        </div>
+      </section>
+
+      @if (error) {
+        <div class="error">{{ error }}</div>
+      }
+
+      <button class="success-btn finish-cleaning-button" [disabled]="loading" (click)="ouvrirConfirmation()">
+        <i class="fa-solid fa-circle-check"></i>
+        {{ loading ? 'Finalisation…' : 'Finir le nettoyage' }}
+      </button>
+    }
+  </div>
+</main>
+
+@if (confirmationOuverte) {
+  <div class="confirmation-backdrop" (mousedown)="fermerDepuisFond($event)">
+    <section
+      class="confirmation-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="confirmation-title"
+      aria-describedby="confirmation-description"
+    >
+      <div class="confirmation-icon" aria-hidden="true">
+        <i class="fa-solid fa-circle-check"></i>
+      </div>
+
+      <h2 id="confirmation-title">Terminer le nettoyage ?</h2>
+      <p id="confirmation-description">
+        Êtes-vous sûr de vouloir terminer ce nettoyage ? Cette action enverra le nettoyage au superviseur pour validation.
+      </p>
+
+      <div class="confirmation-actions">
+        <button type="button" class="cancel-button" [disabled]="loading" (click)="fermerConfirmation()">
+          Annuler
+        </button>
+        <button #terminerButton type="button" class="confirm-button" [disabled]="loading" (click)="terminer()">
+          <i class="fa-solid fa-check" aria-hidden="true"></i>
+          Terminer
+        </button>
+      </div>
+    </section>
+  </div>
+}
