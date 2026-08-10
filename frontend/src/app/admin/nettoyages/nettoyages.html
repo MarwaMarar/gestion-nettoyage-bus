@@ -80,7 +80,7 @@
 
     <select name="typeNettoyageId" [(ngModel)]="form.typeNettoyageId">
       <option *ngFor="let t of typesNettoyage" [ngValue]="t.id">
-              {{ t.libelle }}
+              {{ t.libelle }}{{ t.frequence ? ' — ' + t.frequence : '' }}
       </option>
     </select>
 

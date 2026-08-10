@@ -10,6 +10,7 @@ import com.alsa.alsacleanfleet.exception.BusinessException;
 import com.alsa.alsacleanfleet.exception.ResourceNotFoundException;
 import com.alsa.alsacleanfleet.exception.WorkflowConflictException;
 import com.alsa.alsacleanfleet.repository.BusRepository;
+import com.alsa.alsacleanfleet.repository.BusExclusionRepository;
 import com.alsa.alsacleanfleet.repository.NettoyageRepository;
 import com.alsa.alsacleanfleet.repository.TypeNettoyageRepository;
 import com.alsa.alsacleanfleet.repository.UtilisateurRepository;
@@ -19,13 +20,18 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.text.Normalizer;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 @Transactional
@@ -34,6 +40,7 @@ public class NettoyageService {
     private final BusRepository busRepo;
     private final TypeNettoyageRepository typeRepo;
     private final UtilisateurRepository userRepo;
+    private final BusExclusionRepository busExclusionRepo;
     private final NotificationService notifications;
 
     public NettoyageService(
@@ -41,13 +48,15 @@ public class NettoyageService {
             BusRepository busRepo,
             TypeNettoyageRepository typeRepo,
             UtilisateurRepository userRepo,
-            NotificationService notifications
+            NotificationService notifications,
+            BusExclusionRepository busExclusionRepo
     ) {
         this.repo = repo;
         this.busRepo = busRepo;
         this.typeRepo = typeRepo;
         this.userRepo = userRepo;
         this.notifications = notifications;
+        this.busExclusionRepo = busExclusionRepo;
     }
 
     @Transactional(readOnly = true)
@@ -138,6 +147,10 @@ public class NettoyageService {
         }
         if (!Boolean.TRUE.equals(nettoyage.getBus().getActif())) {
             throw new WorkflowConflictException("Un bus inactif ne peut pas être nettoyé");
+        }
+
+        if (busExclusionRepo.existsByBusId(nettoyage.getBus().getId())) {
+            throw new WorkflowConflictException("Un bus dormant ou immobilise ne peut pas etre nettoye");
         }
 
         LocalDateTime now = LocalDateTime.now();
@@ -278,6 +291,50 @@ public class NettoyageService {
         return dto(nettoyage);
     }
 
+    @Scheduled(cron = "${app.cleaning-planning.cron:0 */5 * * * *}", zone = "Africa/Casablanca")
+    public synchronized void generateDailyPlanning() {
+        generateDueCleanings(LocalDate.now());
+    }
+
+    public int generateDueCleanings(LocalDate planningDate) {
+        int created = 0;
+        var cleaningTypes = typeRepo.findAll();
+        for (Bus bus : busRepo.findByActifTrueOrderByNumeroBusAsc()) {
+            if (busExclusionRepo.existsByBusId(bus.getId())) continue;
+            List<Nettoyage> busHistory = repo.findByBusIdOrderByDateNettoyageDescIdDesc(bus.getId());
+            for (var type : cleaningTypes) {
+                List<Nettoyage> sameTypeHistory = busHistory.stream()
+                        .filter(value -> value.getTypeNettoyage().getId().equals(type.getId()))
+                        .toList();
+                LocalDate lastDate = sameTypeHistory.isEmpty()
+                        ? null
+                        : sameTypeHistory.getFirst().getDateNettoyage();
+                if (!isDue(type.getFrequence(), lastDate, planningDate)
+                        || repo.existsByBusIdAndTypeNettoyageIdAndDateNettoyage(
+                                bus.getId(), type.getId(), planningDate)) {
+                    continue;
+                }
+
+                Nettoyage assignment = sameTypeHistory.stream()
+                        .filter(this::hasReusableAssignment)
+                        .findFirst()
+                        .orElseGet(() -> busHistory.stream()
+                                .filter(this::hasReusableAssignment)
+                                .findFirst()
+                                .orElse(null));
+                if (assignment == null) continue;
+
+                create(new NettoyageRequestDTO(
+                        bus.getId(), type.getId(), assignment.getNettoyeur().getId(),
+                        assignment.getSuperviseur().getId(), planningDate,
+                        null, null, null, null, null,
+                        StatutNettoyage.EN_ATTENTE, null));
+                created++;
+            }
+        }
+        return created;
+    }
+
     private void resetForCleaner(Nettoyage nettoyage, String refusalReason) {
         nettoyage.setStatut(StatutNettoyage.EN_ATTENTE);
         nettoyage.setHeureDebut(null);
@@ -293,10 +350,13 @@ public class NettoyageService {
             NettoyageRequestDTO request,
             boolean creating
     ) {
-        Bus bus = busRepo.findById(request.busId())
+        Bus bus = busRepo.findByIdForUpdate(request.busId())
                 .orElseThrow(() -> new ResourceNotFoundException("Bus introuvable"));
         if (creating && !Boolean.TRUE.equals(bus.getActif())) {
             throw new BusinessException("Un bus inactif ne peut pas recevoir de nettoyage");
+        }
+        if (busExclusionRepo.existsByBusId(bus.getId())) {
+            throw new BusinessException("Un bus dormant ou immobilise ne peut pas recevoir de nettoyage");
         }
 
         Utilisateur nettoyeur = userRepo.findById(request.nettoyeurId())
@@ -340,9 +400,20 @@ public class NettoyageService {
             throw new BusinessException("Superviseur et dateValidation sont obligatoires");
         }
 
+        var typeNettoyage = typeRepo.findById(request.typeNettoyageId())
+                .orElseThrow(() -> new ResourceNotFoundException("Type de nettoyage introuvable"));
+        boolean duplicate = nettoyage.getId() == null
+                ? repo.existsByBusIdAndTypeNettoyageIdAndDateNettoyage(
+                        bus.getId(), typeNettoyage.getId(), request.dateNettoyage())
+                : repo.existsByBusIdAndTypeNettoyageIdAndDateNettoyageAndIdNot(
+                        bus.getId(), typeNettoyage.getId(), request.dateNettoyage(), nettoyage.getId());
+        if (duplicate) {
+            throw new BusinessException("Un nettoyage existe deja pour ce bus, ce type et cette date");
+        }
+        validateFrequency(nettoyage.getId(), bus.getId(), typeNettoyage.getId(),
+                request.dateNettoyage(), typeNettoyage.getFrequence());
         nettoyage.setBus(bus);
-        nettoyage.setTypeNettoyage(typeRepo.findById(request.typeNettoyageId())
-                .orElseThrow(() -> new ResourceNotFoundException("Type de nettoyage introuvable")));
+        nettoyage.setTypeNettoyage(typeNettoyage);
         nettoyage.setNettoyeur(nettoyeur);
         nettoyage.setSuperviseur(superviseur);
         nettoyage.setDateNettoyage(request.dateNettoyage());
@@ -357,6 +428,57 @@ public class NettoyageService {
         nettoyage.setRemarqueSuperviseur(normalize(request.remarqueSuperviseur()));
         nettoyage.setStatut(request.statut());
         nettoyage.setDateValidation(request.dateValidation());
+    }
+
+    private void validateFrequency(Long currentId, Long busId, Long typeId, LocalDate date, String frequency) {
+        for (Nettoyage existing : repo.findByBusIdAndTypeNettoyageIdOrderByDateNettoyageAsc(busId, typeId)) {
+            if (existing.getId().equals(currentId)) continue;
+            LocalDate existingDate = existing.getDateNettoyage();
+            Optional<LocalDate> earliestAfterExisting = nextDueDate(frequency, existingDate);
+            Optional<LocalDate> earliestAfterCandidate = nextDueDate(frequency, date);
+            if (earliestAfterExisting.isEmpty() || earliestAfterCandidate.isEmpty()) return;
+            boolean conflict = !date.isBefore(existingDate)
+                    ? date.isBefore(earliestAfterExisting.get())
+                    : existingDate.isBefore(earliestAfterCandidate.get());
+            if (conflict) {
+                throw new BusinessException("La date ne respecte pas la frequence '" + frequency
+                        + "' pour ce bus et ce type de nettoyage");
+            }
+        }
+    }
+
+    static Optional<LocalDate> nextDueDate(String frequency, LocalDate fromDate) {
+        if (frequency == null || frequency.isBlank() || fromDate == null) return Optional.empty();
+        String normalized = Normalizer.normalize(frequency, Normalizer.Form.NFD)
+                .replaceAll("\\p{M}", "").toLowerCase().trim();
+        Matcher weekly = Pattern.compile("(\\d+)\\s+fois\\s+par\\s+semaine").matcher(normalized);
+        Matcher monthly = Pattern.compile("(?:chaque|tous les)\\s+(\\d+)\\s+mois").matcher(normalized);
+        if (weekly.find()) {
+            int occurrences = Integer.parseInt(weekly.group(1));
+            return occurrences <= 0
+                    ? Optional.empty()
+                    : Optional.of(fromDate.plusDays((long) Math.ceil(7d / occurrences)));
+        }
+        if (monthly.find()) return Optional.of(fromDate.plusMonths(Integer.parseInt(monthly.group(1))));
+        if (normalized.contains("quotidien") || normalized.contains("chaque jour")) {
+            return Optional.of(fromDate.plusDays(1));
+        }
+        return Optional.empty();
+    }
+
+    private boolean isDue(String frequency, LocalDate lastDate, LocalDate planningDate) {
+        if (lastDate == null) return nextDueDate(frequency, planningDate).isPresent();
+        Optional<LocalDate> nextDate = nextDueDate(frequency, lastDate);
+        return nextDate.isPresent() && !planningDate.isBefore(nextDate.get());
+    }
+
+    private boolean hasReusableAssignment(Nettoyage value) {
+        return value.getNettoyeur() != null
+                && Boolean.TRUE.equals(value.getNettoyeur().getActif())
+                && value.getNettoyeur().getRole() == Role.NETTOYEUR
+                && value.getSuperviseur() != null
+                && Boolean.TRUE.equals(value.getSuperviseur().getActif())
+                && value.getSuperviseur().getRole() == Role.SUPERVISEUR;
     }
 
     private Utilisateur currentUser(AuthenticatedUser principal) {

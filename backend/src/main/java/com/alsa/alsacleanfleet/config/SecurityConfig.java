@@ -74,6 +74,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/bus", "/api/bus/*")
                         .hasAnyRole("ADMINISTRATEUR", "CONSULTANT")
                         .requestMatchers("/api/bus/**").hasRole("ADMINISTRATEUR")
+                        .requestMatchers("/api/bus-exclusions/**").hasRole("ADMINISTRATEUR")
 
                         .requestMatchers(HttpMethod.GET, "/api/types-nettoyage", "/api/types-nettoyage/*")
                         .authenticated()

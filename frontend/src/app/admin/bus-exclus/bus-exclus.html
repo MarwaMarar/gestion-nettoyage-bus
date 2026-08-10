@@ -1,0 +1,40 @@
+<div class="bus-exclus">
+  <div class="header-page">
+    <div class="header-page-left">
+      <h2><i class="fa-solid fa-ban"></i> Bus immobilisés et dormants</h2>
+      <p>Ces bus sont exclus de toute planification de nettoyage.</p>
+    </div>
+  </div>
+
+  <p *ngIf="message" class="feedback success">{{ message }}</p>
+  <p *ngIf="erreur" class="feedback error">{{ erreur }}</p>
+
+  <div class="lists-grid">
+    <section class="table-card" *ngFor="let liste of listes">
+      <div class="table-card-header">
+        <div class="table-card-title"><i class="fa-solid {{ liste.icon }}"></i>{{ liste.titre }}
+          <span class="table-count">{{ liste.type === 'DORMANT' ? dormants.length : immobilises.length }}</span>
+        </div>
+      </div>
+      <div class="add-row">
+        <select [(ngModel)]="selection[liste.type]" [disabled]="disponibles.length === 0">
+          <option [ngValue]="null" disabled>{{ disponibles.length ? 'Choisir un bus' : 'Aucun bus disponible' }}</option>
+          <option *ngFor="let b of disponibles" [ngValue]="b.id">{{ b.numeroBus }} — {{ b.typeBusLibelle }}</option>
+        </select>
+        <button class="btn-ajouter" (click)="ajouter(liste.type)" [disabled]="disponibles.length === 0"><i class="fa-solid fa-plus"></i> Ajouter</button>
+      </div>
+      <div class="table-responsive">
+        <table>
+          <thead><tr><th>Bus</th><th>Type</th><th>Action</th></tr></thead>
+          <tbody>
+            <tr *ngFor="let value of (liste.type === 'DORMANT' ? dormants : immobilises)">
+              <td><strong>{{ value.numeroBus }}</strong></td><td>{{ value.typeBusLibelle }}</td>
+              <td><button class="btn-supprimer" (click)="supprimer(value)"><i class="fa-solid fa-trash"></i> Retirer</button></td>
+            </tr>
+            <tr *ngIf="(liste.type === 'DORMANT' ? dormants : immobilises).length === 0"><td colspan="3" class="empty-state">Aucun bus dans cette liste</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+</div>

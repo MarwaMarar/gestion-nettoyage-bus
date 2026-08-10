@@ -2,6 +2,9 @@ export interface TypeBus { id: number; libelle: string; }
 export interface TypeNettoyage { id: number; libelle: string; description: string | null; frequence: string | null; }
 export interface Bus { id: number; numeroBus: string; typeBusId: number; typeBusLibelle: string; actif: boolean; }
 export interface BusRequest { numeroBus: string; typeBusId: number; actif: boolean; }
+export type TypeExclusionBus = 'DORMANT' | 'IMMOBILISE';
+export interface BusExclusion { id: number; busId: number; numeroBus: string; typeBusLibelle: string; type: TypeExclusionBus; }
+export interface BusExclusionRequest { busId: number; type: TypeExclusionBus; }
 export type Role = 'ADMINISTRATEUR' | 'NETTOYEUR' | 'SUPERVISEUR' | 'CONSULTANT';
 export interface Utilisateur { id: number; nom: string; prenom: string; matricule: string; telephone: string | null; email: string; login: string; role: Role; actif: boolean; }
 export interface UtilisateurRequest { nom:string; prenom:string; matricule:string; telephone:string|null; email:string; login:string; motDePasse?:string; role:Role; actif:boolean; }

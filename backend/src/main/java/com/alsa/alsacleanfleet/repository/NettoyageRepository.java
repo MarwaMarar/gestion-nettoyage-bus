@@ -20,6 +20,11 @@ public interface NettoyageRepository extends JpaRepository<Nettoyage, Long>, Jpa
     Page<Nettoyage> findAll(Specification<Nettoyage> specification, Pageable pageable);
 
     List<Nettoyage> findByBusId(Long busId);
+    List<Nettoyage> findByBusIdOrderByDateNettoyageDescIdDesc(Long busId);
+    List<Nettoyage> findByBusIdAndTypeNettoyageIdOrderByDateNettoyageAsc(Long busId, Long typeNettoyageId);
+    boolean existsByBusIdAndTypeNettoyageIdAndDateNettoyage(Long busId, Long typeNettoyageId, LocalDate date);
+    boolean existsByBusIdAndTypeNettoyageIdAndDateNettoyageAndIdNot(
+            Long busId, Long typeNettoyageId, LocalDate date, Long id);
     boolean existsByTypeNettoyageId(Long typeNettoyageId);
 
     List<Nettoyage> findByNettoyeurId(Long nettoyeurId);

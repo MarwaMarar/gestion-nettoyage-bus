@@ -1,10 +1,10 @@
 package com.alsa.alsacleanfleet.service;
 import com.alsa.alsacleanfleet.dto.*; import com.alsa.alsacleanfleet.entity.*; import com.alsa.alsacleanfleet.exception.*; import com.alsa.alsacleanfleet.repository.*; import org.springframework.stereotype.Service; import org.springframework.transaction.annotation.Transactional; import java.util.*;
 @Service @Transactional
-public class BusService { private final BusRepository repo; private final TypeBusRepository types;
- public BusService(BusRepository r,TypeBusRepository t){repo=r;types=t;}
+public class BusService { private final BusRepository repo; private final TypeBusRepository types; private final BusExclusionRepository exclusions;
+ public BusService(BusRepository r,TypeBusRepository t,BusExclusionRepository e){repo=r;types=t;exclusions=e;}
  @Transactional(readOnly=true) public List<BusResponseDTO> findAll(){return repo.findAll().stream().map(this::dto).toList();}
- @Transactional(readOnly=true) public List<BusResponseDTO> findActive(){return repo.findByActifTrueOrderByNumeroBusAsc().stream().map(this::dto).toList();}
+ @Transactional(readOnly=true) public List<BusResponseDTO> findActive(){return repo.findByActifTrueOrderByNumeroBusAsc().stream().filter(b->!exclusions.existsByBusId(b.getId())).map(this::dto).toList();}
  @Transactional(readOnly=true) public BusResponseDTO findById(Long id){return dto(entity(id));}
  public BusResponseDTO create(BusRequestDTO d){check(d.numeroBus(),-1L);Bus b=new Bus();apply(b,d);return dto(repo.save(b));}
  public BusResponseDTO update(Long id,BusRequestDTO d){Bus b=entity(id);check(d.numeroBus(),id);apply(b,d);return dto(repo.save(b));}

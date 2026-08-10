@@ -10,6 +10,7 @@ export const routes: Routes = [
 
   { path: 'admin/tableau-de-bord', loadComponent: () => import('./admin/tableau-de-bord/tableau-de-bord').then(m => m.TableauDeBordComponent), canActivate: [roleGuard(['ADMINISTRATEUR'])] },
   { path: 'admin/bus', loadComponent: () => import('./admin/bus/bus').then(m => m.Bus), canActivate: [roleGuard(['ADMINISTRATEUR'])] },
+  { path: 'admin/bus-exclus', loadComponent: () => import('./admin/bus-exclus/bus-exclus').then(m => m.BusExclus), canActivate: [roleGuard(['ADMINISTRATEUR'])] },
   { path: 'admin/utilisateurs', loadComponent: () => import('./admin/utilisateurs/utilisateurs').then(m => m.Utilisateurs), canActivate: [roleGuard(['ADMINISTRATEUR'])] },
   { path: 'admin/nettoyages', loadComponent: () => import('./admin/nettoyages/nettoyages').then(m => m.Nettoyages), canActivate: [roleGuard(['ADMINISTRATEUR'])] },
   { path: 'admin/types-nettoyage', loadComponent: () => import('./admin/types-nettoyage/types-nettoyage').then(m => m.TypesNettoyage), canActivate: [roleGuard(['ADMINISTRATEUR'])] },
