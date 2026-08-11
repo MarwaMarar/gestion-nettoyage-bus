@@ -50,7 +50,10 @@ public class BusExclusionService {
     public void delete(Long id) {
         BusExclusion exclusion = exclusions.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Exclusion de bus introuvable"));
+        Bus selectedBus = exclusion.getBus();
         exclusions.delete(exclusion);
+        selectedBus.setActif(true);
+        bus.save(selectedBus);
     }
 
     private BusExclusionResponseDTO dto(BusExclusion value) {

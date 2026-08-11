@@ -64,6 +64,47 @@ public class AuthService {
     }
 
     @Transactional
+    public AuthenticatedUserDTO updateProfile(UpdateProfileRequestDTO request, AuthenticatedUser principal) {
+        Utilisateur utilisateur = activeUser(principal);
+        String email = request.email().trim();
+        if (utilisateurs.existsByEmailIgnoreCaseAndIdNot(email, utilisateur.getId())) {
+            throw new com.alsa.alsacleanfleet.exception.DuplicateResourceException("Cet email est déjà utilisé");
+        }
+        utilisateur.setNom(request.nom().trim());
+        utilisateur.setPrenom(request.prenom().trim());
+        utilisateur.setEmail(email);
+        utilisateur.setTelephone(request.telephone() == null || request.telephone().isBlank()
+                ? null : request.telephone().trim());
+        return dto(utilisateurs.save(utilisateur));
+    }
+
+    @Transactional
+    public AuthenticatedUserDTO updateOwnPassword(UpdateOwnPasswordRequestDTO request, AuthenticatedUser principal) {
+        Utilisateur utilisateur = activeUser(principal);
+        if (!passwordEncoder.matches(request.currentPassword(), utilisateur.getMotDePasse())) {
+            throw new BusinessException("L'ancien mot de passe est incorrect");
+        }
+        String password = request.newPassword();
+        if (!password.equals(request.confirmPassword())) throw new BusinessException("Les mots de passe ne correspondent pas");
+        if (password.length() < 8) throw new BusinessException("Le mot de passe doit contenir au moins 8 caractères");
+        if (!password.matches(".*[A-Z].*")) throw new BusinessException("Le mot de passe doit contenir une lettre majuscule");
+        if (!password.matches(".*[0-9].*")) throw new BusinessException("Le mot de passe doit contenir un chiffre");
+        if (!password.matches(".*[^A-Za-z0-9\\s].*")) throw new BusinessException("Le mot de passe doit contenir un symbole spécial");
+        if (passwordEncoder.matches(password, utilisateur.getMotDePasse())) {
+            throw new BusinessException("Le nouveau mot de passe doit être différent de l'ancien mot de passe");
+        }
+        utilisateur.setMotDePasse(passwordEncoder.encode(password));
+        utilisateur.setDoitChangerMotDePasse(false);
+        return dto(utilisateurs.save(utilisateur));
+    }
+
+    private Utilisateur activeUser(AuthenticatedUser principal) {
+        return utilisateurs.findById(principal.id())
+                .filter(user -> Boolean.TRUE.equals(user.getActif()))
+                .orElseThrow(() -> new UnauthorizedException("Utilisateur inactif ou introuvable"));
+    }
+
+    @Transactional
     public LoginResponseDTO changePassword(ChangePasswordRequestDTO request, AuthenticatedUser principal) {
         Utilisateur utilisateur = utilisateurs.findById(principal.id())
                 .filter(user -> Boolean.TRUE.equals(user.getActif()))
@@ -95,6 +136,7 @@ public class AuthService {
                 utilisateur.getNom(),
                 utilisateur.getPrenom(),
                 utilisateur.getMatricule(),
+                utilisateur.getTelephone(),
                 utilisateur.getEmail(),
                 utilisateur.getLogin(),
                 utilisateur.getRole(),

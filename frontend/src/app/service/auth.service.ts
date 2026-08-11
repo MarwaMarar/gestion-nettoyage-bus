@@ -7,6 +7,8 @@ export interface AuthenticatedUser {
   id: number;
   nom: string;
   prenom: string;
+  matricule: string;
+  telephone: string | null;
   email: string;
   login: string;
   role: 'ADMINISTRATEUR' | 'SUPERVISEUR' | 'NETTOYEUR' | 'CONSULTANT';
@@ -62,6 +64,16 @@ export class AuthService {
     );
   }
 
+  updateProfile(data: { nom: string; prenom: string; email: string; telephone: string | null }): Observable<AuthenticatedUser> {
+    return this.http.put<AuthenticatedUser>(`${environment.apiUrl}/auth/profile`, data).pipe(tap(user => this.storeUser(user)));
+  }
+
+  updateOwnPassword(currentPassword: string, newPassword: string, confirmPassword: string): Observable<AuthenticatedUser> {
+    return this.http.post<AuthenticatedUser>(`${environment.apiUrl}/auth/profile/password`, {
+      currentPassword, newPassword, confirmPassword
+    }).pipe(tap(user => this.storeUser(user)));
+  }
+
   validateSession(): Observable<boolean> {
     if (!this.isTokenUsable()) {
       this.logout();
@@ -97,6 +109,12 @@ export class AuthService {
     sessionStorage.removeItem(this.sessionKey);
     this.currentUser.set(null);
     this.authenticated.set(false);
+  }
+
+  private storeUser(user: AuthenticatedUser): void {
+    sessionStorage.setItem(this.sessionKey, JSON.stringify(user));
+    this.currentUser.set(user);
+    this.authenticated.set(Boolean(user.actif));
   }
 
   private readStoredUser(): AuthenticatedUser | null {

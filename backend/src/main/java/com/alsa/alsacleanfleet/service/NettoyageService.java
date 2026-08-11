@@ -109,7 +109,7 @@ public class NettoyageService {
     public NettoyageResponseDTO update(Long id, NettoyageRequestDTO request) {
         Nettoyage nettoyage = entity(id);
         applyAdministrativeRequest(nettoyage, request, false);
-        resetForCleaner(nettoyage, null);
+        resetForCleaner(nettoyage, null, StatutNettoyage.EN_ATTENTE);
         nettoyage = repo.save(nettoyage);
         notifications.create(nettoyage.getNettoyeur(), nettoyage,
                 "Nettoyage modifie par l'administrateur et remis a disposition : bus "
@@ -274,7 +274,7 @@ public class NettoyageService {
         }
         nettoyage.setSuperviseur(superviseur);
         if (decision == StatutNettoyage.REFUSE) {
-            resetForCleaner(nettoyage, remark);
+            resetForCleaner(nettoyage, remark, StatutNettoyage.REFUSE);
         } else {
             nettoyage.setRemarqueSuperviseur(normalize(remark));
             nettoyage.setStatut(decision);
@@ -310,6 +310,9 @@ public class NettoyageService {
                         ? null
                         : sameTypeHistory.getFirst().getDateNettoyage();
                 if (!isDue(type.getFrequence(), lastDate, planningDate)
+                        || repo.existsByBusIdAndTypeNettoyageIdAndStatutIn(
+                                bus.getId(), type.getId(),
+                                List.of(StatutNettoyage.EN_ATTENTE, StatutNettoyage.REFUSE))
                         || repo.existsByBusIdAndTypeNettoyageIdAndDateNettoyage(
                                 bus.getId(), type.getId(), planningDate)) {
                     continue;
@@ -335,8 +338,12 @@ public class NettoyageService {
         return created;
     }
 
-    private void resetForCleaner(Nettoyage nettoyage, String refusalReason) {
-        nettoyage.setStatut(StatutNettoyage.EN_ATTENTE);
+    private void resetForCleaner(
+            Nettoyage nettoyage,
+            String refusalReason,
+            StatutNettoyage status
+    ) {
+        nettoyage.setStatut(status);
         nettoyage.setHeureDebut(null);
         nettoyage.setHeureFin(null);
         nettoyage.setDuree(null);
@@ -460,7 +467,8 @@ public class NettoyageService {
                     : Optional.of(fromDate.plusDays((long) Math.ceil(7d / occurrences)));
         }
         if (monthly.find()) return Optional.of(fromDate.plusMonths(Integer.parseInt(monthly.group(1))));
-        if (normalized.contains("quotidien") || normalized.contains("chaque jour")) {
+        if (normalized.contains("quotidien") || normalized.contains("chaque jour")
+                || normalized.matches(".*\\bpar\\s+jour\\b.*")) {
             return Optional.of(fromDate.plusDays(1));
         }
         return Optional.empty();

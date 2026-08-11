@@ -1,5 +1,6 @@
 package com.alsa.alsacleanfleet;
 
+import com.alsa.alsacleanfleet.dto.DecisionNettoyageRequestDTO;
 import com.alsa.alsacleanfleet.dto.TerminerNettoyageRequestDTO;
 import com.alsa.alsacleanfleet.entity.Nettoyage;
 import com.alsa.alsacleanfleet.entity.Notification;
@@ -89,6 +90,32 @@ class NotificationAndCleanerWorkflowTests {
         assertTrue(notifications.findByDestinataireIdOrderByDateCreationDesc(cleaning.getSuperviseur().getId())
                 .stream().anyMatch(value -> cleaning.getId().equals(
                         value.getNettoyage() == null ? null : value.getNettoyage().getId())));
+    }
+
+    @Test
+    void refusedCleaningRemainsRefusedUntilCleanerRestartsIt() {
+        Nettoyage cleaning = cleanings.findAll().stream()
+                .filter(value -> value.getNettoyeur() != null && value.getSuperviseur() != null)
+                .findFirst().orElseThrow();
+        Utilisateur supervisor = cleaning.getSuperviseur();
+        cleaning.setStatut(StatutNettoyage.EN_ATTENTE);
+        cleaning.setHeureDebut(LocalDateTime.now().minusMinutes(10));
+        cleaning.setHeureFin(LocalDateTime.now());
+        cleanings.saveAndFlush(cleaning);
+
+        var refused = cleaningService.refuser(cleaning.getId(),
+                new DecisionNettoyageRequestDTO("Nettoyage à refaire"),
+                AuthenticatedUser.from(supervisor));
+
+        assertEquals(StatutNettoyage.REFUSE, refused.statut());
+        assertNull(refused.heureDebut());
+        assertNull(refused.heureFin());
+
+        var restarted = cleaningService.commencer(
+                new com.alsa.alsacleanfleet.dto.CommencerNettoyageRequestDTO(cleaning.getId()),
+                AuthenticatedUser.from(cleaning.getNettoyeur()));
+        assertEquals(StatutNettoyage.EN_ATTENTE, restarted.statut());
+        assertNotNull(restarted.heureDebut());
     }
 
     private Utilisateur activeUser(Role role) {

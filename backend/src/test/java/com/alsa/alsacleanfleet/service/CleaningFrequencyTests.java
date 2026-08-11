@@ -23,7 +23,8 @@ class CleaningFrequencyTests {
     @Test
     void dailyAndSevenTimesPerWeekAreDueTheNextDay() {
         assertEquals(date.plusDays(1), NettoyageService.nextDueDate("Quotidien", date).orElseThrow());
-        assertEquals(date.plusDays(1), NettoyageService.nextDueDate("7 fois par semaine", date).orElseThrow());
+        assertEquals(date.plusDays(1), NettoyageService.nextDueDate("Par jour", date).orElseThrow());
+        assertEquals(date.plusDays(1), NettoyageService.nextDueDate("Chaque jour", date).orElseThrow());
     }
 
     @Test
@@ -62,6 +63,17 @@ class CleaningFrequencyTests {
         verify(fixture.service, never()).create(any());
     }
 
+    @Test
+    void pendingOrRefusedCleaningPreventsASecondAutomaticAssignment() {
+        Fixture fixture = new Fixture();
+        fixture.stubEligibleDailyBus(false);
+        when(fixture.cleanings.existsByBusIdAndTypeNettoyageIdAndStatutIn(
+                eq(10L), eq(20L), anyCollection())).thenReturn(true);
+
+        assertEquals(0, fixture.service.generateDueCleanings(date));
+        verify(fixture.service, never()).create(any());
+    }
+
     private static class Fixture {
         final NettoyageRepository cleanings = mock(NettoyageRepository.class);
         final BusRepository buses = mock(BusRepository.class);
@@ -80,7 +92,7 @@ class CleaningFrequencyTests {
             Nettoyage history = mock(Nettoyage.class);
             when(bus.getId()).thenReturn(10L);
             when(type.getId()).thenReturn(20L);
-            when(type.getFrequence()).thenReturn("7 fois par semaine");
+            when(type.getFrequence()).thenReturn("Chaque jour");
             when(cleaner.getId()).thenReturn(30L);
             when(cleaner.getActif()).thenReturn(true);
             when(cleaner.getRole()).thenReturn(Role.NETTOYEUR);

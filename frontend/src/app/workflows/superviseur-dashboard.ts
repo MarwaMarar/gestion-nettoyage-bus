@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { forkJoin } from 'rxjs';
@@ -51,7 +51,7 @@ import { WorkflowNav } from './workflow-nav';
                 }
               </select>
             </div>
-            <div class="filters"><div class="field"><label>Date début</label><input type="date" [(ngModel)]="filterDateStart"></div><div class="field"><label>Date fin</label><input type="date" [(ngModel)]="filterDateEnd"></div><div class="field"><label>Bus</label><select [(ngModel)]="filterBusId"><option [ngValue]="null">Tous les bus</option>@for(bus of buses;track bus.id){<option [ngValue]="bus.id">{{bus.numeroBus}}</option>}</select></div><div class="filter-actions"><button class="primary-btn search-btn" type="button" [disabled]="adminLoading" (click)="searchAdmin()">{{adminLoading?'Recherche…':'Rechercher'}}</button><button class="secondary-btn reset-btn" type="button" [disabled]="adminLoading" (click)="resetAdminFilters()">Réinitialiser les filtres</button></div></div>
+            <div class="filters"><div class="field"><label>Date début</label><input type="date" [(ngModel)]="filterDateStart"></div><div class="field"><label>Date fin</label><input type="date" [(ngModel)]="filterDateEnd"></div><div class="field bus-filter"><label>Bus</label><div class="bus-filter-input"><i class="fa-solid fa-magnifying-glass"></i><input type="text" [(ngModel)]="filterBusSearch" (ngModelChange)="modifierRechercheBus()" placeholder="Rechercher un bus…" autocomplete="off"></div>@if(filterBusSearch.trim() && filterBusId===null){<div class="bus-filter-results">@for(bus of resultatsBus;track bus.id){<button type="button" (click)="selectionnerBus(bus)"><strong>{{bus.numeroBus}}</strong><small>{{bus.typeBusLibelle}}</small></button>}@empty{<span>Aucun bus trouvé</span>}</div>}</div><div class="filter-actions"><button class="primary-btn search-btn" type="button" [disabled]="adminLoading" (click)="searchAdmin()">{{adminLoading?'Recherche…':'Rechercher'}}</button><button class="secondary-btn reset-btn" type="button" [disabled]="adminLoading" (click)="resetAdminFilters()">Réinitialiser les filtres</button></div></div>
           </section>
           @for (value of adminValues; track value.id) {
             <article class="list-card">
@@ -93,7 +93,8 @@ import { WorkflowNav } from './workflow-nav';
       </div>
     </main>`,
 })
-export class SuperviseurDashboard implements OnInit {
+export class SuperviseurDashboard implements OnInit, OnDestroy {
+  private synchronisation?: ReturnType<typeof setInterval>;
   today = new Date().toLocaleDateString('fr-FR', {
     weekday: 'long',
     day: 'numeric',
@@ -105,6 +106,7 @@ export class SuperviseurDashboard implements OnInit {
   allValues: Nettoyage[] = [];
   adminValues: Nettoyage[] = [];
   buses: Bus[] = [];
+  filterBusSearch = '';
   filterDateStart = ''; filterDateEnd = ''; filterBusId: number|null = null;
   appliedDateStart = ''; appliedDateEnd = ''; appliedBusId: number|null = null;
   hasSearched = false;
@@ -124,6 +126,7 @@ export class SuperviseurDashboard implements OnInit {
   ) {}
   ngOnInit(): void {
     this.adminMode = ['ADMINISTRATEUR','CONSULTANT'].includes(this.auth.currentUser()?.role ?? '');
+    this.synchronisation = setInterval(() => this.synchroniser(), 10000);
     if (this.adminMode) {
       forkJoin({
         users: this.userService.getUtilisateurs(),
@@ -154,14 +157,25 @@ export class SuperviseurDashboard implements OnInit {
     });
   }
   filtrerAdmin(): void {
-    this.filterDateStart='';this.filterDateEnd='';this.filterBusId=null;
+    this.filterDateStart='';this.filterDateEnd='';this.filterBusId=null;this.filterBusSearch='';
     this.appliedDateStart='';this.appliedDateEnd='';this.appliedBusId=null;
     this.page=0;this.adminValues=[];this.totalElements=0;this.totalPages=0;this.error='';
     this.hasSearched=this.selectedUserId!==null;
     if(this.selectedUserId!==null)this.loadAdmin();else this.cdr.detectChanges();
   }
+  ngOnDestroy(): void { if (this.synchronisation) clearInterval(this.synchronisation); }
+  private synchroniser(): void {
+    if (this.adminMode) {
+      if (this.selectedUserId !== null && !this.adminLoading) this.loadAdmin();
+      return;
+    }
+    this.service.enAttente().subscribe({next: values => { this.total = values.length; this.cdr.detectChanges(); }});
+  }
   loadAdmin():void{if(this.selectedUserId===null){this.adminValues=[];this.totalElements=0;this.totalPages=0;return;}this.error='';this.adminLoading=true;this.service.adminSupervisorPage(this.selectedUserId,this.page,this.size,this.appliedDateStart||undefined,this.appliedDateEnd||undefined,this.appliedBusId??undefined).subscribe({next:r=>{if(r.totalPages>0&&this.page>=r.totalPages){this.page=r.totalPages-1;this.loadAdmin();return;}this.adminValues=r.content;this.totalElements=r.totalElements;this.totalPages=r.totalPages;this.adminLoading=false;this.cdr.detectChanges();},error:e=>{this.adminLoading=false;this.error=e?.error?.message||'Impossible de charger la vue superviseur.';this.cdr.detectChanges();}});}
-  searchAdmin():void{this.hasSearched=true;this.appliedDateStart=this.filterDateStart;this.appliedDateEnd=this.filterDateEnd;this.appliedBusId=this.filterBusId;this.page=0;this.loadAdmin();}resetAdminFilters():void{this.filterDateStart='';this.filterDateEnd='';this.filterBusId=null;this.searchAdmin();}goToPage(page:number):void{if(page>=0&&page<this.totalPages&&page!==this.page){this.page=page;this.loadAdmin();}}get pageItems():(number|string)[]{return compactPages(this.page+1,this.totalPages);}
+  get resultatsBus():Bus[]{const q=this.filterBusSearch.trim().toLocaleLowerCase('fr');return q?this.buses.filter(b=>`${b.numeroBus} ${b.typeBusLibelle}`.toLocaleLowerCase('fr').includes(q)).slice(0,10):[];}
+  modifierRechercheBus():void{const q=this.filterBusSearch.trim().toLocaleLowerCase('fr');this.filterBusId=this.buses.find(b=>b.numeroBus.toLocaleLowerCase('fr')===q)?.id??null;}
+  selectionnerBus(bus:Bus):void{this.filterBusId=bus.id;this.filterBusSearch=`${bus.numeroBus} — ${bus.typeBusLibelle}`;}
+  searchAdmin():void{this.hasSearched=true;this.appliedDateStart=this.filterDateStart;this.appliedDateEnd=this.filterDateEnd;this.appliedBusId=this.filterBusId;this.page=0;this.loadAdmin();}resetAdminFilters():void{this.filterDateStart='';this.filterDateEnd='';this.filterBusId=null;this.filterBusSearch='';this.searchAdmin();}goToPage(page:number):void{if(page>=0&&page<this.totalPages&&page!==this.page){this.page=page;this.loadAdmin();}}get pageItems():(number|string)[]{return compactPages(this.page+1,this.totalPages);}
   openDetails(value:Nettoyage):void{this.selectedDetails=value;}
   closeDetails():void{this.selectedDetails=null;}
 }

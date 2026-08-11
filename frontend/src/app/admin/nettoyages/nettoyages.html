@@ -137,7 +137,7 @@
           <td>
             <span class="badge"
               [class.badge-en-attente]="n.statut === 'EN_ATTENTE'"
-              [class.badge-en-cours]="n.statut === 'REFUSE'"
+              [class.badge-refuse]="n.statut === 'REFUSE'"
               [class.badge-termine]="n.statut === 'VALIDE'">
               {{ n.statutLabel }}
             </span>
@@ -150,9 +150,11 @@
               <button *ngIf="!readOnly" class="btn-supprimer" (click)="supprimerNettoyage(n.id)">
                 <i class="fa-solid fa-trash"></i> Désactiver
               </button>
-              <button *ngIf="n.statut === 'REFUSE'" class="btn-modifier"
+              <button *ngIf="n.statut === 'REFUSE'" class="btn-motif-refus"
+                      [attr.aria-expanded]="detailsOuvertsId === n.id"
                       (click)="detailsOuvertsId = detailsOuvertsId === n.id ? null : n.id">
-                <i class="fa-solid fa-eye"></i> Voir le motif du refus
+                <span class="motif-icon"><i class="fa-solid" [class.fa-eye]="detailsOuvertsId !== n.id" [class.fa-eye-slash]="detailsOuvertsId === n.id"></i></span>
+                {{ detailsOuvertsId === n.id ? 'Masquer le motif' : 'Voir le motif du refus' }}
               </button>
             </div>
             <div *ngIf="detailsOuvertsId === n.id" class="refusal-details">
@@ -181,3 +183,7 @@
   </div>
 
 </div>
+<app-confirmation-dialog *ngIf="nettoyageASupprimer" titre="Désactiver ce nettoyage ?"
+  [message]="'Le nettoyage #' + nettoyageASupprimer.id + ' du bus ' + nettoyageASupprimer.numeroBus + ' sera supprimé définitivement.'"
+  libelleConfirmation="Désactiver" icone="fa-trash" [chargement]="suppressionEnCours"
+  (annuler)="nettoyageASupprimer = null" (confirmer)="confirmerSuppressionNettoyage()" />

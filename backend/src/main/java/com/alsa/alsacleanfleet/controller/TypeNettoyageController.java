@@ -17,6 +17,7 @@ public class TypeNettoyageController {
     @GetMapping public List<TypeNettoyageDTO> getAll() { return service.findAll(); }
     @GetMapping("/{id}") public ResponseEntity<TypeNettoyageDTO> getById(@PathVariable Long id) { return service.findById(id).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build()); }
     @PostMapping @ResponseStatus(HttpStatus.CREATED) public TypeNettoyageDTO create(@Valid @RequestBody TypeNettoyageDTO type) { return service.create(type); }
+    @PutMapping("/{id}") public TypeNettoyageDTO update(@PathVariable Long id, @Valid @RequestBody TypeNettoyageDTO type) { return service.update(id, type); }
     @DeleteMapping("/{id}") public ResponseEntity<Void> delete(@PathVariable Long id) {
         service.delete(id);
         return ResponseEntity.noContent().build();

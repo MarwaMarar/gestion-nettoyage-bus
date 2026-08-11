@@ -13,7 +13,7 @@
   </div>
 
   <div *ngIf="succes" class="feedback success"><i class="fa-solid fa-circle-check"></i>{{ succes }}</div>
-  <div *ngIf="erreur && !afficherAjout" class="feedback error"><i class="fa-solid fa-circle-xmark"></i>{{ erreur }}</div>
+  <div *ngIf="erreur && !afficherAjout && !typeAModifier" class="feedback error"><i class="fa-solid fa-circle-xmark"></i>{{ erreur }}</div>
 
   <div class="table-card">
     <div class="table-card-header">
@@ -33,6 +33,9 @@
             <td>{{ type.description || '—' }}</td>
             <td>{{ type.frequence || '—' }}</td>
             <td>
+              <button type="button" class="btn-modifier" (click)="ouvrirModification(type)">
+                <i class="fa-solid fa-pen"></i> Modifier
+              </button>
               <button type="button" class="btn-supprimer" (click)="demanderSuppression(type)">
                 <i class="fa-solid fa-trash"></i> Supprimer
               </button>
@@ -56,10 +59,26 @@
         <label for="type-description">Description <small>(facultative)</small></label>
         <textarea id="type-description" [(ngModel)]="description" placeholder="Décrivez ce type de nettoyage…"></textarea>
         <label for="type-frequence">Fréquence <span>*</span></label>
-        <input id="type-frequence" type="text" maxlength="100" [(ngModel)]="frequence" placeholder="Ex. 7 fois par semaine" (keyup.enter)="ajouter()">
+        <input id="type-frequence" type="text" maxlength="100" [(ngModel)]="frequence" placeholder="Ex. Par jour" (keyup.enter)="ajouter()">
         <div *ngIf="erreur" class="feedback error"><i class="fa-solid fa-circle-xmark"></i>{{ erreur }}</div>
       </div>
       <div class="modal-actions"><button type="button" class="btn-annuler" (click)="fermerAjout()" [disabled]="soumission">Annuler</button><button type="button" class="btn-confirmer" (click)="ajouter()" [disabled]="soumission"><i class="fa-solid" [class.fa-plus]="!soumission" [class.fa-spinner]="soumission" [class.fa-spin]="soumission"></i>{{ soumission ? 'Ajout…' : 'Ajouter' }}</button></div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" *ngIf="typeAModifier" (click)="fermerModification()">
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="titre-modification-type" (click)="$event.stopPropagation()">
+      <div class="modal-header"><h3 id="titre-modification-type">Modifier le type de nettoyage</h3><button type="button" class="modal-close" (click)="fermerModification()" aria-label="Fermer"><i class="fa-solid fa-xmark"></i></button></div>
+      <div class="modal-body">
+        <label for="modification-type-libelle">Libellé <span>*</span></label>
+        <input id="modification-type-libelle" type="text" maxlength="100" [(ngModel)]="libelle" (keyup.enter)="modifier()">
+        <label for="modification-type-description">Description <small>(facultative)</small></label>
+        <textarea id="modification-type-description" [(ngModel)]="description"></textarea>
+        <label for="modification-type-frequence">Fréquence <span>*</span></label>
+        <input id="modification-type-frequence" type="text" maxlength="100" [(ngModel)]="frequence" placeholder="Ex. Par jour" (keyup.enter)="modifier()">
+        <div *ngIf="erreur" class="feedback error"><i class="fa-solid fa-circle-xmark"></i>{{ erreur }}</div>
+      </div>
+      <div class="modal-actions"><button type="button" class="btn-annuler" (click)="fermerModification()" [disabled]="soumission">Annuler</button><button type="button" class="btn-confirmer" (click)="modifier()" [disabled]="soumission"><i class="fa-solid" [class.fa-pen]="!soumission" [class.fa-spinner]="soumission" [class.fa-spin]="soumission"></i>{{ soumission ? 'Modification…' : 'Enregistrer' }}</button></div>
     </div>
   </div>
 

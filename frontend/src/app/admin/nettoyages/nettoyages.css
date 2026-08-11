@@ -154,6 +154,7 @@ tbody tr:hover { background: var(--primary-light); }
 
 .badge-en-attente { background: var(--warning-light); color: #d97706; border: 1px solid var(--warning-muted); }
 .badge-en-cours   { background: var(--primary-light); color: var(--primary); border: 1px solid var(--primary-muted); }
+.badge-refuse     { background: var(--danger-light); color: #dc2626; border: 1px solid var(--danger-muted); }
 .badge-termine    { background: var(--success-light); color: #16a34a; border: 1px solid var(--success-muted); }
 
 .refusal-details { margin-top: 12px; min-width: 320px; display: grid; gap: 5px; padding: 12px; text-align: left; background: var(--danger-light); border: 1px solid var(--danger-muted); border-radius: var(--radius-md); color: var(--text-primary); }

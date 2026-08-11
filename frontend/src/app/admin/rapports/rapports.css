@@ -380,6 +380,7 @@ tbody tr:hover {
 .badge-refuse {
   background: var(--danger-light);
   color: #dc2626;
+  border: 1px solid var(--danger-muted);
 }
 
 .badge-attente {

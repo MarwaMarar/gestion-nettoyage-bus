@@ -165,3 +165,7 @@
   </div>
 
 </div>
+<app-confirmation-dialog *ngIf="busASupprimer" titre="Désactiver ce bus ?"
+  [message]="'Le bus ' + busASupprimer.numeroBus + ' ne pourra plus recevoir de nouvelle planification.'"
+  libelleConfirmation="Désactiver" icone="fa-ban" [chargement]="suppressionEnCours"
+  (annuler)="busASupprimer = null" (confirmer)="confirmerSuppressionBus()" />

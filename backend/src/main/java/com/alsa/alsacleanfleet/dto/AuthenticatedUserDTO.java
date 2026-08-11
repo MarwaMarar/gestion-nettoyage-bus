@@ -7,6 +7,7 @@ public record AuthenticatedUserDTO(
         String nom,
         String prenom,
         String matricule,
+        String telephone,
         String email,
         String login,
         Role role,

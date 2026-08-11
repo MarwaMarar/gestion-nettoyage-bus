@@ -66,6 +66,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/auth/change-password").authenticated()
                         .requestMatchers("/api/auth/me").authenticated()
+                        .requestMatchers("/api/auth/profile", "/api/auth/profile/password").authenticated()
 
                         .requestMatchers(HttpMethod.DELETE, "/api/notifications/*").authenticated()
 

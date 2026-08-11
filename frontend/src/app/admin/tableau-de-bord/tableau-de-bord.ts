@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { forkJoin } from 'rxjs';
 import { Bus, Nettoyage, TypeBus, TypeNettoyage, Utilisateur } from '../../service/api.models';
@@ -10,12 +10,15 @@ import { TypeNettoyageService } from '../../service/type-nettoyage.service';
 import { UtilisateurService } from '../../service/utilisateur.service';
 
 @Component({selector:'app-tableau-de-bord',standalone:true,imports:[CommonModule, FormsModule],templateUrl:'./tableau-de-bord.html',styleUrl:'./tableau-de-bord.css'})
-export class TableauDeBordComponent implements OnInit {
+export class TableauDeBordComponent implements OnInit, OnDestroy {
+  private synchronisation?: ReturnType<typeof setInterval>;
   bus=0; nettoyagesJour=0; nettoyagesValides=0; nettoyagesRefuses=0; nettoyagesAttente=0; pourcentageValidation=0;
   dateDebut=''; dateFin=''; dateDebutAppliquee=''; dateFinAppliquee=''; filterError='';
   loading=false; errorMessage=''; busData:Bus[]=[]; utilisateurs:Utilisateur[]=[]; nettoyages:Nettoyage[]=[]; typesBus:TypeBus[]=[]; typesNettoyage:TypeNettoyage[]=[];
   constructor(private busService:BusService,private utilisateurService:UtilisateurService,private nettoyageService:NettoyageService,private typeBusService:TypeBusService,private typeNettoyageService:TypeNettoyageService,private cdr:ChangeDetectorRef){}
-  ngOnInit():void{this.loadDashboardData();}
+  ngOnInit():void{this.loadDashboardData();this.synchronisation=setInterval(()=>this.refreshMetrics(),10000);}
+  ngOnDestroy():void{if(this.synchronisation)clearInterval(this.synchronisation);}
+  private refreshMetrics():void{this.nettoyageService.getAll().subscribe({next:values=>{this.nettoyages=values;this.updateMetrics();this.cdr.detectChanges();}});}
   loadDashboardData():void{
     this.loading=true;this.errorMessage='';
     forkJoin({bus:this.busService.getAll(),utilisateurs:this.utilisateurService.getUtilisateurs(),nettoyages:this.nettoyageService.getAll(),typesBus:this.typeBusService.getAll(),typesNettoyage:this.typeNettoyageService.getAll()}).subscribe({

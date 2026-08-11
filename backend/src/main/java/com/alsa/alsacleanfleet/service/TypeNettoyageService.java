@@ -37,6 +37,18 @@ public class TypeNettoyageService {
         type.setFrequence(input.frequence().trim());
         return toDTO(repository.save(type));
     }
+    public TypeNettoyageDTO update(Long id, TypeNettoyageDTO input) {
+        TypeNettoyage type = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Type de nettoyage introuvable"));
+        String libelle = input.libelle().trim();
+        if (repository.existsByLibelleIgnoreCaseAndIdNot(libelle, id)) {
+            throw new DuplicateResourceException("Un type de nettoyage avec ce libellé existe déjà");
+        }
+        type.setLibelle(libelle);
+        type.setDescription(normalizeDescription(input.description()));
+        type.setFrequence(input.frequence().trim());
+        return toDTO(repository.save(type));
+    }
     public void delete(Long id) {
         TypeNettoyage type = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Type de nettoyage introuvable"));

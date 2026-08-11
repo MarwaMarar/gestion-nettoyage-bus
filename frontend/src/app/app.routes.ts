@@ -17,6 +17,7 @@ export const routes: Routes = [
   { path: 'admin/rapports', loadComponent: () => import('./admin/rapports/rapports').then(m => m.Rapports), canActivate: [roleGuard(['ADMINISTRATEUR'])] },
   { path: 'admin/parametres', loadComponent: () => import('./admin/parametres/parametres').then(m => m.Parametres), canActivate: [roleGuard(['ADMINISTRATEUR'])] },
   { path: 'admin/profil', loadComponent: () => import('./admin/profil/profil').then(m => m.Profil), canActivate: [roleGuard(['ADMINISTRATEUR'])] },
+  { path: 'profil', loadComponent: () => import('./admin/profil/profil').then(m => m.Profil), canActivate: [roleGuard(['ADMINISTRATEUR', 'CONSULTANT', 'SUPERVISEUR', 'NETTOYEUR'])] },
 
   { path: 'consultant/tableau-de-bord', loadComponent: () => import('./admin/tableau-de-bord/tableau-de-bord').then(m => m.TableauDeBordComponent), canActivate: [roleGuard(['CONSULTANT'])] },
   { path: 'consultant/nettoyages', loadComponent: () => import('./admin/nettoyages/nettoyages').then(m => m.Nettoyages), canActivate: [roleGuard(['CONSULTANT'])] },

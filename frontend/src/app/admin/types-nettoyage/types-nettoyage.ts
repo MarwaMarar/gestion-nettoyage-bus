@@ -18,6 +18,7 @@ export class TypesNettoyage implements OnInit {
   description = '';
   frequence = '';
   afficherAjout = false;
+  typeAModifier: TypeNettoyage | null = null;
   typeASupprimer: TypeNettoyage | null = null;
   chargement = false;
   soumission = false;
@@ -46,6 +47,42 @@ export class TypesNettoyage implements OnInit {
   }
 
   fermerAjout(): void { if (!this.soumission) this.afficherAjout = false; }
+
+  ouvrirModification(type: TypeNettoyage): void {
+    this.typeAModifier = type;
+    this.libelle = type.libelle;
+    this.description = type.description ?? '';
+    this.frequence = type.frequence ?? '';
+    this.erreur = '';
+    this.succes = '';
+  }
+
+  fermerModification(): void { if (!this.soumission) this.typeAModifier = null; }
+
+  modifier(): void {
+    if (!this.typeAModifier) return;
+    const libelle = this.libelle.trim();
+    const frequence = this.frequence.trim();
+    if (!libelle || !frequence) {
+      this.erreur = 'Le libellé et la fréquence sont obligatoires.';
+      return;
+    }
+    this.soumission = true;
+    this.erreur = '';
+    this.api.update(this.typeAModifier.id, { libelle, description: this.description.trim() || null, frequence }).subscribe({
+      next: () => {
+        this.typeAModifier = null;
+        this.soumission = false;
+        this.succes = 'Type de nettoyage modifié avec succès.';
+        this.charger();
+      },
+      error: error => {
+        this.soumission = false;
+        this.erreur = error?.error?.message || 'La modification du type de nettoyage a échoué.';
+        this.cdr.detectChanges();
+      }
+    });
+  }
 
   ajouter(): void {
     const libelle = this.libelle.trim();

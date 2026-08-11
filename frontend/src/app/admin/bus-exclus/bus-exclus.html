@@ -17,17 +17,29 @@
         </div>
       </div>
       <div class="add-row">
-        <select [(ngModel)]="selection[liste.type]" [disabled]="disponibles.length === 0">
-          <option [ngValue]="null" disabled>{{ disponibles.length ? 'Choisir un bus' : 'Aucun bus disponible' }}</option>
-          <option *ngFor="let b of disponibles" [ngValue]="b.id">{{ b.numeroBus }} — {{ b.typeBusLibelle }}</option>
-        </select>
-        <button class="btn-ajouter" (click)="ajouter(liste.type)" [disabled]="disponibles.length === 0"><i class="fa-solid fa-plus"></i> Ajouter</button>
+        <div class="bus-search">
+          <div class="search-input">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" [(ngModel)]="recherche[liste.type]" (ngModelChange)="modifierRecherche(liste.type)"
+              placeholder="Rechercher par numéro ou type…" autocomplete="off">
+          </div>
+          <div class="search-results" *ngIf="recherche[liste.type].trim() && selection[liste.type] === null">
+            <button type="button" *ngFor="let b of resultatsRecherche(liste.type)" (click)="selectionner(liste.type, b)"
+              [disabled]="statutExclusion(b.id) !== null">
+              <span><strong>{{ b.numeroBus }}</strong><small>{{ b.typeBusLibelle }}</small></span>
+              <span *ngIf="statutExclusion(b.id) as statut" class="status-exclusion">{{ statut }}</span>
+              <i *ngIf="!statutExclusion(b.id)" class="fa-solid fa-chevron-right"></i>
+            </button>
+            <p *ngIf="resultatsRecherche(liste.type).length === 0">Aucun bus trouvé</p>
+          </div>
+        </div>
+        <button class="btn-ajouter" (click)="ajouter(liste.type)" [disabled]="selection[liste.type] === null"><i class="fa-solid fa-plus"></i> Ajouter</button>
       </div>
       <div class="table-responsive">
         <table>
           <thead><tr><th>Bus</th><th>Type</th><th>Action</th></tr></thead>
           <tbody>
-            <tr *ngFor="let value of (liste.type === 'DORMANT' ? dormants : immobilises)">
+            <tr *ngFor="let value of exclusionsDuType(liste.type)">
               <td><strong>{{ value.numeroBus }}</strong></td><td>{{ value.typeBusLibelle }}</td>
               <td><button class="btn-supprimer" (click)="supprimer(value)"><i class="fa-solid fa-trash"></i> Retirer</button></td>
             </tr>
@@ -35,6 +47,16 @@
           </tbody>
         </table>
       </div>
+      <div class="list-footer" *ngIf="nombreExclusions(liste.type) > 9">
+        <button type="button" class="btn-voir-plus" (click)="basculerListe(liste.type)">
+          <i class="fa-solid" [class.fa-chevron-down]="!listesDeveloppees[liste.type]" [class.fa-chevron-up]="listesDeveloppees[liste.type]"></i>
+          {{ listesDeveloppees[liste.type] ? 'Voir moins' : 'Voir plus' }}
+        </button>
+      </div>
     </section>
   </div>
 </div>
+<app-confirmation-dialog *ngIf="exclusionASupprimer" titre="Réactiver ce bus ?"
+  [message]="'Le bus ' + exclusionASupprimer.numeroBus + ' sera retiré des exclusions et réactivé pour la planification.'"
+  libelleConfirmation="Retirer et réactiver" icone="fa-rotate-left" [chargement]="suppressionEnCours"
+  (annuler)="exclusionASupprimer = null" (confirmer)="confirmerSuppression()" />

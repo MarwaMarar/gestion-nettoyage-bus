@@ -278,6 +278,11 @@
 .notification-item i {
   color: var(--primary);
 }
+.notification-menu-header{display:flex;align-items:center;justify-content:space-between;gap:10px}.notification-menu-header h4{margin:0}.notification-global-actions{display:flex;gap:5px}.notification-global-actions button{display:grid;place-items:center;width:30px;height:30px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface-raised);color:var(--primary);cursor:pointer}.notification-global-actions .delete-all{color:var(--danger)}.notification-global-actions button:disabled{opacity:.45;cursor:not-allowed}
+
+.notification-list { max-height: 360px; overflow-y: auto; }
+.notifications-voir-tout { width:100%;height:36px;margin-top:8px;display:flex;align-items:center;justify-content:center;gap:7px;border:1px solid var(--primary-muted);border-radius:var(--radius-sm);background:var(--primary-light);color:var(--primary);font:600 12.5px inherit;cursor:pointer; }
+.notifications-voir-tout:hover { background:var(--primary-muted); }
 
 .notification-item > span { flex: 1; }
 .notification-delete { border: 0; background: transparent; color: var(--danger); cursor: pointer; padding: 5px; font: inherit; font-size: 11px; display: inline-flex; gap: 4px; align-items: center; }

@@ -4,12 +4,15 @@ import com.alsa.alsacleanfleet.dto.LoginRequestDTO;
 import com.alsa.alsacleanfleet.dto.LoginResponseDTO;
 import com.alsa.alsacleanfleet.dto.AuthenticatedUserDTO;
 import com.alsa.alsacleanfleet.dto.ChangePasswordRequestDTO;
+import com.alsa.alsacleanfleet.dto.UpdateProfileRequestDTO;
+import com.alsa.alsacleanfleet.dto.UpdateOwnPasswordRequestDTO;
 import com.alsa.alsacleanfleet.security.AuthenticatedUser;
 import com.alsa.alsacleanfleet.service.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -31,6 +34,18 @@ public class AuthController {
     @GetMapping("/me")
     public AuthenticatedUserDTO me(@AuthenticationPrincipal AuthenticatedUser principal) {
         return authService.me(principal);
+    }
+
+    @PutMapping("/profile")
+    public AuthenticatedUserDTO updateProfile(@Valid @RequestBody UpdateProfileRequestDTO request,
+                                               @AuthenticationPrincipal AuthenticatedUser principal) {
+        return authService.updateProfile(request, principal);
+    }
+
+    @PostMapping("/profile/password")
+    public AuthenticatedUserDTO updateOwnPassword(@Valid @RequestBody UpdateOwnPasswordRequestDTO request,
+                                                   @AuthenticationPrincipal AuthenticatedUser principal) {
+        return authService.updateOwnPassword(request, principal);
     }
 
     @PostMapping("/change-password")

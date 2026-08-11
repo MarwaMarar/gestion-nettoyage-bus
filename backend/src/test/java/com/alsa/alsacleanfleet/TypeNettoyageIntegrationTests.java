@@ -36,21 +36,28 @@ class TypeNettoyageIntegrationTests {
 
         mvc.perform(post("/api/types-nettoyage").header("Authorization", admin)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"libelle\":\"   \",\"description\":\"vide\"}"))
+                        .content("{\"libelle\":\"   \",\"description\":\"vide\",\"frequence\":\"Par jour\"}"))
                 .andExpect(status().isBadRequest());
 
         String response = mvc.perform(post("/api/types-nettoyage").header("Authorization", admin)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"libelle\":\"Type test intégration\",\"description\":\"Description facultative\"}"))
+                        .content("{\"libelle\":\"Type test intégration\",\"description\":\"Description facultative\",\"frequence\":\"Par jour\"}"))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.libelle").value("Type test intégration"))
                 .andReturn().getResponse().getContentAsString();
         JsonNode created = objectMapper.readTree(response);
         long unusedId = created.get("id").asLong();
 
+        mvc.perform(put("/api/types-nettoyage/{id}", unusedId).header("Authorization", admin)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"libelle\":\"Type test modifié\",\"description\":\"Nouvelle description\",\"frequence\":\"Par jour\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.libelle").value("Type test modifié"))
+                .andExpect(jsonPath("$.frequence").value("Par jour"));
+
         mvc.perform(post("/api/types-nettoyage").header("Authorization", admin)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"libelle\":\"  TYPE TEST INTÉGRATION  \"}"))
+                        .content("{\"libelle\":\"  TYPE TEST MODIFIÉ  \",\"frequence\":\"Par jour\"}"))
                 .andExpect(status().isConflict());
 
         Nettoyage existingCleaning = nettoyages.findAll().stream().findFirst().orElseThrow();
@@ -72,7 +79,10 @@ class TypeNettoyageIntegrationTests {
             mvc.perform(get("/api/types-nettoyage").header("Authorization", token))
                     .andExpect(status().isOk());
             mvc.perform(post("/api/types-nettoyage").header("Authorization", token)
-                            .contentType(MediaType.APPLICATION_JSON).content("{\"libelle\":\"Interdit\"}"))
+                            .contentType(MediaType.APPLICATION_JSON).content("{\"libelle\":\"Interdit\",\"frequence\":\"Par jour\"}"))
+                    .andExpect(status().isForbidden());
+            mvc.perform(put("/api/types-nettoyage/1").header("Authorization", token)
+                            .contentType(MediaType.APPLICATION_JSON).content("{\"libelle\":\"Interdit\",\"frequence\":\"Par jour\"}"))
                     .andExpect(status().isForbidden());
             mvc.perform(delete("/api/types-nettoyage/1").header("Authorization", token))
                     .andExpect(status().isForbidden());

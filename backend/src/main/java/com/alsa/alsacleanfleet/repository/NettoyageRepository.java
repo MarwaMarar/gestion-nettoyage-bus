@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
 
 public interface NettoyageRepository extends JpaRepository<Nettoyage, Long>, JpaSpecificationExecutor<Nettoyage> {
@@ -26,6 +27,8 @@ public interface NettoyageRepository extends JpaRepository<Nettoyage, Long>, Jpa
     boolean existsByBusIdAndTypeNettoyageIdAndDateNettoyageAndIdNot(
             Long busId, Long typeNettoyageId, LocalDate date, Long id);
     boolean existsByTypeNettoyageId(Long typeNettoyageId);
+    boolean existsByBusIdAndTypeNettoyageIdAndStatutIn(
+            Long busId, Long typeNettoyageId, Collection<StatutNettoyage> statuts);
 
     List<Nettoyage> findByNettoyeurId(Long nettoyeurId);
     List<Nettoyage> findByNettoyeurIdOrderByDateNettoyageDescHeureDebutDesc(Long nettoyeurId);
