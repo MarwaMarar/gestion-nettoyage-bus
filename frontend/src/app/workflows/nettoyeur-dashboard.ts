@@ -80,66 +80,25 @@ import { WorkflowNav } from './workflow-nav';
           @if(selectedDetails){<div class="details-overlay" (click)="closeDetails()"><section class="details-panel" (click)="$event.stopPropagation()"><h2>Détails du nettoyage #{{selectedDetails.id}}</h2><div class="info-row"><span class="label">Bus</span><strong>{{selectedDetails.numeroBus}}</strong></div><div class="info-row"><span class="label">Type</span><strong>{{selectedDetails.typeNettoyageLibelle}}</strong></div><div class="info-row"><span class="label">Nettoyeur</span><strong>{{selectedDetails.nettoyeurNom}}</strong></div><div class="info-row"><span class="label">Superviseur</span><strong>{{selectedDetails.superviseurNom||'—'}}</strong></div><div class="info-row"><span class="label">Date</span><strong>{{selectedDetails.dateNettoyage|date:'dd/MM/yyyy'}}</strong></div><div class="info-row"><span class="label">Début</span><strong>{{selectedDetails.heureDebut?(selectedDetails.heureDebut|date:'HH:mm:ss'):'—'}}</strong></div><div class="info-row"><span class="label">Fin</span><strong>{{selectedDetails.heureFin?(selectedDetails.heureFin|date:'HH:mm:ss'):'—'}}</strong></div><div class="info-row"><span class="label">Durée</span><strong>{{selectedDetails.duree!=null?selectedDetails.duree+' min':'—'}}</strong></div><div class="info-row"><span class="label">Remarque nettoyeur</span><strong>{{selectedDetails.remarqueNettoyeur||'—'}}</strong></div><div class="info-row"><span class="label">Remarque superviseur</span><strong>{{selectedDetails.remarqueSuperviseur||'—'}}</strong></div><div class="info-row"><span class="label">Statut</span><span class="badge {{selectedDetails.statut}}">{{selectedDetails.statut}}</span></div><button class="secondary-btn details-close" type="button" (click)="closeDetails()">Fermer</button></section></div>}
         } @else {
           <section class="panel-card">
-            <h2>Commencer un nettoyage</h2>
+            <div class="actions-top cleaner-heading"><h2>Nettoyages à traiter</h2><span class="results-count">{{ filteredAssignments.length }} résultat{{filteredAssignments.length>1?'s':''}}</span></div>
             @if (error) {
               <div class="error">{{ error }}</div>
             }
             @if (assignations.length > 0) {
-              <div class="field">
-                <label><i class="fa-solid fa-bus"></i> Bus assigné</label
-                ><select
-                  [(ngModel)]="selectedAssignmentId"
-                  (ngModelChange)="selectionnerAssignation($event)"
-                >
-                  <option [ngValue]="null">Sélectionner un bus</option>
-                  @for (value of assignations; track value.id) {
-                    <option [ngValue]="value.id">{{ value.numeroBus }}</option>
-                  }
-                </select>
-              </div>
-              <div class="field">
-                <label><i class="fa-solid fa-sparkles"></i> Type de nettoyage assigné</label
-                ><select disabled>
-                  <option>
-                    {{ selectedAssignment?.typeNettoyageLibelle || 'Sélectionnez d’abord un bus' }}
-                  </option>
-                </select>
-              </div>
-              @if (selectedAssignment) {
-                <section class="info-card">
-                  <div class="info-row">
-                    <span class="label">ID</span><strong>#{{ selectedAssignment.id }}</strong>
-                  </div>
-                  <div class="info-row">
-                    <span class="label">Date prévue</span
-                    ><strong>{{ selectedAssignment.dateNettoyage | date: 'dd/MM/yyyy' }}</strong>
-                  </div>
-                  <div class="info-row">
-                    <span class="label">Nettoyeur</span
-                    ><strong>{{ selectedAssignment.nettoyeurNom }}</strong>
-                  </div>
-                  <div class="info-row">
-                    <span class="label">Superviseur</span
-                    ><strong>{{ selectedAssignment.superviseurNom }}</strong>
-                  </div>
-                  <div class="info-row">
-                    <span class="label">Statut</span
-                    ><strong>{{ selectedAssignment.statut }}</strong>
-                  </div>
-                </section>
-              }
-              <button
-                class="primary-btn"
-                [disabled]="loading || !selectedAssignment"
-                (click)="commencer()"
-              >
-                <i class="fa-solid fa-circle-play"></i>
-                {{ loading ? 'Démarrage…' : 'Commencer le nettoyage' }}
-              </button>
+              <div class="field cleaner-type-filter"><label><i class="fa-solid fa-sparkles"></i> Type de nettoyage</label><select [(ngModel)]="selectedTypeId" (ngModelChange)="filterAssignments()"><option [ngValue]="null">Tous les types</option>@for(type of assignedTypes;track type.id){<option [ngValue]="type.id">{{type.label}}</option>}</select></div>
+              @for (value of pagedAssignments; track value.id) {
+                <article class="list-card compact-assignment">
+                  <div class="assignment-main"><strong>Bus {{value.numeroBus}}</strong><span>{{value.typeNettoyageLibelle}}</span></div>
+                  <span class="assignment-date"><i class="fa-regular fa-calendar"></i> {{value.dateNettoyage|date:'dd/MM/yyyy'}}</span>
+                  <div class="assignment-actions"><button class="secondary-btn" type="button" (click)="openDetails(value)">Voir détails</button><button class="primary-btn" type="button" [disabled]="loading" (click)="commencer(value)"><i class="fa-solid fa-circle-play"></i> Commencer</button></div>
+                </article>
+              } @empty { <div class="empty">Aucun nettoyage de ce type ne reste à traiter.</div> }
+              @if(filteredAssignments.length>assignmentSize){<nav class="pagination"><span class="results-count">{{filteredAssignments.length}} résultat{{filteredAssignments.length>1?'s':''}}</span><div class="page-buttons"><button (click)="goToAssignmentPage(assignmentPage-1)" [disabled]="assignmentPage===0">Précédent</button>@for(item of assignmentPageItems;track $index){@if(item==='…'){<span class="ellipsis">…</span>}@else{<button [class.active]="item===assignmentPage+1" (click)="goToAssignmentPage(+item-1)">{{item}}</button>}}<button (click)="goToAssignmentPage(assignmentPage+1)" [disabled]="assignmentPage>=assignmentTotalPages-1">Suivant</button></div></nav>}
             } @else {
               <div class="empty">Aucun nettoyage ne vous est actuellement assigné.</div>
             }
           </section>
+          @if(selectedDetails){<div class="details-overlay" (click)="closeDetails()"><section class="details-panel" (click)="$event.stopPropagation()"><h2>Détails du nettoyage #{{selectedDetails.id}}</h2><div class="info-row"><span class="label">Bus</span><strong>{{selectedDetails.numeroBus}}</strong></div><div class="info-row"><span class="label">Type</span><strong>{{selectedDetails.typeNettoyageLibelle}}</strong></div><div class="info-row"><span class="label">Date prévue</span><strong>{{selectedDetails.dateNettoyage|date:'dd/MM/yyyy'}}</strong></div><div class="info-row"><span class="label">Nettoyeur</span><strong>{{selectedDetails.nettoyeurNom}}</strong></div><div class="info-row"><span class="label">Superviseur</span><strong>{{selectedDetails.superviseurNom||'—'}}</strong></div><div class="info-row"><span class="label">Statut</span><span class="badge {{selectedDetails.statut}}">{{selectedDetails.statut}}</span></div><div class="info-row"><span class="label">Motif du refus</span><strong>{{selectedDetails.remarqueSuperviseur||'—'}}</strong></div><button class="secondary-btn details-close" type="button" (click)="closeDetails()">Fermer</button></section></div>}
         }
       </div>
     </main>`,
@@ -166,6 +125,9 @@ export class NettoyeurDashboard implements OnInit, OnDestroy {
   selectedDetails: Nettoyage | null = null;
   selectedUserId: number | null = null;
   assignations: Nettoyage[] = [];
+  selectedTypeId: number | null = null;
+  assignmentPage = 0;
+  readonly assignmentSize = 5;
   selectedAssignmentId: number | null = null;
   selectedAssignment: Nettoyage | null = null;
   loading = false;
@@ -212,6 +174,7 @@ export class NettoyeurDashboard implements OnInit, OnDestroy {
           (value) => (value.statut === 'EN_ATTENTE' && !value.heureDebut && !value.heureFin)
             || value.statut === 'REFUSE',
         );
+        this.normalizeAssignmentFilter();
         this.cdr.detectChanges();
       },
       error: (error) => {
@@ -236,6 +199,7 @@ export class NettoyeurDashboard implements OnInit, OnDestroy {
     this.clean.mesNettoyages().subscribe({next: history => {
       this.assignations = history.filter(value =>
         (value.statut === 'EN_ATTENTE' && !value.heureDebut && !value.heureFin) || value.statut === 'REFUSE');
+      this.normalizeAssignmentFilter();
       if (this.selectedAssignmentId !== null) this.selectionnerAssignation(this.selectedAssignmentId);
       this.cdr.detectChanges();
     }});
@@ -252,7 +216,16 @@ export class NettoyeurDashboard implements OnInit, OnDestroy {
       id === null ? null : (this.assignations.find((value) => value.id === Number(id)) ?? null);
     this.error = '';
   }
-  commencer(): void {
+  get assignedTypes(): {id:number;label:string}[] { return [...new Map(this.assignations.map(value => [value.typeNettoyageId, {id:value.typeNettoyageId,label:value.typeNettoyageLibelle}])).values()].sort((a,b)=>a.label.localeCompare(b.label,'fr')); }
+  get filteredAssignments(): Nettoyage[] { return this.selectedTypeId===null ? this.assignations : this.assignations.filter(value=>value.typeNettoyageId===this.selectedTypeId); }
+  get assignmentTotalPages(): number { return Math.ceil(this.filteredAssignments.length/this.assignmentSize); }
+  get pagedAssignments(): Nettoyage[] { const start=this.assignmentPage*this.assignmentSize;return this.filteredAssignments.slice(start,start+this.assignmentSize); }
+  get assignmentPageItems(): (number|string)[] { return compactPages(this.assignmentPage+1,this.assignmentTotalPages); }
+  filterAssignments(): void { this.assignmentPage=0;this.selectedDetails=null; }
+  goToAssignmentPage(page:number): void { if(page>=0&&page<this.assignmentTotalPages)this.assignmentPage=page; }
+  private normalizeAssignmentFilter(): void { if(this.selectedTypeId!==null&&!this.assignations.some(value=>value.typeNettoyageId===this.selectedTypeId))this.selectedTypeId=null;const lastPage=Math.max(0,this.assignmentTotalPages-1);if(this.assignmentPage>lastPage)this.assignmentPage=lastPage; }
+  commencer(value?: Nettoyage): void {
+    if (value) this.selectedAssignment = value;
     if (!this.selectedAssignment) {
       this.error = 'Veuillez sélectionner un bus assigné.';
       return;

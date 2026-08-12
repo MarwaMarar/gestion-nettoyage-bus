@@ -3,6 +3,7 @@ package com.alsa.alsacleanfleet.service;
 import com.alsa.alsacleanfleet.dto.TypeNettoyageDTO;
 import com.alsa.alsacleanfleet.entity.TypeNettoyage;
 import com.alsa.alsacleanfleet.exception.DuplicateResourceException;
+import com.alsa.alsacleanfleet.exception.BusinessException;
 import com.alsa.alsacleanfleet.exception.ResourceNotFoundException;
 import com.alsa.alsacleanfleet.exception.WorkflowConflictException;
 import com.alsa.alsacleanfleet.repository.NettoyageRepository;
@@ -34,7 +35,7 @@ public class TypeNettoyageService {
         TypeNettoyage type = new TypeNettoyage();
         type.setLibelle(libelle);
         type.setDescription(normalizeDescription(input.description()));
-        type.setFrequence(input.frequence().trim());
+        type.setFrequence(normalizeFrequency(input.frequence()));
         return toDTO(repository.save(type));
     }
     public TypeNettoyageDTO update(Long id, TypeNettoyageDTO input) {
@@ -46,7 +47,7 @@ public class TypeNettoyageService {
         }
         type.setLibelle(libelle);
         type.setDescription(normalizeDescription(input.description()));
-        type.setFrequence(input.frequence().trim());
+        type.setFrequence(normalizeFrequency(input.frequence()));
         return toDTO(repository.save(type));
     }
     public void delete(Long id) {
@@ -65,5 +66,19 @@ public class TypeNettoyageService {
     private String normalizeDescription(String description) {
         if (description == null || description.isBlank()) return null;
         return description.trim();
+    }
+
+    private String normalizeFrequency(String frequency) {
+        String value = frequency.trim();
+        if (value.equalsIgnoreCase("Selon besoin")) return "Selon besoin";
+        if (value.matches("(?i)\\d+\\s+fois\\s*(?:par|/)\\s*jour")
+                && !value.matches("(?i)1\\s+fois\\s*(?:par|/)\\s*jour")) {
+            throw new BusinessException("Une fréquence journalière est limitée à 1 fois/jour");
+        }
+        if (NettoyageService.nextDueDate(value, java.time.LocalDate.now()).isEmpty()) {
+            throw new BusinessException("La fréquence doit être au format 'N fois/jour', 'N fois/semaine', "
+                    + "'N fois/mois', 'Tous les N mois' ou 'Selon besoin'");
+        }
+        return value;
     }
 }

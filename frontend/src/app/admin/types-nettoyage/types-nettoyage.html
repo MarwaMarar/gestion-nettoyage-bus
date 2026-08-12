@@ -31,7 +31,7 @@
             <td><span class="badge-neutral">#{{ type.id }}</span></td>
             <td><strong>{{ type.libelle }}</strong></td>
             <td>{{ type.description || '—' }}</td>
-            <td>{{ type.frequence || '—' }}</td>
+            <td>{{ afficherFrequence(type.frequence) }}</td>
             <td>
               <button type="button" class="btn-modifier" (click)="ouvrirModification(type)">
                 <i class="fa-solid fa-pen"></i> Modifier
@@ -59,7 +59,19 @@
         <label for="type-description">Description <small>(facultative)</small></label>
         <textarea id="type-description" [(ngModel)]="description" placeholder="Décrivez ce type de nettoyage…"></textarea>
         <label for="type-frequence">Fréquence <span>*</span></label>
-        <input id="type-frequence" type="text" maxlength="100" [(ngModel)]="frequence" placeholder="Ex. Par jour" (keyup.enter)="ajouter()">
+        <small>Choisissez le nombre de nettoyages et la période correspondante.</small>
+        <select id="type-frequence" [(ngModel)]="frequenceMode">
+          <option value="occurrences">Nombre de fois par période</option>
+          <option value="intervalle">Tous les N mois</option>
+          <option value="manuel">Selon besoin (manuel)</option>
+        </select>
+        <div class="frequency-fields" *ngIf="frequenceMode !== 'manuel'">
+          <input type="number" min="1" [max]="frequenceMode === 'occurrences' && frequencePeriode === 'jour' ? 1 : null" step="1" [(ngModel)]="frequenceNombre" aria-label="Nombre">
+          <select *ngIf="frequenceMode === 'occurrences'" [(ngModel)]="frequencePeriode" aria-label="Période">
+            <option value="jour">fois/jour</option><option value="semaine">fois/semaine</option><option value="mois">fois/mois</option>
+          </select>
+          <span *ngIf="frequenceMode === 'intervalle'">mois</span>
+        </div>
         <div *ngIf="erreur" class="feedback error"><i class="fa-solid fa-circle-xmark"></i>{{ erreur }}</div>
       </div>
       <div class="modal-actions"><button type="button" class="btn-annuler" (click)="fermerAjout()" [disabled]="soumission">Annuler</button><button type="button" class="btn-confirmer" (click)="ajouter()" [disabled]="soumission"><i class="fa-solid" [class.fa-plus]="!soumission" [class.fa-spinner]="soumission" [class.fa-spin]="soumission"></i>{{ soumission ? 'Ajout…' : 'Ajouter' }}</button></div>
@@ -75,7 +87,19 @@
         <label for="modification-type-description">Description <small>(facultative)</small></label>
         <textarea id="modification-type-description" [(ngModel)]="description"></textarea>
         <label for="modification-type-frequence">Fréquence <span>*</span></label>
-        <input id="modification-type-frequence" type="text" maxlength="100" [(ngModel)]="frequence" placeholder="Ex. Par jour" (keyup.enter)="modifier()">
+        <small>« 2 fois/mois » est différent de « Tous les 2 mois ».</small>
+        <select id="modification-type-frequence" [(ngModel)]="frequenceMode">
+          <option value="occurrences">Nombre de fois par période</option>
+          <option value="intervalle">Tous les N mois</option>
+          <option value="manuel">Selon besoin (manuel)</option>
+        </select>
+        <div class="frequency-fields" *ngIf="frequenceMode !== 'manuel'">
+          <input type="number" min="1" [max]="frequenceMode === 'occurrences' && frequencePeriode === 'jour' ? 1 : null" step="1" [(ngModel)]="frequenceNombre" aria-label="Nombre">
+          <select *ngIf="frequenceMode === 'occurrences'" [(ngModel)]="frequencePeriode" aria-label="Période">
+            <option value="jour">fois/jour</option><option value="semaine">fois/semaine</option><option value="mois">fois/mois</option>
+          </select>
+          <span *ngIf="frequenceMode === 'intervalle'">mois</span>
+        </div>
         <div *ngIf="erreur" class="feedback error"><i class="fa-solid fa-circle-xmark"></i>{{ erreur }}</div>
       </div>
       <div class="modal-actions"><button type="button" class="btn-annuler" (click)="fermerModification()" [disabled]="soumission">Annuler</button><button type="button" class="btn-confirmer" (click)="modifier()" [disabled]="soumission"><i class="fa-solid" [class.fa-pen]="!soumission" [class.fa-spinner]="soumission" [class.fa-spin]="soumission"></i>{{ soumission ? 'Modification…' : 'Enregistrer' }}</button></div>

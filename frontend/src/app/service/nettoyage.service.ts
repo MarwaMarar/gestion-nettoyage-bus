@@ -32,6 +32,20 @@ export class NettoyageService {
   adminSupervisorPage(userId: number, page = 0, size = 10, dateDebut?: string, dateFin?: string, busId?: number): Observable<PageResponse<Nettoyage>> {
     return this.http.get<PageResponse<Nettoyage>>(`${this.url}/admin/superviseur/page`, { params: this.pageParams(page,size,dateDebut,dateFin,busId).set('userId',userId) });
   }
+  planningPage(date: string, page = 0, size = 20, busId?: number, typeId?: number, statut?: string): Observable<PageResponse<Nettoyage>> {
+    let params = new HttpParams().set('date', date).set('page', page).set('size', size);
+    if (busId != null) params = params.set('busId', busId);
+    if (typeId != null) params = params.set('typeId', typeId);
+    if (statut) params = params.set('statut', statut);
+    return this.http.get<PageResponse<Nettoyage>>(`${this.url}/admin/planification/page`, { params });
+  }
+  planningExport(date: string, busId?: number, typeId?: number, statut?: string): Observable<Nettoyage[]> {
+    let params = new HttpParams().set('date', date);
+    if (busId != null) params = params.set('busId', busId);
+    if (typeId != null) params = params.set('typeId', typeId);
+    if (statut) params = params.set('statut', statut);
+    return this.http.get<Nettoyage[]>(`${this.url}/admin/planification/export`, { params });
+  }
   valider(id: number, remarqueSuperviseur = ''): Observable<Nettoyage> {
     return this.http.put<Nettoyage>(`${this.url}/${id}/valider`, { remarqueSuperviseur });
   }

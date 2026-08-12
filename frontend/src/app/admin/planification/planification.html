@@ -1,0 +1,32 @@
+<div class="planification">
+  <div class="header-page"><div class="header-page-left"><h2><i class="fa-solid fa-calendar-days"></i> Planification</h2><p>Consultez les nettoyages prévus pour une journée.</p></div><div class="export-actions"><button type="button" (click)="exportExcel()" [disabled]="exporting"><i class="fa-solid fa-file-excel"></i> Export Excel</button><button type="button" (click)="exportCsv()" [disabled]="exporting"><i class="fa-solid fa-file-csv"></i> Export CSV</button></div></div>
+  <section class="filters" aria-label="Filtres de planification">
+    <label>Date<input type="date" [(ngModel)]="date"></label>
+    <label>Bus<select [(ngModel)]="busId"><option [ngValue]="null">Tous les bus</option><option *ngFor="let b of bus" [ngValue]="b.id">Bus {{b.numeroBus}}</option></select></label>
+    <label>Type de nettoyage<select [(ngModel)]="typeId"><option [ngValue]="null">Tous les types</option><option *ngFor="let t of types" [ngValue]="t.id">{{t.libelle}}</option></select></label>
+    <label>Statut<select [(ngModel)]="statut"><option value="">Tous les statuts</option><option value="EN_ATTENTE">En attente</option><option value="VALIDE">Validé</option><option value="REFUSE">Refusé</option></select></label>
+    <button type="button" (click)="applyFilters()"><i class="fa-solid fa-filter"></i> Filtrer</button>
+  </section>
+  <div *ngIf="error" class="feedback error">{{error}}</div>
+  <section class="list-card">
+    <div class="list-header"><strong>Nettoyages planifiés</strong><span>{{totalElements}}</span></div>
+    <div *ngIf="loading" class="empty"><i class="fa-solid fa-spinner fa-spin"></i> Chargement…</div>
+    <article *ngFor="let n of values" class="planning-row">
+      <div class="main-info"><strong>Bus {{n.numeroBus}}</strong><span>{{n.typeNettoyageLibelle}}</span></div>
+      <span class="cleaner"><i class="fa-solid fa-user"></i> {{n.nettoyeurNom}}</span>
+      <span class="badge" [class.pending]="n.statut==='EN_ATTENTE'" [class.valid]="n.statut==='VALIDE'" [class.refused]="n.statut==='REFUSE'">{{labels[n.statut]}}</span>
+      <button type="button" class="details-button" (click)="open(n)">Voir détails</button>
+    </article>
+    <div *ngIf="!loading && !values.length" class="empty"><i class="fa-regular fa-calendar-xmark"></i>
+      <p *ngIf="selectedBusLabel; else genericEmpty"><strong>{{selectedBusLabel}}</strong> n’a aucun nettoyage planifié le {{formattedDate}}.</p>
+      <ng-template #genericEmpty><p>Aucun nettoyage planifié pour cette date et ces filtres.</p></ng-template>
+      <small *ngIf="selectedBusLabel">Ce bus peut appartenir à une vague planifiée un autre jour.</small>
+      <button *ngIf="selectedBusLabel" type="button" class="clear-filter" (click)="clearBusFilter()">Voir tous les bus ce jour-là</button>
+    </div>
+    <div class="pagination" *ngIf="totalPages>1"><button (click)="previous()" [disabled]="page===0">Précédent</button><span>Page {{page+1}} sur {{totalPages}}</span><button (click)="next()" [disabled]="page+1>=totalPages">Suivant</button></div>
+  </section>
+  <div class="modal-overlay" *ngIf="selected" (click)="close()"><section class="details-panel" role="dialog" aria-modal="true" aria-labelledby="planning-details-title" (click)="$event.stopPropagation()">
+    <div class="details-header"><h3 id="planning-details-title">Détails du nettoyage #{{selected.id}}</h3><button type="button" (click)="close()" aria-label="Fermer"><i class="fa-solid fa-xmark"></i></button></div>
+    <div class="detail"><span>Bus</span><strong>{{selected.numeroBus}}</strong></div><div class="detail"><span>Type</span><strong>{{selected.typeNettoyageLibelle}}</strong></div><div class="detail"><span>Date</span><strong>{{selected.dateNettoyage|date:'dd/MM/yyyy'}}</strong></div><div class="detail"><span>Nettoyeur</span><strong>{{selected.nettoyeurNom}}</strong></div><div class="detail"><span>Superviseur</span><strong>{{selected.superviseurNom||'—'}}</strong></div><div class="detail"><span>Statut</span><strong>{{labels[selected.statut]}}</strong></div><div class="detail"><span>Début</span><strong>{{selected.heureDebut?(selected.heureDebut|date:'HH:mm'):'—'}}</strong></div><div class="detail"><span>Fin</span><strong>{{selected.heureFin?(selected.heureFin|date:'HH:mm'):'—'}}</strong></div><div class="detail"><span>Durée</span><strong>{{selected.duree!=null?selected.duree+' min':'—'}}</strong></div><div class="detail full"><span>Remarque nettoyeur</span><strong>{{selected.remarqueNettoyeur||'—'}}</strong></div><div class="detail full"><span>Remarque superviseur</span><strong>{{selected.remarqueSuperviseur||'—'}}</strong></div>
+  </section></div>
+</div>

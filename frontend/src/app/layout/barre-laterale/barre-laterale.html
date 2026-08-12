@@ -46,6 +46,11 @@
       <span>Nettoyages</span>
     </a>
 
+    <a routerLink="/admin/planification" routerLinkActive="active" (click)="layoutService.closeSidebar()">
+      <i class="fa-solid fa-calendar-days"></i>
+      <span>Planification</span>
+    </a>
+
     <a routerLink="/admin/types-nettoyage" routerLinkActive="active" (click)="layoutService.closeSidebar()">
       <i class="fa-solid fa-spray-can-sparkles"></i>
       <span>Types de nettoyage</span>

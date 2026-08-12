@@ -18,6 +18,7 @@ import com.alsa.alsacleanfleet.security.AuthenticatedUser;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -25,6 +26,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.YearMonth;
+import java.time.DayOfWeek;
 import java.time.temporal.ChronoUnit;
 import java.text.Normalizer;
 import java.util.List;
@@ -232,6 +235,43 @@ public class NettoyageService {
                 .map(this::dto);
     }
 
+    @Transactional(readOnly = true)
+    public Page<NettoyageResponseDTO> planningPage(
+            AuthenticatedUser principal, LocalDate date, Long busId, Long typeId,
+            StatutNettoyage statut, Pageable pageable
+    ) {
+        if (principal.role() != Role.ADMINISTRATEUR) {
+            throw new AccessDeniedException("Rôle administrateur requis");
+        }
+        return repo.findAll(planningSpecification(date, busId, typeId, statut), pageable).map(this::dto);
+    }
+
+    @Transactional(readOnly = true)
+    public List<NettoyageResponseDTO> planningExport(
+            AuthenticatedUser principal, LocalDate date, Long busId, Long typeId, StatutNettoyage statut
+    ) {
+        if (principal.role() != Role.ADMINISTRATEUR) {
+            throw new AccessDeniedException("Rôle administrateur requis");
+        }
+        return repo.findAll(planningSpecification(date, busId, typeId, statut),
+                        Sort.by(Sort.Order.asc("bus.numeroBus"), Sort.Order.asc("id")))
+                .stream().map(this::dto).toList();
+    }
+
+    private Specification<Nettoyage> planningSpecification(
+            LocalDate date, Long busId, Long typeId, StatutNettoyage statut
+    ) {
+        Specification<Nettoyage> specification = (root, query, builder) ->
+                builder.equal(root.get("dateNettoyage"), date);
+        if (busId != null) specification = specification.and((root, query, builder) ->
+                builder.equal(root.get("bus").get("id"), busId));
+        if (typeId != null) specification = specification.and((root, query, builder) ->
+                builder.equal(root.get("typeNettoyage").get("id"), typeId));
+        if (statut != null) specification = specification.and((root, query, builder) ->
+                builder.equal(root.get("statut"), statut));
+        return specification;
+    }
+
     public NettoyageResponseDTO valider(
             Long id,
             DecisionNettoyageRequestDTO request,
@@ -306,13 +346,11 @@ public class NettoyageService {
                 List<Nettoyage> sameTypeHistory = busHistory.stream()
                         .filter(value -> value.getTypeNettoyage().getId().equals(type.getId()))
                         .toList();
-                LocalDate lastDate = sameTypeHistory.isEmpty()
-                        ? null
-                        : sameTypeHistory.getFirst().getDateNettoyage();
-                if (!isDue(type.getFrequence(), lastDate, planningDate)
+                if (!isDueForPlanning(type.getFrequence(), bus.getId(), type.getId(),
+                                sameTypeHistory, planningDate)
                         || repo.existsByBusIdAndTypeNettoyageIdAndStatutIn(
                                 bus.getId(), type.getId(),
-                                List.of(StatutNettoyage.EN_ATTENTE, StatutNettoyage.REFUSE))
+                                List.of(StatutNettoyage.REFUSE))
                         || repo.existsByBusIdAndTypeNettoyageIdAndDateNettoyage(
                                 bus.getId(), type.getId(), planningDate)) {
                     continue;
@@ -438,6 +476,20 @@ public class NettoyageService {
     }
 
     private void validateFrequency(Long currentId, Long busId, Long typeId, LocalDate date, String frequency) {
+        OccurrenceFrequency occurrences = occurrenceFrequency(frequency);
+        if (occurrences != null) {
+            long countInPeriod = repo.findByBusIdAndTypeNettoyageIdOrderByDateNettoyageAsc(busId, typeId)
+                    .stream()
+                    .filter(existing -> !existing.getId().equals(currentId))
+                    .map(Nettoyage::getDateNettoyage)
+                    .filter(existingDate -> occurrences.samePeriod(existingDate, date))
+                    .count();
+            if (countInPeriod >= occurrences.count()) {
+                throw new BusinessException("La date ne respecte pas la frequence '" + frequency
+                        + "' pour ce bus et ce type de nettoyage");
+            }
+            return;
+        }
         for (Nettoyage existing : repo.findByBusIdAndTypeNettoyageIdOrderByDateNettoyageAsc(busId, typeId)) {
             if (existing.getId().equals(currentId)) continue;
             LocalDate existingDate = existing.getDateNettoyage();
@@ -458,15 +510,24 @@ public class NettoyageService {
         if (frequency == null || frequency.isBlank() || fromDate == null) return Optional.empty();
         String normalized = Normalizer.normalize(frequency, Normalizer.Form.NFD)
                 .replaceAll("\\p{M}", "").toLowerCase().trim();
-        Matcher weekly = Pattern.compile("(\\d+)\\s+fois\\s+par\\s+semaine").matcher(normalized);
+        Matcher occurrences = Pattern.compile("(\\d+)\\s+fois\\s*(?:par|/)\\s*(jour|semaine|mois)").matcher(normalized);
         Matcher monthly = Pattern.compile("(?:chaque|tous les)\\s+(\\d+)\\s+mois").matcher(normalized);
-        if (weekly.find()) {
-            int occurrences = Integer.parseInt(weekly.group(1));
-            return occurrences <= 0
-                    ? Optional.empty()
-                    : Optional.of(fromDate.plusDays((long) Math.ceil(7d / occurrences)));
+        if (occurrences.find()) {
+            Integer count = positiveInteger(occurrences.group(1));
+            if (count == null) return Optional.empty();
+            return switch (occurrences.group(2)) {
+                case "jour" -> Optional.of(fromDate.plusDays(1));
+                case "semaine" -> Optional.of(fromDate.plusDays((long) Math.ceil(7d / count)));
+                case "mois" -> count == 1
+                        ? Optional.of(fromDate.plusMonths(1))
+                        : Optional.of(fromDate.plusDays((long) Math.ceil(30d / count)));
+                default -> Optional.empty();
+            };
         }
-        if (monthly.find()) return Optional.of(fromDate.plusMonths(Integer.parseInt(monthly.group(1))));
+        if (monthly.find()) {
+            Integer monthInterval = positiveInteger(monthly.group(1));
+            return monthInterval == null ? Optional.empty() : Optional.of(fromDate.plusMonths(monthInterval));
+        }
         if (normalized.contains("quotidien") || normalized.contains("chaque jour")
                 || normalized.matches(".*\\bpar\\s+jour\\b.*")) {
             return Optional.of(fromDate.plusDays(1));
@@ -474,10 +535,77 @@ public class NettoyageService {
         return Optional.empty();
     }
 
+    private static Integer positiveInteger(String value) {
+        try {
+            int parsed = Integer.parseInt(value);
+            return parsed > 0 ? parsed : null;
+        } catch (NumberFormatException ignored) {
+            return null;
+        }
+    }
+
     private boolean isDue(String frequency, LocalDate lastDate, LocalDate planningDate) {
         if (lastDate == null) return nextDueDate(frequency, planningDate).isPresent();
         Optional<LocalDate> nextDate = nextDueDate(frequency, lastDate);
         return nextDate.isPresent() && !planningDate.isBefore(nextDate.get());
+    }
+
+    private boolean isDueForPlanning(String frequency, Long busId, Long typeId,
+                                     List<Nettoyage> history, LocalDate planningDate) {
+        OccurrenceFrequency occurrences = occurrenceFrequency(frequency);
+        if (occurrences == null) {
+            LocalDate lastDate = history.isEmpty() ? null : history.getFirst().getDateNettoyage();
+            return isDue(frequency, lastDate, planningDate);
+        }
+        long alreadyPlanned = history.stream()
+                .map(Nettoyage::getDateNettoyage)
+                .filter(date -> occurrences.samePeriod(date, planningDate))
+                .count();
+        return alreadyPlanned < occurrences.count()
+                && occurrences.isWaveDay(busId, typeId, planningDate);
+    }
+
+    private static OccurrenceFrequency occurrenceFrequency(String frequency) {
+        if (frequency == null) return null;
+        String normalized = Normalizer.normalize(frequency, Normalizer.Form.NFD)
+                .replaceAll("\\p{M}", "").toLowerCase().trim();
+        Matcher matcher = Pattern.compile("(\\d+)\\s+fois\\s*(?:par|/)\\s*(jour|semaine|mois)")
+                .matcher(normalized);
+        if (!matcher.matches()) {
+            if (normalized.contains("quotidien") || normalized.equals("chaque jour")
+                    || normalized.equals("par jour")) return new OccurrenceFrequency(1, "jour");
+            return null;
+        }
+        Integer count = positiveInteger(matcher.group(1));
+        return count == null ? null : new OccurrenceFrequency(count, matcher.group(2));
+    }
+
+    private record OccurrenceFrequency(int count, String unit) {
+        boolean samePeriod(LocalDate first, LocalDate second) {
+            return switch (unit) {
+                case "jour" -> first.equals(second);
+                case "semaine" -> first.with(DayOfWeek.MONDAY).equals(second.with(DayOfWeek.MONDAY));
+                case "mois" -> YearMonth.from(first).equals(YearMonth.from(second));
+                default -> false;
+            };
+        }
+
+        boolean isWaveDay(Long busId, Long typeId, LocalDate date) {
+            if (unit.equals("jour")) return true;
+            int periodLength = unit.equals("semaine") ? 7 : date.lengthOfMonth();
+            int required = Math.min(count, periodLength);
+            long periodIndex = unit.equals("semaine")
+                    ? ChronoUnit.WEEKS.between(LocalDate.of(1970, 1, 5), date.with(DayOfWeek.MONDAY))
+                    : (long) date.getYear() * 12 + date.getMonthValue() - 1;
+            int dayIndex = unit.equals("semaine") ? date.getDayOfWeek().getValue() - 1 : date.getDayOfMonth() - 1;
+            int phase = Math.floorMod(busId.hashCode() * 31 + typeId.hashCode() + Long.hashCode(periodIndex),
+                    periodLength);
+            for (int occurrence = 0; occurrence < required; occurrence++) {
+                int slot = Math.floorMod(phase + (occurrence * periodLength / required), periodLength);
+                if (slot == dayIndex) return true;
+            }
+            return false;
+        }
     }
 
     private boolean hasReusableAssignment(Nettoyage value) {

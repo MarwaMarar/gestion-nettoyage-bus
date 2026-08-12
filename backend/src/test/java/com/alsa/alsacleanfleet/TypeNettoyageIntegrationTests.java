@@ -89,6 +89,14 @@ class TypeNettoyageIntegrationTests {
         }
     }
 
+    @Test
+    void rejectsAFreeTextFrequency() throws Exception {
+        mvc.perform(post("/api/types-nettoyage").header("Authorization", bearer(Role.ADMINISTRATEUR))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"libelle\":\"Fréquence invalide\",\"frequence\":\"Souvent\"}"))
+                .andExpect(status().isBadRequest());
+    }
+
     private String bearer(Role role) {
         Utilisateur user = utilisateurs.findByRoleAndActifTrue(role).stream().findFirst().orElseThrow();
         user.setDoitChangerMotDePasse(false);

@@ -1,6 +1,7 @@
 package com.alsa.alsacleanfleet.controller;
 
 import com.alsa.alsacleanfleet.dto.*;
+import com.alsa.alsacleanfleet.enums.StatutNettoyage;
 import com.alsa.alsacleanfleet.security.AuthenticatedUser;
 import com.alsa.alsacleanfleet.service.NettoyageService;
 import jakarta.validation.Valid;
@@ -92,6 +93,31 @@ public class NettoyageController {
     ) {
         return service.adminSupervisorPage(principal, userId, dateDebut, dateFin, busId, PageRequest.of(page, size,
                 Sort.by(Sort.Order.desc("dateNettoyage"), Sort.Order.desc("heureFin"), Sort.Order.desc("id"))));
+    }
+
+    @GetMapping("/admin/planification/page")
+    public Page<NettoyageResponseDTO> planningPage(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+            @RequestParam(required = false) Long busId,
+            @RequestParam(required = false) Long typeId,
+            @RequestParam(required = false) StatutNettoyage statut,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @AuthenticationPrincipal AuthenticatedUser principal
+    ) {
+        return service.planningPage(principal, date, busId, typeId, statut,
+                PageRequest.of(page, size, Sort.by(Sort.Order.asc("bus.numeroBus"), Sort.Order.asc("id"))));
+    }
+
+    @GetMapping("/admin/planification/export")
+    public List<NettoyageResponseDTO> planningExport(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+            @RequestParam(required = false) Long busId,
+            @RequestParam(required = false) Long typeId,
+            @RequestParam(required = false) StatutNettoyage statut,
+            @AuthenticationPrincipal AuthenticatedUser principal
+    ) {
+        return service.planningExport(principal, date, busId, typeId, statut);
     }
 
     @PutMapping("/{id}/valider")

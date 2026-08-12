@@ -16,7 +16,9 @@ export class TypesNettoyage implements OnInit {
   recherche = '';
   libelle = '';
   description = '';
-  frequence = '';
+  frequenceMode: 'occurrences' | 'intervalle' | 'manuel' = 'occurrences';
+  frequenceNombre = 1;
+  frequencePeriode: 'jour' | 'semaine' | 'mois' = 'jour';
   afficherAjout = false;
   typeAModifier: TypeNettoyage | null = null;
   typeASupprimer: TypeNettoyage | null = null;
@@ -40,7 +42,7 @@ export class TypesNettoyage implements OnInit {
   ouvrirAjout(): void {
     this.libelle = '';
     this.description = '';
-    this.frequence = '';
+    this.reinitialiserFrequence();
     this.erreur = '';
     this.succes = '';
     this.afficherAjout = true;
@@ -52,9 +54,24 @@ export class TypesNettoyage implements OnInit {
     this.typeAModifier = type;
     this.libelle = type.libelle;
     this.description = type.description ?? '';
-    this.frequence = type.frequence ?? '';
+    this.chargerFrequence(type.frequence);
     this.erreur = '';
     this.succes = '';
+  }
+
+  afficherFrequence(value: string | null): string {
+    const frequence = (value ?? '').trim();
+    if (!frequence) return '—';
+    const normalisee = frequence.toLocaleLowerCase('fr');
+    if (normalisee === 'selon besoin') return 'Selon besoin';
+    if (normalisee.includes('quotidien') || normalisee === 'chaque jour' || normalisee === 'par jour') {
+      return '1 fois/jour';
+    }
+    const occurrences = normalisee.match(/^(\d+)\s+fois\s*(?:par|\/)\s*(jour|semaine|mois)$/);
+    if (occurrences) return `${occurrences[1]} fois/${occurrences[2]}`;
+    const intervalle = normalisee.match(/^(?:chaque|tous les)\s+(\d+)\s+mois$/);
+    if (intervalle) return `Tous les ${intervalle[1]} mois`;
+    return frequence;
   }
 
   fermerModification(): void { if (!this.soumission) this.typeAModifier = null; }
@@ -62,7 +79,7 @@ export class TypesNettoyage implements OnInit {
   modifier(): void {
     if (!this.typeAModifier) return;
     const libelle = this.libelle.trim();
-    const frequence = this.frequence.trim();
+    const frequence = this.construireFrequence();
     if (!libelle || !frequence) {
       this.erreur = 'Le libellé et la fréquence sont obligatoires.';
       return;
@@ -86,7 +103,7 @@ export class TypesNettoyage implements OnInit {
 
   ajouter(): void {
     const libelle = this.libelle.trim();
-    const frequence = this.frequence.trim();
+    const frequence = this.construireFrequence();
     if (!libelle || !frequence) {
       this.erreur = 'Le libellé et la fréquence sont obligatoires.';
       return;
@@ -151,5 +168,43 @@ export class TypesNettoyage implements OnInit {
         this.cdr.detectChanges();
       }
     });
+  }
+
+  private reinitialiserFrequence(): void {
+    this.frequenceMode = 'occurrences';
+    this.frequenceNombre = 1;
+    this.frequencePeriode = 'jour';
+  }
+
+  private construireFrequence(): string {
+    if (this.frequenceMode === 'manuel') return 'Selon besoin';
+    const nombre = Math.trunc(this.frequenceNombre);
+    if (nombre < 1) return '';
+    if (this.frequenceMode === 'intervalle') return `Tous les ${nombre} mois`;
+    return `${nombre} fois/${this.frequencePeriode}`;
+  }
+
+  private chargerFrequence(value: string | null): void {
+    const frequence = (value ?? '').trim().toLocaleLowerCase('fr');
+    if (frequence === 'selon besoin') {
+      this.frequenceMode = 'manuel';
+      this.frequenceNombre = 1;
+      return;
+    }
+    const intervalle = frequence.match(/^(?:chaque|tous les)\s+(\d+)\s+mois$/);
+    if (intervalle) {
+      this.frequenceMode = 'intervalle';
+      this.frequenceNombre = Number(intervalle[1]);
+      return;
+    }
+    const occurrences = frequence.match(/^(\d+)\s+fois\s*(?:par|\/)\s*(jour|semaine|mois)$/);
+    this.frequenceMode = 'occurrences';
+    if (occurrences) {
+      this.frequenceNombre = Number(occurrences[1]);
+      this.frequencePeriode = occurrences[2] as 'jour' | 'semaine' | 'mois';
+    } else {
+      this.frequenceNombre = 1;
+      this.frequencePeriode = frequence.includes('semaine') ? 'semaine' : frequence.includes('mois') ? 'mois' : 'jour';
+    }
   }
 }
