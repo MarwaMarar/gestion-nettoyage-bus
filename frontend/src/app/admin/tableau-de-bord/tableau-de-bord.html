@@ -6,8 +6,8 @@
 
   <div class="welcome-banner">
     <div class="welcome-text">
-      <h2>Bienvenue, Administrateur 👋</h2>
-      <p>Gérez les bus, les utilisateurs et les opérations de nettoyage depuis votre tableau de bord.</p>
+      <h2>Bienvenue, {{ consultantMode ? 'Consultant' : 'Administrateur' }} 👋</h2>
+      <p>{{ consultantMode ? 'Consultez les bus, les utilisateurs et les opérations de nettoyage depuis votre tableau de bord.' : 'Gérez les bus, les utilisateurs et les opérations de nettoyage depuis votre tableau de bord.' }}</p>
     </div>
     <div class="welcome-icon">🚌</div>
   </div>

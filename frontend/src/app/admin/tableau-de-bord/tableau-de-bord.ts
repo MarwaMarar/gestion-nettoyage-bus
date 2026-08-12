@@ -8,6 +8,7 @@ import { NettoyageService } from '../../service/nettoyage.service';
 import { TypeBusService } from '../../service/type-bus.service';
 import { TypeNettoyageService } from '../../service/type-nettoyage.service';
 import { UtilisateurService } from '../../service/utilisateur.service';
+import { AuthService } from '../../service/auth.service';
 
 @Component({selector:'app-tableau-de-bord',standalone:true,imports:[CommonModule, FormsModule],templateUrl:'./tableau-de-bord.html',styleUrl:'./tableau-de-bord.css'})
 export class TableauDeBordComponent implements OnInit, OnDestroy {
@@ -15,7 +16,8 @@ export class TableauDeBordComponent implements OnInit, OnDestroy {
   bus=0; nettoyagesJour=0; nettoyagesValides=0; nettoyagesRefuses=0; nettoyagesAttente=0; pourcentageValidation=0;
   dateDebut=''; dateFin=''; dateDebutAppliquee=''; dateFinAppliquee=''; filterError='';
   loading=false; errorMessage=''; busData:Bus[]=[]; utilisateurs:Utilisateur[]=[]; nettoyages:Nettoyage[]=[]; typesBus:TypeBus[]=[]; typesNettoyage:TypeNettoyage[]=[];
-  constructor(private busService:BusService,private utilisateurService:UtilisateurService,private nettoyageService:NettoyageService,private typeBusService:TypeBusService,private typeNettoyageService:TypeNettoyageService,private cdr:ChangeDetectorRef){}
+  constructor(private busService:BusService,private utilisateurService:UtilisateurService,private nettoyageService:NettoyageService,private typeBusService:TypeBusService,private typeNettoyageService:TypeNettoyageService,private cdr:ChangeDetectorRef,private authService:AuthService){}
+  get consultantMode():boolean{return this.authService.currentUser()?.role==='CONSULTANT';}
   ngOnInit():void{this.loadDashboardData();this.synchronisation=setInterval(()=>this.refreshMetrics(),10000);}
   ngOnDestroy():void{if(this.synchronisation)clearInterval(this.synchronisation);}
   private refreshMetrics():void{this.nettoyageService.getAll().subscribe({next:values=>{this.nettoyages=values;this.updateMetrics();this.cdr.detectChanges();}});}
